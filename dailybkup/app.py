@@ -1,4 +1,5 @@
 import typer
+import dailybkup.injector as injector
 
 
 def new_app() -> typer.Typer:
@@ -9,7 +10,8 @@ def new_app() -> typer.Typer:
 
 
 def backup() -> None:
-    raise NotImplementedError()
+    runner = injector.get().runner()
+    runner.run()
 
 
 def version() -> None:
