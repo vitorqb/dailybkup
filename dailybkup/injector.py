@@ -1,5 +1,6 @@
 import dailybkup.runner as runnermod
-from typing import Optional
+import dailybkup.compression as compression
+from typing import Optional, List
 
 
 class _Injector():
@@ -7,8 +8,16 @@ class _Injector():
     Class responsible to inject dependencies to commands.
     """
 
+    def compressor(self) -> compression.ICompressor:
+        # TODO - LOAD FROM CONFIG
+        files: List[str] = []
+        exclude: List[str] = []
+        config = compression.CompressorConfig(files=files, exclude=exclude)
+        return compression.TarCompressor(config)
+
     def runner(self) -> runnermod.Runner:
-        return runnermod.Runner()
+        compressor = self.compressor()
+        return runnermod.Runner(compressor=compressor)
 
 
 _instance: Optional[_Injector] = None

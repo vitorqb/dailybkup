@@ -10,8 +10,7 @@ def new_app() -> typer.Typer:
 
 
 def backup() -> None:
-    runner = injector.get().runner()
-    runner.run()
+    injector.get().runner().run()
 
 
 def version() -> None:
