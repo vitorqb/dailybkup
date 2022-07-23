@@ -12,7 +12,5 @@ class Runner():
 
     def run(self) -> statemod.State:
         state = statemod.State.initial_state()
-        print(state)
         state = self._compressor.run(state)
-        print(state)
         return state

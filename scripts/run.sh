@@ -29,4 +29,5 @@ done
 ARGS="${@:$OPTIND}"
 
 # Script
-poetry run python -m dailybkup "${ARGS[@]}"
+export DAILYBKUP_ENV="dev"
+poetry run python -m dailybkup ${ARGS[@]}

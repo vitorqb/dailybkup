@@ -1,3 +1,4 @@
+import dailybkup.config as configmod
 import dailybkup.compression as sut
 from dailybkup.state import State
 import os
@@ -10,8 +11,10 @@ def p(path):
     """
     Shortcut function to get the path to a testdata file.
     """
-    root = os.path.dirname(os.path.realpath(__file__))
-    return f"{root}/testdata/{path}"
+    testutil_path = os.path.dirname(os.path.realpath(__file__))
+    testdata_path = os.path.abspath(f"{testutil_path}/../testdata")
+    return f"{testdata_path}/{path}"
+
 
 def p_(path):
     """
@@ -36,7 +39,7 @@ def tempfile():
 class TestTarCompressor():
 
     def test_compresses_to_file(self, tempfile):
-        config = sut.CompressorConfig(
+        config = configmod.CompressorConfig(
             files=[p("file1"), p("dir1")],
             exclude=[p("dir1/dir2")]
         )

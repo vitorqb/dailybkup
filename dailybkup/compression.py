@@ -4,20 +4,14 @@ import dataclasses
 from typing import List
 import tempfile
 import subprocess
+import dailybkup.config as configmod
 from dailybkup.phases import Phase
 from typing import Any
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class CompressorConfig():
-    files: List[str]
-    exclude: List[str]
-    tar_executable: str = "tar"
-
-
 class ICompressor(ABC):
 
-    def __init__(self, config: CompressorConfig) -> None:
+    def __init__(self, config: configmod.CompressorConfig) -> None:
         self._config = config
 
     @abstractmethod
@@ -52,7 +46,7 @@ class TarCompressor(ICompressor):
 
 class MockCompressor(ICompressor):
 
-    def __init__(self, config: CompressorConfig) -> None:
+    def __init__(self, config: configmod.CompressorConfig) -> None:
         super().__init__(config)
         self.calls: List[Any] = []
 

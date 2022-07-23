@@ -26,5 +26,6 @@ while getopts "h" opt; do
 done
 
 # Script
+export DAILYBKUP_ENV="dev"
 GIT_ROOT="$(git rev-parse --show-toplevel)"
 poetry run mypy $GIT_ROOT/dailybkup/
