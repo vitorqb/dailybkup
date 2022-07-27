@@ -1,14 +1,14 @@
 """
 Functional tests for the app
 """
-import contextlib
+import dailybkup.tarutils as tarutils
 import pytest
-import yaml
 import typer.testing
 import dailybkup.app as appmod
 import dailybkup.config as configmod
 import dailybkup.testutils as testutils
-from dailybkup.testutils import p
+import os
+from dailybkup.testutils import p, p_
 
 
 @pytest.fixture
@@ -29,12 +29,19 @@ def temp_file():
 
 @pytest.fixture
 def config1():
-    return configmod.Config.from_dict({
-        "compressor": {
-            "files": [p("file1"), p("dir1")],
-            "exclude": [],
-        }
-    })
+    with testutils.with_temp_file() as destination_file:
+        return configmod.Config.from_dict({
+            "compressor": {
+                "files": [p("file1"), p("dir1")],
+                "exclude": [],
+            },
+            "destination": [
+                {
+                    "type_": "file",
+                    "path": destination_file
+                }
+            ]
+        })
 
 
 class TestFunctionalApp():
@@ -43,3 +50,6 @@ class TestFunctionalApp():
         with testutils.config_to_file(config1) as config1_file:
             result = cli_runner.invoke(app, ['-c', config1_file, 'backup'])
             assert result.exit_code == 0
+            tar_file = config1.destination[0].path
+            assert os.path.exists(tar_file)
+            assert p_("file1") in tarutils.list_files(tar_file)

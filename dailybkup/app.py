@@ -30,6 +30,6 @@ def version() -> None:
 
 
 def injector_cbk(
-        config_file: str = typer.Option(_get_default_config_file, "-c", "--config-file")
+        config_file: str = typer.Option(_get_default_config_file(), "-c", "--config-file")
 ) -> None:
     injector.init(config_file=config_file)

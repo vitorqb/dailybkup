@@ -24,9 +24,14 @@ def temp_file():
 
 @pytest.fixture
 def config1():
-    return configmod.Config.from_dict({
-        "compressor": {
-            "files": [p("afile")],
-            "exclude": [],
-        }
-    })
+    with testutils.with_temp_file() as dest_file:
+        return configmod.Config.from_dict({
+            "compressor": {
+                "files": [p("afile")],
+                "exclude": [],
+            },
+            "destination": [{
+                "type_": "file",
+                "path": dest_file
+            }]
+        })

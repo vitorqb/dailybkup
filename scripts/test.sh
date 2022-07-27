@@ -1,10 +1,13 @@
 #!/bin/bash
-USAGE="$0"' [-h]
+USAGE="$0"' [-h] [-p] [-g PATTERN]
 
 Runs tests.
 
   -h)
     Displays this help message.
+
+  -g PATTERN)
+    Grep tests by name/blob pattern.
 
   -p)
     Show print statements.
@@ -12,7 +15,7 @@ Runs tests.
 '
 
 # Getopts
-while getopts "hp" opt; do
+while getopts "hpg:" opt; do
   case "$opt" in
     h)
         echo "$USAGE"
@@ -21,8 +24,11 @@ while getopts "hp" opt; do
     p)
         SHOW_PRINT=1
         ;;
+    g)
+        GREP="$OPTARG"
+        ;;
     --)
-        shift
+        break
         ;;
     *)
         echo "ERROR: UNKNOWN ARGUMENT: $1" >&2
@@ -38,5 +44,9 @@ ARGS=( poetry run pytest )
 if [ "$SHOW_PRINT" = "1" ]
 then
     ARGS+=( -s )
+fi
+if ! [ -z "$GREP" ]
+then
+    ARGS+=( -k "$GREP" )
 fi
 ${ARGS[@]}

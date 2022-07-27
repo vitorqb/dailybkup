@@ -13,13 +13,23 @@ def p(path):
     return os.path.abspath(f"{root}/../testdata/{path}")
 
 
+def p_(path):
+    """
+    Same as p, but without leading slash '/'
+    """
+    return p(path)[1:]
+
+
 @contextlib.contextmanager
 def with_temp_file():
     tempfile = tempfilemod.NamedTemporaryFile().name
     try:
         yield tempfile
     finally:
-        os.remove(tempfile)
+        try:
+            os.remove(tempfile)
+        except FileNotFoundError:
+            pass
 
 
 @contextlib.contextmanager
