@@ -38,22 +38,22 @@ config1 = sut.Config(
 class TestCompressorConfig():
 
     def test_from_dict(self):
-        result = sut.CompressorConfig.from_dict(compressor_config_dict1)
+        result = sut.compressor_config_builder.build(compressor_config_dict1)
         assert result == compressor_config1
 
     def test_fails_on_unknown_arg(self):
         with pytest.raises(sut.UnkownConfigKey):
-            sut.CompressorConfig.from_dict({"a": "b"})
+            sut.compressor_config_builder.build({"a": "b"})
 
     def test_raises_on_missing_arg(self):
         with pytest.raises(sut.MissingConfigKey):
-            sut.CompressorConfig.from_dict({})
+            sut.compressor_config_builder.build({})
 
 
 class TestConfig():
 
     def test_from_dict(self):
-        result = sut.Config.from_dict(config_dict1)
+        result = sut.config_builder.build(config_dict1)
         assert result == config1
 
     @pytest.mark.parametrize("missing_keys", [["destination", "compressor"],
@@ -64,20 +64,20 @@ class TestConfig():
         for key in missing_keys:
             dict_.pop(key)
         with pytest.raises(sut.MissingConfigKey):
-            sut.Config.from_dict(dict_)
+            sut.config_builder.build(dict_)
 
 
-class TestFileDestinationConfig():
+class TestFileDestinationConfigBuilder():
 
     def test_from_dict(self):
-        result = sut.FileDestinationConfig.from_dict(destination_config_dict1)
+        result = sut.file_destination_config_builder.build(destination_config_dict1)
         assert result == destination_config1
 
     def test_missing_key(self):
         with pytest.raises(sut.MissingConfigKey):
-            sut.FileDestinationConfig.from_dict({})
+            sut.destination_config_builder.build({})
 
     def test_extra_key(self):
         dict_ = {**destination_config_dict1, "foo": "bar"}
         with pytest.raises(sut.UnkownConfigKey):
-            sut.FileDestinationConfig.from_dict(dict_)
+            sut.destination_config_builder.build(dict_)

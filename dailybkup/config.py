@@ -1,7 +1,7 @@
 import copy
 from abc import ABC
 import dataclasses
-from typing import Dict, Any, Sequence, Protocol, TypeVar, Generic, Type, ClassVar
+from typing import Dict, Any, Sequence, ClassVar
 import dailybkup.dictutils as dictutils
 
 
@@ -13,77 +13,85 @@ class MissingConfigKey(RuntimeError):
     pass
 
 
-class PDictBuildable(Protocol):
-    _req_fields: Sequence[str]
-    _opt_fields: Sequence[str]
-
-
-T = TypeVar('T', bound=PDictBuildable)
-
-
-class ConfigDictBuilderMixin(Generic[T]):
-    @classmethod
-    def from_dict(cls: Type[T], dict_: Dict[str, Any]) -> T:
-        req_fields = cls._req_fields
-        opt_fields = cls._opt_fields
-        builder = dictutils.DictBuilder(req_fields, opt_fields, cls)
-        try:
-            return builder.build(dict_)
-        except dictutils.MissingKey as e:
-            raise MissingConfigKey(str(e))
-        except dictutils.UnkownKey as e:
-            raise UnkownConfigKey(str(e))
-
-
-class DictDumpableMixin():
-    def to_dict(self) -> Dict[str, Any]:
-        return dataclasses.asdict(self)
-
-
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class Config(DictDumpableMixin):
-
-    compressor: 'CompressorConfig'
-    destination: Sequence['IDestinationConfig']
-
-    @classmethod
-    def from_dict(cls, d: Dict[str, Any]) -> 'Config':
-        missing_keys = {'compressor', 'destination'} - {x for x in d.keys()}
-        if missing_keys:
-            raise MissingConfigKey(f'Missing configuration keys:  {missing_keys}')
-        compressor = CompressorConfig.from_dict(d['compressor'])
-        destination = [build_destination_config(x) for x in d['destination']]
-        return cls(compressor=compressor, destination=destination)
-
-
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class CompressorConfig(ConfigDictBuilderMixin, DictDumpableMixin):
-    files: Sequence[str]
-    exclude: Sequence[str]
-    tar_executable: str = "tar"
-
-    _req_fields: ClassVar[Sequence[str]] = ['files', 'exclude']
-    _opt_fields: ClassVar[Sequence[str]] = ['tar_executable']
-
-
+#
+# Config Protocols
+#
 class IDestinationConfig(ABC):
     pass
 
 
+#
+# Config classes
+#
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class FileDestinationConfig(IDestinationConfig, ConfigDictBuilderMixin, DictDumpableMixin):
+class Config():
+    compressor: 'CompressorConfig'
+    destination: Sequence['IDestinationConfig']
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class CompressorConfig():
+    files: Sequence[str]
+    exclude: Sequence[str]
+    tar_executable: str = "tar"
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class FileDestinationConfig(IDestinationConfig):
     path: str
     type_: str = "file"
     _req_fields: ClassVar[Sequence[str]] = ['path']
     _opt_fields: ClassVar[Sequence[str]] = ['type_']
 
 
-def build_destination_config(dict_: Dict[str, Any]) -> IDestinationConfig:
-    dict_ = copy.deepcopy(dict_)
-    type_ = dict_.pop('type_', 'MISSING')
-    if type_ == 'file':
-        return FileDestinationConfig.from_dict(dict_)
-    elif type_ == 'MISSING':
-        raise MissingConfigKey('Missing key type_ for destination config')
-    else:
-        raise ValueError(f'Invalid type_ "{type_}" for destination config')
+#
+# Builder classes
+#
+class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
+    def build(cls, d: Dict[str, Any]) -> 'Config':
+        missing_keys = {'compressor', 'destination'} - {x for x in d.keys()}
+        if missing_keys:
+            raise MissingConfigKey(f'Missing configuration keys:  {missing_keys}')
+        compressor = compressor_config_builder.build(d['compressor'])
+        destination = [destination_config_builder.build(x) for x in d['destination']]
+        return Config(compressor=compressor, destination=destination)
+
+
+class DestinationConfigBuilder(dictutils.PDictBuilder[IDestinationConfig]):
+
+    def build(cls, d: Dict[str, Any]) -> IDestinationConfig:
+        dict_ = copy.deepcopy(d)
+        type_ = dict_.pop('type_', 'MISSING')
+        if type_ == 'file':
+            return file_destination_config_builder.build(d)
+        elif type_ == 'MISSING':
+            raise MissingConfigKey('Missing key type_ for destination config')
+        else:
+            raise ValueError(f'Invalid type_ "{type_}" for destination config')
+
+
+#
+# Builder instances
+#
+config_builder = ConfigDictBuilder()
+compressor_config_builder: dictutils.DictBuilder = dictutils.DictBuilder(
+    cls_=CompressorConfig,
+    req_fields=['files', 'exclude'],
+    opt_fields=['tar_executable'],
+    missing_key_exception=MissingConfigKey,
+    unknown_key_exception=UnkownConfigKey,
+)
+destination_config_builder = DestinationConfigBuilder()
+file_destination_config_builder = dictutils.DictBuilder(
+    ['path'],
+    ['type_'],
+    FileDestinationConfig,
+    missing_key_exception=MissingConfigKey,
+    unknown_key_exception=UnkownConfigKey,
+)
+
+
+#
+# Dumper instances
+#
+dumper: dictutils.DictDumper = dictutils.DictDumper()

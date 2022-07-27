@@ -36,5 +36,5 @@ def with_temp_file():
 def config_to_file(config: configmod.Config):
     with with_temp_file() as f:
         with open(f, 'w') as f_:
-            yaml.safe_dump(config.to_dict(), f_)
+            yaml.safe_dump(configmod.dumper.dump(config), f_)
         yield f

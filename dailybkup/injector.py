@@ -24,11 +24,11 @@ class _ConfigLoader():
         if self._config is None:
             LOGGER.info(f"Loading config from file {self._config_file}")
             if not os.path.exists(self._config_file):
-                self._config = configmod.Config.from_dict({})
+                self._config = configmod.config_builder.build({})
             else:
                 with open(self._config_file) as f:
                     d = yaml.load(f, Loader=yaml.Loader)
-                    self._config = configmod.Config.from_dict(d)
+                    self._config = configmod.config_builder.build(d)
         return self._config
 
 
