@@ -5,6 +5,9 @@ from typing import Dict, Any, Sequence, ClassVar
 import dailybkup.dictutils as dictutils
 
 
+#
+# Exceptions
+#
 class UnkownConfigKey(RuntimeError):
     pass
 

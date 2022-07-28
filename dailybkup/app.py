@@ -2,6 +2,7 @@ import typer
 import dailybkup.injector as injector
 import os.path
 import os
+import logging
 
 
 def _get_default_config_file() -> str:
@@ -15,7 +16,7 @@ def new_app() -> typer.Typer:
     app = typer.Typer()
     app.command()(backup)
     app.command()(version)
-    app.callback()(injector_cbk)
+    app.callback()(global_setup)
     return app
 
 
@@ -29,7 +30,21 @@ def version() -> None:
     typer.echo(version)
 
 
-def injector_cbk(
-        config_file: str = typer.Option(_get_default_config_file(), "-c", "--config-file")
+def global_setup(
+        config_file: str = typer.Option(_get_default_config_file(), "-c", "--config-file"),
+        verbose: bool = typer.Option(False, "-v", "--verbose")
 ) -> None:
+    """
+    Global setup for the app.
+    """
+    _setup_logging(verbose)
+    _setup_injector(config_file)
+
+
+def _setup_injector(config_file: str):
     injector.init(config_file=config_file)
+
+
+def _setup_logging(verbose: bool) -> None:
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(level=level)
