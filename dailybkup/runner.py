@@ -2,6 +2,10 @@ import dailybkup.state as statemod
 import dailybkup.compression as compression
 import dailybkup.destinator as destinatormod
 from typing import Sequence
+import logging
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Runner():
@@ -20,7 +24,13 @@ class Runner():
 
     def run(self) -> statemod.State:
         state = statemod.State.initial_state()
+
+        LOGGER.info("Running compression")
         state = self._compressor.run(state)
+
+        LOGGER.info("Running destinators")
         for destinator in self._destinators:
             state = destinator.run(state)
+
+        LOGGER.info("Finished pipeline")
         return state

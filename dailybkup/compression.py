@@ -4,9 +4,13 @@ import dataclasses
 from typing import List
 import tempfile
 import subprocess
+import logging
 import dailybkup.config as configmod
 from dailybkup.phases import Phase
 from typing import Any
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class ICompressor(ABC):
@@ -41,6 +45,8 @@ class TarCompressor(ICompressor):
             compression_logfile=logfile,
             compressed_file=compressed_file
         )
+        LOGGER.info(f"Compression done to file {compressed_file}")
+        LOGGER.info(f"Logs saved to file {logfile}")
         return new_state
 
 
