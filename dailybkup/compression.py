@@ -8,6 +8,7 @@ import logging
 import dailybkup.config as configmod
 from dailybkup.phases import Phase
 from typing import Any
+import dailybkup.tarutils as tarutils
 
 
 LOGGER = logging.getLogger(__name__)
@@ -26,26 +27,25 @@ class ICompressor(ABC):
 class TarCompressor(ICompressor):
 
     def run(self, state: State) -> State:
-        tar_executable = self._config.tar_executable
         # TODO logfile cleanup
         logfile = tempfile.NamedTemporaryFile().name
-        compressed_file = tempfile.NamedTemporaryFile().name
-        cmd = [tar_executable, "--dereference", "--checkpoint=1000", f"--index-file={logfile}", "-v", "-z", "-c", f"-f{compressed_file}"]
-        for f in self._config.exclude:
-            cmd.append(f"--exclude={f}")
-        for f in self._config.files:
-            cmd.append(f)
-        subprocess.check_output(cmd)
-        list_files_cmd = [tar_executable, "-zt", f"-f{compressed_file}"]
-        files = subprocess.check_output(list_files_cmd).decode().splitlines()
+        destfile = tempfile.NamedTemporaryFile().name
+        tarutils.compress(
+            files=self._config.files,
+            destfile=destfile,
+            logfile=logfile,
+            excludes=self._config.exclude,
+            tar_executable=self._config.tar_executable
+        )
+        files = tarutils.list_files(destfile)
         new_state = dataclasses.replace(
             state,
             last_phase=Phase.COMPRESSION,
             files=files,
             compression_logfile=logfile,
-            compressed_file=compressed_file
+            compressed_file=destfile
         )
-        LOGGER.info(f"Compression done to file {compressed_file}")
+        LOGGER.info(f"Compression done to file {destfile}")
         LOGGER.info(f"Logs saved to file {logfile}")
         return new_state
 
