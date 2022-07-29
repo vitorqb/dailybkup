@@ -29,16 +29,16 @@ def temp_file():
 
 @pytest.fixture
 def config1():
-    with testutils.with_temp_file() as destination_file:
+    with testutils.with_temp_file() as storage_file:
         return configmod.config_builder.build({
             "compression": {
                 "files": [p("file1"), p("dir1")],
                 "exclude": [],
             },
-            "destination": [
+            "storage": [
                 {
                     "type_": "file",
-                    "path": destination_file
+                    "path": storage_file
                 }
             ]
         })
@@ -50,6 +50,6 @@ class TestFunctionalApp():
         with testutils.config_to_file(config1) as config1_file:
             result = cli_runner.invoke(app, ['-c', config1_file, 'backup'])
             assert result.exit_code == 0
-            tar_file = config1.destination[0].path
+            tar_file = config1.storage[0].path
             assert os.path.exists(tar_file)
             assert p_("file1") in tarutils.list_files(tar_file)

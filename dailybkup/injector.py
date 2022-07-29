@@ -1,7 +1,7 @@
 import dailybkup.config as configmod
 import dailybkup.runner as runnermod
 import dailybkup.compression as compression
-import dailybkup.destinator as destinator
+import dailybkup.storer as storer
 import yaml
 from typing import Optional, Sequence
 import logging
@@ -46,14 +46,14 @@ class _Injector():
         config = self._config_loader.load()
         return compression.TarCompressor(config.compression)
 
-    def destinators(self) -> Sequence[destinator.IDestinator]:
-        configs = self._config_loader.load().destination
-        return [destinator.build_from_config(config) for config in configs]
+    def storers(self) -> Sequence[storer.IStorer]:
+        configs = self._config_loader.load().storage
+        return [storer.build_from_config(config) for config in configs]
 
     def runner(self) -> runnermod.Runner:
         compressor = self.compressor()
-        destinators = self.destinators()
-        return runnermod.Runner(compressor=compressor, destinators=destinators)
+        storers = self.storers()
+        return runnermod.Runner(compressor=compressor, storers=storers)
 
 
 _injector: Optional[_Injector] = None

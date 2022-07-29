@@ -17,21 +17,21 @@ compression_config1 = sut.CompressionConfig(
     tar_executable="special_tar",
 )
 
-destination_config_dict1: Dict[str, Any] = {
+storage_config_dict1: Dict[str, Any] = {
     "type_": "file",
     "path": p("out")
 }
 
-destination_config1 = sut.FileDestinationConfig(path=p("out"))
+storage_config1 = sut.FileStorageConfig(path=p("out"))
 
 config_dict1 = {
     "compression": compression_config_dict1,
-    "destination": [destination_config_dict1]
+    "storage": [storage_config_dict1]
 }
 
 config1 = sut.Config(
     compression=compression_config1,
-    destination=[destination_config1]
+    storage=[storage_config1]
 )
 
 
@@ -56,9 +56,9 @@ class TestConfig():
         result = sut.config_builder.build(config_dict1)
         assert result == config1
 
-    @pytest.mark.parametrize("missing_keys", [["destination", "compression"],
+    @pytest.mark.parametrize("missing_keys", [["storage", "compression"],
                                               ["compression"],
-                                              ["destination"]])
+                                              ["storage"]])
     def test_from_dict_missing_key(self, missing_keys):
         dict_ = copy.deepcopy(config_dict1)
         for key in missing_keys:
@@ -67,17 +67,17 @@ class TestConfig():
             sut.config_builder.build(dict_)
 
 
-class TestFileDestinationConfigBuilder():
+class TestFileStorageConfigBuilder():
 
     def test_from_dict(self):
-        result = sut.file_destination_config_builder.build(destination_config_dict1)
-        assert result == destination_config1
+        result = sut.file_storage_config_builder.build(storage_config_dict1)
+        assert result == storage_config1
 
     def test_missing_key(self):
         with pytest.raises(sut.MissingConfigKey):
-            sut.destination_config_builder.build({})
+            sut.storage_config_builder.build({})
 
     def test_extra_key(self):
-        dict_ = {**destination_config_dict1, "foo": "bar"}
+        dict_ = {**storage_config_dict1, "foo": "bar"}
         with pytest.raises(sut.UnkownConfigKey):
-            sut.destination_config_builder.build(dict_)
+            sut.storage_config_builder.build(dict_)

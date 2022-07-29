@@ -9,8 +9,8 @@ class TestRunner():
 
     def test_run(self):
         compressor = compression.MockCompressor(mock.Mock())
-        destinators = []
-        result = sut.Runner(compressor=compressor, destinators=destinators).run()
+        storers = []
+        result = sut.Runner(compressor=compressor, storers=storers).run()
         initial_state = state.State.initial_state()
         final_state = state.State(last_phase=Phase.COMPRESSION, files=["foo"])
         assert compressor.calls == [initial_state]

@@ -6,17 +6,17 @@ from dailybkup.phases import Phase
 import shutil
 
 
-class IDestinator(ABC):
+class IStorer(ABC):
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         raise NotImplementedError()
 
 
-class FileDestinator():
+class FileStorer():
 
-    _config: configmod.FileDestinationConfig
+    _config: configmod.FileStorageConfig
 
-    def __init__(self, config: configmod.FileDestinationConfig):
+    def __init__(self, config: configmod.FileStorageConfig):
         self._config = config
 
     def run(self, state: statemod.State) -> statemod.State:
@@ -27,6 +27,6 @@ class FileDestinator():
         return dataclasses.replace(state, last_phase=Phase.STORAGE)
 
 
-def build_from_config(config: configmod.IDestinationConfig):
-    if isinstance(config, configmod.FileDestinationConfig):
-        return FileDestinator(config)
+def build_from_config(config: configmod.IStorageConfig):
+    if isinstance(config, configmod.FileStorageConfig):
+        return FileStorer(config)

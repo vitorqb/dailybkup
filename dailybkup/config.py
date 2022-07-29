@@ -19,7 +19,7 @@ class MissingConfigKey(RuntimeError):
 #
 # Config Protocols
 #
-class IDestinationConfig(ABC):
+class IStorageConfig(ABC):
     pass
 
 
@@ -29,7 +29,7 @@ class IDestinationConfig(ABC):
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class Config():
     compression: 'CompressionConfig'
-    destination: Sequence['IDestinationConfig']
+    storage: Sequence['IStorageConfig']
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
@@ -40,7 +40,7 @@ class CompressionConfig():
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class FileDestinationConfig(IDestinationConfig):
+class FileStorageConfig(IStorageConfig):
     path: str
     type_: str = "file"
     _req_fields: ClassVar[Sequence[str]] = ['path']
@@ -52,25 +52,25 @@ class FileDestinationConfig(IDestinationConfig):
 #
 class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
     def build(cls, d: Dict[str, Any]) -> 'Config':
-        missing_keys = {'compression', 'destination'} - {x for x in d.keys()}
+        missing_keys = {'compression', 'storage'} - {x for x in d.keys()}
         if missing_keys:
             raise MissingConfigKey(f'Missing configuration keys:  {missing_keys}')
         compression = compression_config_builder.build(d['compression'])
-        destination = [destination_config_builder.build(x) for x in d['destination']]
-        return Config(compression=compression, destination=destination)
+        storage = [storage_config_builder.build(x) for x in d['storage']]
+        return Config(compression=compression, storage=storage)
 
 
-class DestinationConfigBuilder(dictutils.PDictBuilder[IDestinationConfig]):
+class StorageConfigBuilder(dictutils.PDictBuilder[IStorageConfig]):
 
-    def build(cls, d: Dict[str, Any]) -> IDestinationConfig:
+    def build(cls, d: Dict[str, Any]) -> IStorageConfig:
         dict_ = copy.deepcopy(d)
         type_ = dict_.pop('type_', 'MISSING')
         if type_ == 'file':
-            return file_destination_config_builder.build(d)
+            return file_storage_config_builder.build(d)
         elif type_ == 'MISSING':
-            raise MissingConfigKey('Missing key type_ for destination config')
+            raise MissingConfigKey('Missing key type_ for storage config')
         else:
-            raise ValueError(f'Invalid type_ "{type_}" for destination config')
+            raise ValueError(f'Invalid type_ "{type_}" for storage config')
 
 
 #
@@ -84,11 +84,11 @@ compression_config_builder: dictutils.DictBuilder = dictutils.DictBuilder(
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,
 )
-destination_config_builder = DestinationConfigBuilder()
-file_destination_config_builder = dictutils.DictBuilder(
+storage_config_builder = StorageConfigBuilder()
+file_storage_config_builder = dictutils.DictBuilder(
     ['path'],
     ['type_'],
-    FileDestinationConfig,
+    FileStorageConfig,
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,
 )
