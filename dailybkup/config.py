@@ -28,12 +28,12 @@ class IDestinationConfig(ABC):
 #
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class Config():
-    compressor: 'CompressorConfig'
+    compression: 'CompressionConfig'
     destination: Sequence['IDestinationConfig']
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class CompressorConfig():
+class CompressionConfig():
     files: Sequence[str]
     exclude: Sequence[str]
     tar_executable: str = "tar"
@@ -52,12 +52,12 @@ class FileDestinationConfig(IDestinationConfig):
 #
 class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
     def build(cls, d: Dict[str, Any]) -> 'Config':
-        missing_keys = {'compressor', 'destination'} - {x for x in d.keys()}
+        missing_keys = {'compression', 'destination'} - {x for x in d.keys()}
         if missing_keys:
             raise MissingConfigKey(f'Missing configuration keys:  {missing_keys}')
-        compressor = compressor_config_builder.build(d['compressor'])
+        compression = compression_config_builder.build(d['compression'])
         destination = [destination_config_builder.build(x) for x in d['destination']]
-        return Config(compressor=compressor, destination=destination)
+        return Config(compression=compression, destination=destination)
 
 
 class DestinationConfigBuilder(dictutils.PDictBuilder[IDestinationConfig]):
@@ -77,8 +77,8 @@ class DestinationConfigBuilder(dictutils.PDictBuilder[IDestinationConfig]):
 # Builder instances
 #
 config_builder = ConfigDictBuilder()
-compressor_config_builder: dictutils.DictBuilder = dictutils.DictBuilder(
-    cls_=CompressorConfig,
+compression_config_builder: dictutils.DictBuilder = dictutils.DictBuilder(
+    cls_=CompressionConfig,
     req_fields=['files', 'exclude'],
     opt_fields=['tar_executable'],
     missing_key_exception=MissingConfigKey,

@@ -39,7 +39,7 @@ def tempfile():
 class TestTarCompressor():
 
     def test_compresses_to_file(self, tempfile):
-        config = configmod.CompressorConfig(
+        config = configmod.CompressionConfig(
             files=[p("file1"), p("dir1")],
             exclude=[p("dir1/dir2")]
         )

@@ -5,13 +5,13 @@ import pytest
 import copy
 
 
-compressor_config_dict1 = {
+compression_config_dict1 = {
     "files": ["/foo", "/bar"],
     "exclude": ["/baz"],
     "tar_executable": "special_tar",
 }
 
-compressor_config1 = sut.CompressorConfig(
+compression_config1 = sut.CompressionConfig(
     files=["/foo", "/bar"],
     exclude=["/baz"],
     tar_executable="special_tar",
@@ -25,29 +25,29 @@ destination_config_dict1: Dict[str, Any] = {
 destination_config1 = sut.FileDestinationConfig(path=p("out"))
 
 config_dict1 = {
-    "compressor": compressor_config_dict1,
+    "compression": compression_config_dict1,
     "destination": [destination_config_dict1]
 }
 
 config1 = sut.Config(
-    compressor=compressor_config1,
+    compression=compression_config1,
     destination=[destination_config1]
 )
 
 
-class TestCompressorConfig():
+class TestCompressionConfig():
 
     def test_from_dict(self):
-        result = sut.compressor_config_builder.build(compressor_config_dict1)
-        assert result == compressor_config1
+        result = sut.compression_config_builder.build(compression_config_dict1)
+        assert result == compression_config1
 
     def test_fails_on_unknown_arg(self):
         with pytest.raises(sut.UnkownConfigKey):
-            sut.compressor_config_builder.build({"a": "b"})
+            sut.compression_config_builder.build({"a": "b"})
 
     def test_raises_on_missing_arg(self):
         with pytest.raises(sut.MissingConfigKey):
-            sut.compressor_config_builder.build({})
+            sut.compression_config_builder.build({})
 
 
 class TestConfig():
@@ -56,8 +56,8 @@ class TestConfig():
         result = sut.config_builder.build(config_dict1)
         assert result == config1
 
-    @pytest.mark.parametrize("missing_keys", [["destination", "compressor"],
-                                              ["compressor"],
+    @pytest.mark.parametrize("missing_keys", [["destination", "compression"],
+                                              ["compression"],
                                               ["destination"]])
     def test_from_dict_missing_key(self, missing_keys):
         dict_ = copy.deepcopy(config_dict1)

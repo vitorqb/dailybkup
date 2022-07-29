@@ -44,7 +44,7 @@ class _Injector():
 
     def compressor(self) -> compression.ICompressor:
         config = self._config_loader.load()
-        return compression.TarCompressor(config.compressor)
+        return compression.TarCompressor(config.compression)
 
     def destinators(self) -> Sequence[destinator.IDestinator]:
         configs = self._config_loader.load().destination

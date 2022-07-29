@@ -3,7 +3,6 @@ from dailybkup.state import State
 import dataclasses
 from typing import List
 import tempfile
-import subprocess
 import logging
 import dailybkup.config as configmod
 from dailybkup.phases import Phase
@@ -16,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 class ICompressor(ABC):
 
-    def __init__(self, config: configmod.CompressorConfig) -> None:
+    def __init__(self, config: configmod.CompressionConfig) -> None:
         self._config = config
 
     @abstractmethod
@@ -52,7 +51,7 @@ class TarCompressor(ICompressor):
 
 class MockCompressor(ICompressor):
 
-    def __init__(self, config: configmod.CompressorConfig) -> None:
+    def __init__(self, config: configmod.CompressionConfig) -> None:
         super().__init__(config)
         self.calls: List[Any] = []
 

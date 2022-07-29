@@ -26,7 +26,7 @@ def temp_file():
 def config1():
     with testutils.with_temp_file() as dest_file:
         return configmod.config_builder.build({
-            "compressor": {
+            "compression": {
                 "files": [p("afile")],
                 "exclude": [],
             },
