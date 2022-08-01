@@ -1,7 +1,7 @@
 import copy
 from abc import ABC
 import dataclasses
-from typing import Dict, Any, Sequence, ClassVar
+from typing import Dict, Any, Sequence, ClassVar, Optional
 import dailybkup.dictutils as dictutils
 
 
@@ -23,12 +23,17 @@ class IStorageConfig(ABC):
     pass
 
 
+class IEncryptionConfig(ABC):
+    pass
+
+
 #
 # Config classes
 #
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class Config():
     compression: 'CompressionConfig'
+    encryption: Optional[IEncryptionConfig] = None
     storage: Sequence['IStorageConfig']
 
 
@@ -43,8 +48,12 @@ class CompressionConfig():
 class FileStorageConfig(IStorageConfig):
     path: str
     type_: str = "file"
-    _req_fields: ClassVar[Sequence[str]] = ['path']
-    _opt_fields: ClassVar[Sequence[str]] = ['type_']
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class PasswordEncryptionConfig(IEncryptionConfig):
+    type_: str = "password"
+    password: str
 
 
 #
@@ -55,18 +64,33 @@ class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
         missing_keys = {'compression', 'storage'} - {x for x in d.keys()}
         if missing_keys:
             raise MissingConfigKey(f'Missing configuration keys:  {missing_keys}')
-        compression = compression_config_builder.build(d['compression'])
-        storage = [storage_config_builder.build(x) for x in d['storage']]
-        return Config(compression=compression, storage=storage)
+        kwargs = dict(
+            compression=compression_config_builder.build(d['compression']),
+            storage=[storage_config_builder.build(x) for x in d['storage']]
+        )
+        if d.get('encryption') is not None:
+            kwargs['encryption'] = encryption_config_builder.build(d['encryption'])
+        return Config(**kwargs)
 
 
 class StorageConfigBuilder(dictutils.PDictBuilder[IStorageConfig]):
-
     def build(cls, d: Dict[str, Any]) -> IStorageConfig:
         dict_ = copy.deepcopy(d)
         type_ = dict_.pop('type_', 'MISSING')
         if type_ == 'file':
-            return file_storage_config_builder.build(d)
+            return file_storage_config_builder.build(dict_)
+        elif type_ == 'MISSING':
+            raise MissingConfigKey('Missing key type_ for storage config')
+        else:
+            raise ValueError(f'Invalid type_ "{type_}" for storage config')
+
+
+class EncryptionConfigBuilder(dictutils.PDictBuilder[IEncryptionConfig]):
+    def build(self, d: Dict[str, Any]) -> IEncryptionConfig:
+        dict_ = copy.deepcopy(d)
+        type_ = dict_.pop('type_', 'MISSING')
+        if type_ == 'password':
+            return password_encryption_config_builder.build(dict_)
         elif type_ == 'MISSING':
             raise MissingConfigKey('Missing key type_ for storage config')
         else:
@@ -85,6 +109,14 @@ compression_config_builder: dictutils.DictBuilder = dictutils.DictBuilder(
     unknown_key_exception=UnkownConfigKey,
 )
 storage_config_builder = StorageConfigBuilder()
+encryption_config_builder = EncryptionConfigBuilder()
+password_encryption_config_builder = dictutils.DictBuilder(
+    ['password'],
+    [],
+    PasswordEncryptionConfig,
+    missing_key_exception=MissingConfigKey,
+    unknown_key_exception=UnkownConfigKey,
+)
 file_storage_config_builder = dictutils.DictBuilder(
     ['path'],
     ['type_'],

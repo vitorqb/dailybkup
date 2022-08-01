@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from dailybkup.testutils import p
 import dailybkup.config as sut
+import dataclasses
 import pytest
 import copy
 
@@ -24,7 +25,7 @@ storage_config_dict1: Dict[str, Any] = {
 
 storage_config1 = sut.FileStorageConfig(path=p("out"))
 
-config_dict1 = {
+config_dict1: Dict[str, Any] = {
     "compression": compression_config_dict1,
     "storage": [storage_config_dict1]
 }
@@ -32,6 +33,19 @@ config_dict1 = {
 config1 = sut.Config(
     compression=compression_config1,
     storage=[storage_config1]
+)
+
+config_dict2 = {
+    **copy.deepcopy(config_dict1),
+    "encryption": {
+        "type_": "password",
+        "password": "123456",
+    }
+}
+
+config2 = dataclasses.replace(
+    config1,
+    encryption=sut.PasswordEncryptionConfig(password="123456")
 )
 
 
@@ -55,6 +69,10 @@ class TestConfig():
     def test_from_dict(self):
         result = sut.config_builder.build(config_dict1)
         assert result == config1
+
+    def test_from_dict_complete(self):
+        result = sut.config_builder.build(config_dict2)
+        assert result == config2
 
     @pytest.mark.parametrize("missing_keys", [["storage", "compression"],
                                               ["compression"],
@@ -81,3 +99,22 @@ class TestFileStorageConfigBuilder():
         dict_ = {**storage_config_dict1, "foo": "bar"}
         with pytest.raises(sut.UnkownConfigKey):
             sut.storage_config_builder.build(dict_)
+
+
+class TestEncryptionConfigBuilder():
+
+    def test_password_config_from_dict(self):
+        dict_ = {"type_": "password", "password": "123"}
+        config = sut.EncryptionConfigBuilder().build(dict_)
+        expected = sut.PasswordEncryptionConfig(password="123")
+        assert config == expected
+
+    def test_unknown_type(self):
+        dict_ = {"type_": "foo"}
+        with pytest.raises(ValueError):
+            config = sut.EncryptionConfigBuilder().build(dict_)
+
+    def test_missing_key(self):
+        dict_ = {"type_": "password"}
+        with pytest.raises(sut.MissingConfigKey):
+            config = sut.EncryptionConfigBuilder().build(dict_)

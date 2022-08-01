@@ -2,6 +2,7 @@ import dailybkup.config as configmod
 import dailybkup.runner as runnermod
 import dailybkup.compression as compression
 import dailybkup.storer as storer
+from dailybkup import encryption as encryptionmod
 import yaml
 from typing import Optional, Sequence
 import logging
@@ -50,10 +51,25 @@ class _Injector():
         configs = self._config_loader.load().storage
         return [storer.build_from_config(config) for config in configs]
 
+    def encryptor(self) -> encryptionmod.IEncryptor:
+        config = self._config_loader.load().encryption
+        return encryptionmod.build_from_config(config)
+
     def runner(self) -> runnermod.Runner:
         compressor = self.compressor()
         storers = self.storers()
-        return runnermod.Runner(compressor=compressor, storers=storers)
+        encryptor = self.encryptor()
+        LOGGER.info(
+            "Loaded runner with: compressor=%s storers=%s encryptr=%s",
+            compressor,
+            storers,
+            encryptor,
+        )
+        return runnermod.Runner(
+            compressor=compressor,
+            storers=storers,
+            encryptor=encryptor,
+        )
 
 
 _injector: Optional[_Injector] = None

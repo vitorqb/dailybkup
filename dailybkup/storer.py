@@ -4,15 +4,19 @@ import dailybkup.state as statemod
 import dailybkup.config as configmod
 from dailybkup.phases import Phase
 import shutil
+import logging
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class IStorer(ABC):
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
-        raise NotImplementedError()
+        ...
 
 
-class FileStorer():
+class FileStorer(IStorer):
 
     _config: configmod.FileStorageConfig
 
@@ -21,8 +25,9 @@ class FileStorer():
 
     def run(self, state: statemod.State) -> statemod.State:
         assert state.compressed_file is not None, "State has no compressed file"
-        src = state.compressed_file
+        src = state.encrypted_file if state.encrypted_file else state.compressed_file
         dst = self._config.path
+        LOGGER.info("Copying %s to %s", src, dst)
         shutil.copyfile(src, dst)
         return dataclasses.replace(state, last_phase=Phase.STORAGE)
 

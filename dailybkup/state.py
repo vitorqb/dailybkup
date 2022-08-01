@@ -9,6 +9,7 @@ class State():
     files: Optional[List[str]] = None
     compression_logfile: Optional[str] = None
     compressed_file: Optional[str] = None
+    encrypted_file: Optional[str] = None
 
     @classmethod
     def initial_state(cls) -> 'State':
