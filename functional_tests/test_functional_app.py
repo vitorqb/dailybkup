@@ -38,12 +38,6 @@ def cli_runner():
 
 
 @pytest.fixture
-def temp_file():
-    with testutils.with_temp_file() as f:
-        yield f
-
-
-@pytest.fixture
 def config1():
     with testutils.with_temp_file() as storage_file:
         return configmod.config_builder.build({
