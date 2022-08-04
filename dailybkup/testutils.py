@@ -10,7 +10,7 @@ def p(path):
     Shortcut function to get the path to a testdata file.
     """
     root = os.path.dirname(os.path.realpath(__file__))
-    return os.path.abspath(f"{root}/../testdata/{path}")
+    return os.path.abspath(f"{root}/testdata/{path}")
 
 
 def p_(path):
