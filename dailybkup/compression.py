@@ -42,7 +42,8 @@ class TarCompressor(ICompressor):
             last_phase=Phase.COMPRESSION,
             files=files,
             compression_logfile=logfile,
-            compressed_file=destfile
+            compressed_file=destfile,
+            current_file=destfile,
         )
         LOGGER.info(f"Compression done to file {destfile}")
         LOGGER.info(f"Logs saved to file {logfile}")

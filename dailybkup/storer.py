@@ -24,11 +24,10 @@ class FileStorer(IStorer):
         self._config = config
 
     def run(self, state: statemod.State) -> statemod.State:
-        assert state.compressed_file is not None, "State has no compressed file"
-        src = state.encrypted_file if state.encrypted_file else state.compressed_file
+        assert state.current_file is not None, "State has no current file"
         dst = self._config.path
-        LOGGER.info("Copying %s to %s", src, dst)
-        shutil.copyfile(src, dst)
+        LOGGER.info("Copying %s to %s", state.current_file, dst)
+        shutil.copyfile(state.current_file, dst)
         return dataclasses.replace(state, last_phase=Phase.STORAGE)
 
 

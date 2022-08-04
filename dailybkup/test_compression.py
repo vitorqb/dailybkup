@@ -55,4 +55,5 @@ class TestTarCompressor():
         assert p_("dir1/file3") in state_2.files
         assert isinstance(state_2.compression_logfile, str)
         assert isinstance(state_2.compressed_file, str)
+        assert state_2.compressed_file == state_2.current_file
         assert os.path.isfile(state_2.compressed_file)

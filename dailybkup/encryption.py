@@ -24,20 +24,21 @@ class PasswordEncryptor(IEncryptor):
         self._config = config
 
     def run(self, state: statemod.State) -> statemod.State:
-        assert state.compressed_file, "Missing compressed file for encryption"
+        assert state.current_file, "Missing current file for encryption"
         outfile = tempfile.NamedTemporaryFile().name
         LOGGER.info("Starting encryption to %s",  outfile)
-        gpgutils.encrypt(state.compressed_file, self._config.password, outfile)
+        gpgutils.encrypt(state.current_file, self._config.password, outfile)
         return dataclasses.replace(
             state,
             last_phase=Phase.ENCRYPTION,
             encrypted_file=outfile,
+            current_file=outfile,
         )
 
 
 class NoOpEncryptor(IEncryptor):
     def run(self, state: statemod.State) -> statemod.State:
-        return state
+        return dataclasses.replace(state, last_phase=Phase.ENCRYPTION)
 
 
 def build_from_config(config: Optional[configmod.IEncryptionConfig]) -> IEncryptor:

@@ -18,6 +18,6 @@ class TestRunner():
             encryptor=encryptor,
         ).run()
         initial_state = state.State.initial_state()
-        final_state = state.State(last_phase=Phase.COMPRESSION, files=["foo"])
+        final_state = state.State(last_phase=Phase.ENCRYPTION, files=["foo"])
         assert compressor.calls == [initial_state]
         assert result == final_state
