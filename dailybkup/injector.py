@@ -1,5 +1,6 @@
 import dailybkup.config as configmod
 import dailybkup.runner as runnermod
+import dailybkup.state as statemod
 import dailybkup.compression as compression
 import dailybkup.storer as storer
 import dailybkup.fileutils as fileutils
@@ -69,20 +70,30 @@ class _Injector():
         config = self._config_loader.load().encryption
         return encryptionmod.build_from_config(config, self.temp_file_generator())
 
+    def phase_transition_hooks(self) -> Sequence[statemod.IPhaseTransitionHook]:
+        return [
+            statemod.CompressedFileCleanupHook(),
+            statemod.EncryptedFileCleanupHook(),
+            statemod.FinalFileCleanupHook(),
+        ]
+
     def runner(self) -> runnermod.Runner:
         compressor = self.compressor()
         storers = self.storers()
         encryptor = self.encryptor()
+        phase_transition_hooks = self.phase_transition_hooks()
         LOGGER.info(
-            "Loaded runner with: compressor=%s storers=%s encryptr=%s",
+            "Loaded runner with: compressor=%s storers=%s encryptr=%s phase_transition_hooks=%s",
             compressor,
             storers,
             encryptor,
+            phase_transition_hooks,
         )
         return runnermod.Runner(
             compressor=compressor,
             storers=storers,
             encryptor=encryptor,
+            phase_transition_hooks=phase_transition_hooks
         )
 
 

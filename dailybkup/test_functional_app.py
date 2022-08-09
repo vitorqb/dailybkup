@@ -10,6 +10,7 @@ import dailybkup.testutils as testutils
 import dailybkup.gpgutils as gpgutils
 import dataclasses
 import os
+import tempfile
 from dailybkup.testutils import p, p_
 
 
@@ -63,3 +64,17 @@ class TestFunctionalApp():
                 gpgutils.decrypt(encrypted_file, "123456", decrypted_file)
                 assert os.path.exists(decrypted_file)
                 assert p_("file1") in tarutils.list_files(decrypted_file)
+
+    def test_deletes_temporary_files(self, app, cli_runner, config2):
+        with tempfile.TemporaryDirectory() as tempdir:
+            config2 = dataclasses.replace(
+                config2,
+                tempdir=tempdir,
+                # Adds encryption so more tempfiles to remove
+                encryption={"type_": "password", "password": "123456"},
+            )
+            with testutils.config_to_file(config2) as config2_file:
+                result = cli_runner.invoke(app, ['-c', config2_file, 'backup'])
+                assert result.exit_code == 0
+                assert os.path.isdir(tempdir)
+                assert len(os.listdir(tempdir)) == 0

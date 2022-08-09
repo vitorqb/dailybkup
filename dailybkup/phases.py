@@ -8,3 +8,4 @@ class Phase(enum.Enum):
     STORAGE: str = "STORAGE"
     CLEANUP: str = "CLEANUP"
     NOTIFICATION: str = "NOTIFICATION"
+    END: str = "END"

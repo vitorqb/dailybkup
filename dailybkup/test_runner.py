@@ -18,6 +18,26 @@ class TestRunner():
             encryptor=encryptor,
         ).run()
         initial_state = state.State.initial_state()
-        final_state = state.State(last_phase=Phase.ENCRYPTION, files=["foo"])
+        final_state = state.State(last_phase=Phase.END, files=["foo"])
         assert compressor.calls == [initial_state]
         assert result == final_state
+
+    def test_run_phase_transition_hooks(self):
+        phase_transition_hooks = [
+            state.MockPhaseTransitionHook(should_run=True),
+            state.MockPhaseTransitionHook(should_run=False),
+        ]
+        compressor = compression.MockCompressor(mock.Mock(), mock.Mock())
+        storers = []
+        encryptor = encryption.NoOpEncryptor()
+        runner = sut.Runner(
+            compressor=compressor,
+            storers=storers,
+            encryptor=encryptor,
+            phase_transition_hooks=phase_transition_hooks
+        )
+        final_state = runner.run()
+        assert phase_transition_hooks[0].call_count == 4
+        assert phase_transition_hooks[0].last_state == final_state
+        assert phase_transition_hooks[1].call_count == 0
+        assert phase_transition_hooks[1].last_state is None
