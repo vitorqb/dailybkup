@@ -1,10 +1,11 @@
 from typing import Optional
 from abc import ABC, abstractmethod
 import dailybkup.state as statemod
+import dailybkup.fileutils as fileutils
 from dailybkup import config as configmod
 from dailybkup import gpgutils
 from dailybkup.phases import Phase
-import tempfile
+import dailybkup.fileutils as fileutils
 import dataclasses
 import logging
 
@@ -20,12 +21,17 @@ class IEncryptor(ABC):
 
 class PasswordEncryptor(IEncryptor):
 
-    def __init__(self, config: configmod.PasswordEncryptionConfig):
+    def __init__(
+            self,
+            config: configmod.PasswordEncryptionConfig,
+            tempFileGenerator: fileutils.ITempFileGenerator,
+    ):
         self._config = config
+        self._tempFileGenerator = tempFileGenerator
 
     def run(self, state: statemod.State) -> statemod.State:
         assert state.current_file, "Missing current file for encryption"
-        outfile = tempfile.NamedTemporaryFile().name
+        outfile = self._tempFileGenerator.gen_name()
         LOGGER.info("Starting encryption to %s",  outfile)
         gpgutils.encrypt(state.current_file, self._config.password, outfile)
         return dataclasses.replace(
@@ -41,9 +47,12 @@ class NoOpEncryptor(IEncryptor):
         return dataclasses.replace(state, last_phase=Phase.ENCRYPTION)
 
 
-def build_from_config(config: Optional[configmod.IEncryptionConfig]) -> IEncryptor:
+def build_from_config(
+        config: Optional[configmod.IEncryptionConfig],
+        tempFileGenerator: fileutils.ITempFileGenerator,
+) -> IEncryptor:
     if config is None:
         return NoOpEncryptor()
     if isinstance(config, configmod.PasswordEncryptionConfig):
-        return PasswordEncryptor(config)
+        return PasswordEncryptor(config, tempFileGenerator)
     raise ValueError(f"Unknown encryptor config: {config}")

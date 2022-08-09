@@ -35,6 +35,7 @@ class Config():
     compression: 'CompressionConfig'
     encryption: Optional[IEncryptionConfig] = None
     storage: Sequence['IStorageConfig']
+    tempdir: Optional[str] = None
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
@@ -66,7 +67,8 @@ class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
             raise MissingConfigKey(f'Missing configuration keys:  {missing_keys}')
         kwargs = dict(
             compression=compression_config_builder.build(d['compression']),
-            storage=[storage_config_builder.build(x) for x in d['storage']]
+            storage=[storage_config_builder.build(x) for x in d['storage']],
+            tempdir=d.get('tempdir'),
         )
         if d.get('encryption') is not None:
             kwargs['encryption'] = encryption_config_builder.build(d['encryption'])

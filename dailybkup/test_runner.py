@@ -9,7 +9,7 @@ from dailybkup.phases import Phase
 class TestRunner():
 
     def test_run(self):
-        compressor = compression.MockCompressor(mock.Mock())
+        compressor = compression.MockCompressor(mock.Mock(), mock.Mock())
         storers = []
         encryptor = encryption.NoOpEncryptor()
         result = sut.Runner(

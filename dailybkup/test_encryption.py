@@ -4,6 +4,7 @@ from dailybkup import state as statemod
 from dailybkup.testutils import p
 from dailybkup import config as configmod
 from dailybkup.phases import Phase
+import dailybkup.fileutils as fileutils
 import os
 
 
@@ -11,7 +12,7 @@ class TestPasswordEncryptor():
     def test_encrypts_tar_file(self):
         config = configmod.PasswordEncryptionConfig(password="foo")
         state = statemod.State(current_file=p("file1"))
-        encryptor = sut.PasswordEncryptor(config)
+        encryptor = sut.PasswordEncryptor(config, fileutils.TempFileGenerator())
         newstate = encryptor.run(state)
         assert os.path.exists(newstate.encrypted_file)
         assert newstate.last_phase == Phase.ENCRYPTION

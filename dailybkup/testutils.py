@@ -1,8 +1,8 @@
 import yaml
 import dailybkup.config as configmod
 import os.path
-import tempfile as tempfilemod
 import contextlib
+import dailybkup.fileutils as fileutils
 
 
 def p(path):
@@ -22,7 +22,7 @@ def p_(path):
 
 @contextlib.contextmanager
 def with_temp_file():
-    tempfile = tempfilemod.NamedTemporaryFile().name
+    tempfile = fileutils.TempFileGenerator().gen_name()
     try:
         yield tempfile
     finally:

@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 from dailybkup.state import State
 import dataclasses
 from typing import List
-import tempfile
 import logging
 import dailybkup.config as configmod
 from dailybkup.phases import Phase
 from typing import Any
 import dailybkup.tarutils as tarutils
+import dailybkup.fileutils as fileutils
 
 
 LOGGER = logging.getLogger(__name__)
@@ -15,8 +15,16 @@ LOGGER = logging.getLogger(__name__)
 
 class ICompressor(ABC):
 
-    def __init__(self, config: configmod.CompressionConfig) -> None:
+    _config: configmod.CompressionConfig
+    _tempFileGenerator: fileutils.ITempFileGenerator
+
+    def __init__(
+            self,
+            config: configmod.CompressionConfig,
+            tempFileGenerator: fileutils.ITempFileGenerator,
+    ) -> None:
         self._config = config
+        self._tempFileGenerator = tempFileGenerator
 
     @abstractmethod
     def run(self, state: State) -> State:
@@ -27,8 +35,8 @@ class TarCompressor(ICompressor):
 
     def run(self, state: State) -> State:
         # TODO logfile cleanup
-        logfile = tempfile.NamedTemporaryFile().name
-        destfile = tempfile.NamedTemporaryFile().name
+        logfile = self._tempFileGenerator.gen_name()
+        destfile = self._tempFileGenerator.gen_name()
         tarutils.compress(
             files=self._config.files,
             destfile=destfile,
@@ -52,8 +60,12 @@ class TarCompressor(ICompressor):
 
 class MockCompressor(ICompressor):
 
-    def __init__(self, config: configmod.CompressionConfig) -> None:
-        super().__init__(config)
+    def __init__(
+            self,
+            config: configmod.CompressionConfig,
+            tempFileGenerator: fileutils.ITempFileGenerator,
+    ) -> None:
+        super().__init__(config, tempFileGenerator)
         self.calls: List[Any] = []
 
     def run(self, state: State) -> State:
