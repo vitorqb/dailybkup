@@ -37,9 +37,16 @@ while getopts "hpg:" opt; do
   esac
 done
 
-# Script
+# Find root directory
 GIT_ROOT="$(git rev-parse --show-toplevel)"
+
+# Set's config file for tests
 export DAILYBKUP_CONFIG_FILE=${GIT_ROOT}/testdata/config.yaml
+
+# Loads env vars for test
+source ${GIT_ROOT}/.env.test
+
+# Constructs command and run
 ARGS=( poetry run pytest )
 if [ "$SHOW_PRINT" = "1" ]
 then

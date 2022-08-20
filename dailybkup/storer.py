@@ -5,6 +5,9 @@ import dailybkup.config as configmod
 from dailybkup.phases import Phase
 import shutil
 import logging
+import datetime
+from typing import Callable
+import dailybkup.b2utils as b2utils
 
 
 LOGGER = logging.getLogger(__name__)
@@ -31,6 +34,36 @@ class FileStorer(IStorer):
         return dataclasses.replace(state, last_phase=Phase.STORAGE)
 
 
-def build_from_config(config: configmod.IStorageConfig):
+class B2Storer(IStorer):
+
+    _config: configmod.B2StorageConfig
+
+    def __init__(
+            self,
+            config: configmod.B2StorageConfig,
+            b2context: b2utils.B2Context,
+    ):
+        self._config = config
+        self._b2context = b2context
+
+    def run(self, state: statemod.State) -> statemod.State:
+        assert state.current_file, "No current file to upload!"
+        src = state.current_file
+        bucket = self._b2context.bucket_name
+        datetime_str = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        file_name = f"{datetime_str}{self._config.suffix}"
+        LOGGER.info("Copying %s to %s in bucket %s", src, file_name, bucket)
+        self._b2context.upload(src, file_name)
+        return dataclasses.replace(state, last_phase=Phase.STORAGE)
+
+
+def build_from_config(
+        config: configmod.IStorageConfig,
+        l_b2context: Callable[[str], b2utils.B2Context],
+):
     if isinstance(config, configmod.FileStorageConfig):
         return FileStorer(config)
+    if isinstance(config, configmod.B2StorageConfig):
+        b2context = l_b2context(config.bucket)
+        return B2Storer(config, b2context)
+    raise RuntimeError(f"Uknown config class: {config}")

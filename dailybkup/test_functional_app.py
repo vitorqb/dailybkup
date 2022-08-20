@@ -78,3 +78,16 @@ class TestFunctionalApp():
                 assert result.exit_code == 0
                 assert os.path.isdir(tempdir)
                 assert len(os.listdir(tempdir)) == 0
+
+    def test_uploads_file_to_b2(self, app, cli_runner, config2):
+        with testutils.b2_test_setup() as b2_context:
+            b2_storage_config = configmod.B2StorageConfig(
+                bucket=b2_context.bucket_name,
+                suffix=".tar",
+            )
+            config2 = dataclasses.replace(config2, storage=[b2_storage_config])
+            with testutils.config_to_file(config2) as config2_file:
+                result = cli_runner.invoke(app, ['-c', config2_file, 'backup'])
+                assert result.exit_code == 0
+                assert b2_context.count_files() == 1
+
