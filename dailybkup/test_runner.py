@@ -1,5 +1,6 @@
 from unittest import mock
 import dailybkup.runner as sut
+import dailybkup.storer as storermod
 import dailybkup.state as state
 import dailybkup.compression as compression
 import dailybkup.encryption as encryption
@@ -10,11 +11,11 @@ class TestRunner():
 
     def test_run(self):
         compressor = compression.MockCompressor(mock.Mock(), mock.Mock())
-        storers = []
+        storer = storermod.CompositeStorer([])
         encryptor = encryption.NoOpEncryptor()
         result = sut.Runner(
             compressor=compressor,
-            storers=storers,
+            storer=storer,
             encryptor=encryptor,
         ).run()
         initial_state = state.State.initial_state()
@@ -28,11 +29,11 @@ class TestRunner():
             state.MockPhaseTransitionHook(should_run=False),
         ]
         compressor = compression.MockCompressor(mock.Mock(), mock.Mock())
-        storers = []
+        storer = storermod.CompositeStorer([])
         encryptor = encryption.NoOpEncryptor()
         runner = sut.Runner(
             compressor=compressor,
-            storers=storers,
+            storer=storer,
             encryptor=encryptor,
             phase_transition_hooks=phase_transition_hooks
         )

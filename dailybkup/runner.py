@@ -20,12 +20,12 @@ class Runner():
             self,
             *,
             compressor: compression.ICompressor,
-            storers: Sequence[storermod.IStorer],
+            storer: storermod.IStorer,
             encryptor: encryptionmod.IEncryptor,
             phase_transition_hooks: Sequence[statemod.IPhaseTransitionHook] = [],
     ):
         self._compressor: compression.ICompressor = compressor
-        self._storers: Sequence[storermod.IStorer] = storers
+        self._storer: storermod.IStorer = storer
         self._encryptor = encryptor
         self._phase_transition_hooks = phase_transition_hooks
 
@@ -39,16 +39,7 @@ class Runner():
         state = self._run_phase_transition_hooks(state, self._encryptor.run(state))
 
         LOGGER.info("Running storers")
-        state_before_storer = state
-        for storer in self._storers:
-            state = storer.run(state)
-        # TODO - For now this is an ugly hack. We need to fix #6 to fix this
-        state = dataclasses.replace(
-            state,
-            last_phase=Phase.STORAGE,
-            current_file=None,
-        )
-        state = self._run_phase_transition_hooks(state_before_storer, state)
+        state = self._run_phase_transition_hooks(state, self._storer.run(state))
 
         # Is there a nicer way to do this?
         state_before_end = state

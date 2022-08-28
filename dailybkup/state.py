@@ -16,8 +16,8 @@ class State():
     current_file: Optional[str] = None
 
     @classmethod
-    def initial_state(cls) -> 'State':
-        return cls()
+    def initial_state(cls, **kwargs) -> 'State':
+        return cls(**kwargs)
 
 
 class IPhaseTransitionHook(abc.ABC):

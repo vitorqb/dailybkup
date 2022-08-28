@@ -2,7 +2,7 @@ import dailybkup.config as configmod
 import dailybkup.runner as runnermod
 import dailybkup.state as statemod
 import dailybkup.compression as compression
-import dailybkup.storer as storer
+import dailybkup.storer as storermod
 import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
 from dailybkup import encryption as encryptionmod
@@ -68,9 +68,10 @@ class _Injector():
         application_key = os.environ['DAILYBKUP_B2_APPLICATION_KEY']
         return b2utils.B2Context(application_key_id, application_key, bucket_name)
 
-    def storers(self) -> Sequence[storer.IStorer]:
+    def storer(self) -> storermod.IStorer:
         configs = self._config_loader.load().storage
-        return [storer.build_from_config(config, self.b2context) for config in configs]
+        storers = [storermod.build_from_config(config, self.b2context) for config in configs]
+        return storermod.CompositeStorer(storers)
 
     def encryptor(self) -> encryptionmod.IEncryptor:
         config = self._config_loader.load().encryption
@@ -85,19 +86,19 @@ class _Injector():
 
     def runner(self) -> runnermod.Runner:
         compressor = self.compressor()
-        storers = self.storers()
+        storer = self.storer()
         encryptor = self.encryptor()
         phase_transition_hooks = self.phase_transition_hooks()
         LOGGER.info(
             "Loaded runner with: compressor=%s storers=%s encryptr=%s phase_transition_hooks=%s",
             compressor,
-            storers,
+            storer,
             encryptor,
             phase_transition_hooks,
         )
         return runnermod.Runner(
             compressor=compressor,
-            storers=storers,
+            storer=storer,
             encryptor=encryptor,
             phase_transition_hooks=phase_transition_hooks
         )
