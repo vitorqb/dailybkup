@@ -1,5 +1,5 @@
 #!/bin/bash
-USAGE="$0"' [-h] [-p] [-g PATTERN]
+USAGE="$0"' [-h] [-p] [-g PATTERN] [-f] [-u]
 
 Runs tests.
 
@@ -12,10 +12,16 @@ Runs tests.
   -p)
     Show print statements.
 
+  -f)
+    Run functional tests only
+
+  -u)
+    Run unit tests only
+
 '
 
 # Getopts
-while getopts "hpg:" opt; do
+while getopts "hpg:fu" opt; do
   case "$opt" in
     h)
         echo "$USAGE"
@@ -27,6 +33,12 @@ while getopts "hpg:" opt; do
     g)
         GREP="$OPTARG"
         ;;
+    f)
+        FUNCTIONAL=1
+        ;;
+    u)
+        UNIT=1
+        ;;
     --)
         break
         ;;
@@ -37,9 +49,18 @@ while getopts "hpg:" opt; do
   esac
 done
 
-# Script
+# Find root directory
 GIT_ROOT="$(git rev-parse --show-toplevel)"
+
+# Set's config file for tests
+echo "Setting DAILYBKUP_CONFIG_FILE=${GIT_ROOT}/testdata/config.yaml"
 export DAILYBKUP_CONFIG_FILE=${GIT_ROOT}/testdata/config.yaml
+
+# Loads env vars for test
+echo "Soucing ${GIT_ROOT}/.env.test"
+source ${GIT_ROOT}/.env.test
+
+# Constructs command and run
 ARGS=( poetry run pytest )
 if [ "$SHOW_PRINT" = "1" ]
 then
@@ -49,4 +70,13 @@ if ! [ -z "$GREP" ]
 then
     ARGS+=( -k "$GREP" )
 fi
+if ! [ -z "$UNIT" ]
+then
+    ARGS+=( -c "${GIT_ROOT}/pytest.unit.ini" )
+fi
+if ! [ -z "$FUNCTIONAL" ]
+then
+    ARGS+=( -c "${GIT_ROOT}/pytest.functional.ini" )
+fi
+echo ${ARGS[@]}
 ${ARGS[@]}

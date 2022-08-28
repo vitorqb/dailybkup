@@ -52,6 +52,13 @@ class FileStorageConfig(IStorageConfig):
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
+class B2StorageConfig(IStorageConfig):
+    bucket: str
+    suffix: str
+    type_: str = "b2"
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True)
 class PasswordEncryptionConfig(IEncryptionConfig):
     type_: str = "password"
     password: str
@@ -81,6 +88,8 @@ class StorageConfigBuilder(dictutils.PDictBuilder[IStorageConfig]):
         type_ = dict_.pop('type_', 'MISSING')
         if type_ == 'file':
             return file_storage_config_builder.build(dict_)
+        elif type_ == 'b2':
+            return b2_storage_config_builder.build(dict_)
         elif type_ == 'MISSING':
             raise MissingConfigKey('Missing key type_ for storage config')
         else:
@@ -123,6 +132,13 @@ file_storage_config_builder = dictutils.DictBuilder(
     ['path'],
     ['type_'],
     FileStorageConfig,
+    missing_key_exception=MissingConfigKey,
+    unknown_key_exception=UnkownConfigKey,
+)
+b2_storage_config_builder = dictutils.DictBuilder(
+    ['bucket', 'suffix'],
+    ['type_'],
+    B2StorageConfig,
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,
 )

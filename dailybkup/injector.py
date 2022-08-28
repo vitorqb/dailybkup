@@ -4,6 +4,7 @@ import dailybkup.state as statemod
 import dailybkup.compression as compression
 import dailybkup.storer as storer
 import dailybkup.fileutils as fileutils
+import dailybkup.b2utils as b2utils
 from dailybkup import encryption as encryptionmod
 import yaml
 from typing import Optional, Sequence
@@ -62,9 +63,14 @@ class _Injector():
             self.temp_file_generator(),
         )
 
+    def b2context(self, bucket_name: str) -> b2utils.B2Context:
+        application_key_id = os.environ['DAILYBKUP_B2_APPLICATION_KEY_ID']
+        application_key = os.environ['DAILYBKUP_B2_APPLICATION_KEY']
+        return b2utils.B2Context(application_key_id, application_key, bucket_name)
+
     def storers(self) -> Sequence[storer.IStorer]:
         configs = self._config_loader.load().storage
-        return [storer.build_from_config(config) for config in configs]
+        return [storer.build_from_config(config, self.b2context) for config in configs]
 
     def encryptor(self) -> encryptionmod.IEncryptor:
         config = self._config_loader.load().encryption
