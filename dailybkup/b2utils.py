@@ -1,4 +1,4 @@
-import b2sdk.v2 as b2sdk
+import b2sdk.v2 as b2sdk # type: ignore
 import os
 import dataclasses
 from typing import Optional
