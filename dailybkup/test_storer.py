@@ -4,6 +4,7 @@ import dailybkup.state as statemod
 import dailybkup.config as configmod
 import dailybkup.storer as sut
 from dailybkup.phases import Phase
+import unittest.mock as mock
 
 
 class TestFileStorer():
@@ -23,3 +24,22 @@ class TestFileStorer():
                     last_phase=Phase.STORAGE
                 )
                 assert state_2 == exp_state
+
+
+class TestCompositeStorer():
+    def test_calls_all_storers(self):
+        # ARRANGE
+        state = statemod.State.initial_state(current_file="/")
+        storers = [mock.Mock(), mock.Mock()]
+        for storer in storers:
+            storer.run.return_value = state
+        storer = sut.CompositeStorer(storers)
+
+        # ACT
+        final_state = storer.run(state)
+
+        # ASSERT
+        for storer in storers:
+            storer.run.assert_called_once_with(state)
+        assert final_state.last_phase == Phase.STORAGE
+        assert final_state.current_file is None
