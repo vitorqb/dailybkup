@@ -58,7 +58,10 @@ export DAILYBKUP_CONFIG_FILE=${GIT_ROOT}/testdata/config.yaml
 
 # Loads env vars for test
 echo "Soucing ${GIT_ROOT}/.env.test"
-source ${GIT_ROOT}/.env.test
+if [ -f ${GIT_ROOT}/.env.test ]
+then
+    source ${GIT_ROOT}/.env.test
+fi
 
 # Constructs command and run
 ARGS=( poetry run pytest )

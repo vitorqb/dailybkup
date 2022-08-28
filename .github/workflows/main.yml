@@ -1,0 +1,53 @@
+name: Main Pipeline
+on: [push]
+jobs:
+  Unit-Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Setup Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+      - name: "Install Poetry"
+        uses: abatilo/actions-poetry@v2.0.0
+      - name: "Check out repository code"
+        uses: "actions/checkout@v3"
+      - name: "Install Dependencies"
+        run: "scripts/install-deps.sh"
+      - name: "Unit Tests"
+        run: "scripts/test.sh -u"
+
+  Functional-Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Setup Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+      - name: "Install Poetry"
+        uses: abatilo/actions-poetry@v2.0.0
+      - name: "Check out repository code"
+        uses: "actions/checkout@v3"
+      - name: "Install Dependencies"
+        run: "scripts/install-deps.sh"
+      - name: "Functional Tests"
+        env:
+          DAILYBKUP_B2_APPLICATION_KEY: ${{ secrets.DAILYBKUP_B2_APPLICATION_KEY }}
+          DAILYBKUP_B2_APPLICATION_KEY_ID: ${{ secrets.DAILYBKUP_B2_APPLICATION_KEY_ID }}
+        run: "scripts/test.sh -f"
+
+  Type-Check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Setup Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+      - name: "Install Poetry"
+        uses: abatilo/actions-poetry@v2.0.0
+      - name: "Check out repository code"
+        uses: "actions/checkout@v3"
+      - name: "Install Dependencies"
+        run: "scripts/install-deps.sh"
+      - name: "Type Checking"
+        run: "scripts/typecheck.sh"
