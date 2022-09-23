@@ -7,6 +7,7 @@ import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
 from dailybkup import encryption as encryptionmod
 import yaml
+import datetime
 from typing import Optional, Sequence
 import logging
 import os.path
@@ -68,9 +69,21 @@ class _Injector():
         application_key = os.environ['DAILYBKUP_B2_APPLICATION_KEY']
         return b2utils.B2Context(application_key_id, application_key, bucket_name)
 
+    def backup_file_name_generator(self, suffix: str) -> storermod.IBackupFileNameGenerator:
+        return storermod.BackupFileNameGenerator(
+            suffix=suffix,
+            now_fn=datetime.datetime.now,
+        )
+
     def storer(self) -> storermod.IStorer:
         configs = self._config_loader.load().storage
-        storers = [storermod.build_from_config(config, self.b2context) for config in configs]
+        storers = [
+            storermod.build_from_config(
+                config,
+                l_b2context=self.b2context,
+                l_backup_file_name_generator=self.backup_file_name_generator,
+            ) for config in configs
+        ]
         return storermod.CompositeStorer(storers)
 
     def encryptor(self) -> encryptionmod.IEncryptor:

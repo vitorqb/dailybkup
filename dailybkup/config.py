@@ -27,6 +27,10 @@ class IEncryptionConfig(ABC):
     pass
 
 
+class ICleanerConfig(ABC):
+    pass
+
+
 #
 # Config classes
 #
@@ -56,6 +60,11 @@ class B2StorageConfig(IStorageConfig):
     bucket: str
     suffix: str
     type_: str = "b2"
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class B2CleanerConfig(ICleanerConfig):
+    retain_last: int
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)

@@ -90,4 +90,3 @@ class TestFunctionalApp():
                 result = cli_runner.invoke(app, ['-c', config2_file, 'backup'])
                 assert result.exit_code == 0
                 assert b2_context.count_files() == 1
-

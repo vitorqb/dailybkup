@@ -14,6 +14,23 @@ from typing import Sequence
 LOGGER = logging.getLogger(__name__)
 
 
+class IBackupFileNameGenerator(ABC):
+
+    def __init__(self, *, suffix: str, now_fn: Callable[[], datetime.datetime]):
+        self._suffix = suffix
+        self._now_fn = now_fn
+
+    @abstractmethod
+    def generate(self) -> str:
+        ...
+
+
+class BackupFileNameGenerator(IBackupFileNameGenerator):
+    def generate(self) -> str:
+        formatted_now = self._now_fn().strftime("%Y-%m-%dT%H:%M:%S")
+        return f"{formatted_now}{self._suffix}"
+
+
 class IStorer(ABC):
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
@@ -59,21 +76,24 @@ class FileStorer(IStorer):
 class B2Storer(IStorer):
 
     _config: configmod.B2StorageConfig
+    _b2context: b2utils.B2Context
+    _backup_file_name_generator: IBackupFileNameGenerator
 
     def __init__(
             self,
             config: configmod.B2StorageConfig,
             b2context: b2utils.B2Context,
+            backup_file_name_generator: IBackupFileNameGenerator
     ):
         self._config = config
         self._b2context = b2context
+        self._backup_file_name_generator = backup_file_name_generator
 
     def run(self, state: statemod.State) -> statemod.State:
         assert state.current_file, "No current file to upload!"
         src = state.current_file
         bucket = self._b2context.bucket_name
-        datetime_str = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        file_name = f"{datetime_str}{self._config.suffix}"
+        file_name = self._backup_file_name_generator.generate()
         LOGGER.info("Copying %s to %s in bucket %s", src, file_name, bucket)
         self._b2context.upload(src, file_name)
         return dataclasses.replace(state, last_phase=Phase.STORAGE)
@@ -82,10 +102,16 @@ class B2Storer(IStorer):
 def build_from_config(
         config: configmod.IStorageConfig,
         l_b2context: Callable[[str], b2utils.B2Context],
+        l_backup_file_name_generator: Callable[[str], IBackupFileNameGenerator],
 ):
     if isinstance(config, configmod.FileStorageConfig):
         return FileStorer(config)
     if isinstance(config, configmod.B2StorageConfig):
         b2context = l_b2context(config.bucket)
-        return B2Storer(config, b2context)
+        backup_file_name_generator = l_backup_file_name_generator(config.suffix)
+        return B2Storer(
+            config,
+            b2context,
+            backup_file_name_generator=backup_file_name_generator,
+        )
     raise RuntimeError(f"Uknown config class: {config}")
