@@ -12,6 +12,7 @@ import dataclasses
 import os
 import tempfile
 from dailybkup.testutils import p, p_
+from dailybkup import injector
 
 
 @pytest.fixture
@@ -36,6 +37,35 @@ def config2():
                 {
                     "type_": "file",
                     "path": storage_file
+                }
+            ]
+        })
+
+
+@pytest.fixture
+def config3():
+    with testutils.with_temp_file() as storage_file:
+        return configmod.config_builder.build({
+            "compression": {
+                "files": [p("file1"), p("dir1")],
+                "exclude": [],
+            },
+            "encryption": {
+                "type_": "password",
+                "password": "pass",
+            },
+            "storage": [
+                {
+                    "type_": "b2",
+                    "bucket": testutils.B2_TEST_BUCKET,
+                    "suffix": ".tar.gz",
+                }
+            ],
+            "cleaner": [
+                {
+                    "type_": "b2",
+                    "bucket": testutils.B2_TEST_BUCKET,
+                    "retain_last": 1,
                 }
             ]
         })
@@ -91,3 +121,13 @@ class TestFunctionalApp():
                 assert result.exit_code == 0
                 assert b2_context.count_files() == 1
 
+    def test_runs_with_encryption_and_cleaner(self, app, cli_runner, config3):
+        with testutils.b2_test_setup() as b2_context:
+            with testutils.config_to_file(config3) as config3_file:
+                result1 = cli_runner.invoke(app, ['-c', config3_file, 'backup'])
+                assert result1.exit_code == 0
+                injector.end()
+                result2 = cli_runner.invoke(app, ['-c', config3_file, 'backup'])
+                assert result2.exit_code == 0
+                assert b2_context.count_files() == 1 # Cleaner cleaned 1 file
+                assert list(b2_context.get_file_names())[0].endswith(".tar.gz")

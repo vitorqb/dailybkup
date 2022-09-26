@@ -27,6 +27,10 @@ class IEncryptionConfig(ABC):
     pass
 
 
+class ICleanerConfig(ABC):
+    pass
+
+
 #
 # Config classes
 #
@@ -35,6 +39,7 @@ class Config():
     compression: 'CompressionConfig'
     encryption: Optional[IEncryptionConfig] = None
     storage: Sequence['IStorageConfig']
+    cleaner: Sequence[ICleanerConfig] = dataclasses.field(default_factory=list)
     tempdir: Optional[str] = None
 
 
@@ -59,6 +64,13 @@ class B2StorageConfig(IStorageConfig):
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
+class B2CleanerConfig(ICleanerConfig):
+    retain_last: int
+    bucket: str
+    type_: str = "b2"
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True)
 class PasswordEncryptionConfig(IEncryptionConfig):
     type_: str = "password"
     password: str
@@ -79,6 +91,11 @@ class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
         )
         if d.get('encryption') is not None:
             kwargs['encryption'] = encryption_config_builder.build(d['encryption'])
+        cleaner_configs = d.get('cleaner')
+        if cleaner_configs is not None:
+            kwargs['cleaner'] = [
+                cleaner_config_builder.build(x) for x in cleaner_configs
+            ]
         return Config(**kwargs)
 
 
@@ -108,6 +125,17 @@ class EncryptionConfigBuilder(dictutils.PDictBuilder[IEncryptionConfig]):
             raise ValueError(f'Invalid type_ "{type_}" for storage config')
 
 
+class CleanerConfigBuilder(dictutils.PDictBuilder[ICleanerConfig]):
+    def build(self, d: Dict[str, Any]) -> ICleanerConfig:
+        dict_ = copy.deepcopy(d)
+        type_ = dict_.pop('type_', 'MISSING')
+        if type_ == 'b2':
+            return b2_cleaner_config_builder.build(dict_)
+        if type_ == 'MISSING':
+            raise MissingConfigKey('Missing key type_ for cleaner config')
+        raise ValueError(f'Invalid type_ "{type_}" for cleaner config')
+
+
 #
 # Builder instances
 #
@@ -120,6 +148,7 @@ compression_config_builder: dictutils.DictBuilder = dictutils.DictBuilder(
     unknown_key_exception=UnkownConfigKey,
 )
 storage_config_builder = StorageConfigBuilder()
+cleaner_config_builder = CleanerConfigBuilder()
 encryption_config_builder = EncryptionConfigBuilder()
 password_encryption_config_builder = dictutils.DictBuilder(
     ['password'],
@@ -139,6 +168,13 @@ b2_storage_config_builder = dictutils.DictBuilder(
     ['bucket', 'suffix'],
     ['type_'],
     B2StorageConfig,
+    missing_key_exception=MissingConfigKey,
+    unknown_key_exception=UnkownConfigKey,
+)
+b2_cleaner_config_builder = dictutils.DictBuilder(
+    ['bucket', 'retain_last'],
+    ['type_'],
+    B2CleanerConfig,
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,
 )

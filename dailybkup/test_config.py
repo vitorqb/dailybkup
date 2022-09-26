@@ -112,9 +112,28 @@ class TestEncryptionConfigBuilder():
     def test_unknown_type(self):
         dict_ = {"type_": "foo"}
         with pytest.raises(ValueError):
-            config = sut.EncryptionConfigBuilder().build(dict_)
+            sut.EncryptionConfigBuilder().build(dict_)
 
     def test_missing_key(self):
         dict_ = {"type_": "password"}
         with pytest.raises(sut.MissingConfigKey):
-            config = sut.EncryptionConfigBuilder().build(dict_)
+            sut.EncryptionConfigBuilder().build(dict_)
+
+
+class TestCleanerConfigBuilder():
+
+    def test_build_b2_config(self):
+        dict_ = {"type_": "b2", "bucket": "foo", "retain_last": 2}
+        config = sut.CleanerConfigBuilder().build(dict_)
+        expected = sut.B2CleanerConfig(retain_last=2, bucket="foo")
+        assert config == expected
+
+    def test_unknown_type(self):
+        dict_ = {}
+        with pytest.raises(sut.MissingConfigKey):
+            sut.CleanerConfigBuilder().build(dict_)
+
+    def test_value_error_if_unknown_type(self):
+        dict_ = {"type_": "foo"}
+        with pytest.raises(ValueError):
+            sut.CleanerConfigBuilder().build(dict_)

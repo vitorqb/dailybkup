@@ -1,6 +1,7 @@
 import dailybkup.state as statemod
 import dailybkup.compression as compression
 import dailybkup.storer as storermod
+from dailybkup import cleaner as cleanermod
 from dailybkup.phases import Phase
 from dailybkup import encryption as encryptionmod
 from typing import Sequence
@@ -21,11 +22,13 @@ class Runner():
             *,
             compressor: compression.ICompressor,
             storer: storermod.IStorer,
+            cleaner: cleanermod.ICleaner,
             encryptor: encryptionmod.IEncryptor,
             phase_transition_hooks: Sequence[statemod.IPhaseTransitionHook] = [],
     ):
         self._compressor: compression.ICompressor = compressor
         self._storer: storermod.IStorer = storer
+        self._cleaner: cleanermod.ICleaner = cleaner
         self._encryptor = encryptor
         self._phase_transition_hooks = phase_transition_hooks
 
@@ -40,6 +43,9 @@ class Runner():
 
         LOGGER.info("Running storers")
         state = self._run_phase_transition_hooks(state, self._storer.run(state))
+
+        LOGGER.info("Running cleaners")
+        state = self._run_phase_transition_hooks(state, self._cleaner.run(state))
 
         # Is there a nicer way to do this?
         state_before_end = state

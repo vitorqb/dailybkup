@@ -5,6 +5,7 @@ import dailybkup.state as state
 import dailybkup.compression as compression
 import dailybkup.encryption as encryption
 from dailybkup.phases import Phase
+from dailybkup import cleaner as cleanermod
 
 
 class TestRunner():
@@ -12,10 +13,12 @@ class TestRunner():
     def test_run(self):
         compressor = compression.MockCompressor(mock.Mock(), mock.Mock())
         storer = storermod.CompositeStorer([])
+        cleaner = cleanermod.NoOpCleaner()
         encryptor = encryption.NoOpEncryptor()
         result = sut.Runner(
             compressor=compressor,
             storer=storer,
+            cleaner=cleaner,
             encryptor=encryptor,
         ).run()
         initial_state = state.State.initial_state()
@@ -30,15 +33,17 @@ class TestRunner():
         ]
         compressor = compression.MockCompressor(mock.Mock(), mock.Mock())
         storer = storermod.CompositeStorer([])
+        cleaner = cleanermod.NoOpCleaner()
         encryptor = encryption.NoOpEncryptor()
         runner = sut.Runner(
             compressor=compressor,
             storer=storer,
+            cleaner=cleaner,
             encryptor=encryptor,
             phase_transition_hooks=phase_transition_hooks
         )
         final_state = runner.run()
-        assert phase_transition_hooks[0].call_count == 4
+        assert phase_transition_hooks[0].call_count == 5
         assert phase_transition_hooks[0].last_state == final_state
         assert phase_transition_hooks[1].call_count == 0
         assert phase_transition_hooks[1].last_state is None

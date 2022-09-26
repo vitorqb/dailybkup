@@ -1,3 +1,4 @@
+from datetime import datetime
 import dataclasses
 import dailybkup.testutils as testutils
 import dailybkup.state as statemod
@@ -5,6 +6,17 @@ import dailybkup.config as configmod
 import dailybkup.storer as sut
 from dailybkup.phases import Phase
 import unittest.mock as mock
+
+
+def fake_now():
+    return datetime(2011, 12, 2)
+
+
+class TestBackupFileNameGenerator():
+
+    def test_generate_based_on_current_datetime(self):
+        generator = sut.BackupFileNameGenerator(suffix=".tar.gz", now_fn=fake_now)
+        assert generator.generate() == "2011-12-02T00:00:00.tar.gz"
 
 
 class TestFileStorer():

@@ -1,7 +1,8 @@
 import b2sdk.v2 as b2sdk # type: ignore
 import os
 import dataclasses
-from typing import Optional
+import tempfile
+from typing import Optional, Iterator
 
 
 DELETE_ALL_FILES_WHITELIST = ["dailybkup-test"]
@@ -38,8 +39,16 @@ class B2Context:
     def upload(self, local_file: str, remote_file_name: str) -> None:
         self._bucket.upload_local_file(local_file, remote_file_name)
 
+    def create_empty_file(self, remote_file_name: str) -> None:
+        with tempfile.NamedTemporaryFile() as f:
+            f.write("".encode())
+            self._bucket.upload_local_file(f.name, remote_file_name)
+
     def count_files(self) -> int:
         return sum(1 for _ in self._bucket.ls(latest_only=True, recursive=True))
+
+    def get_file_names(self) -> Iterator[str]:
+        return (file_version.file_name for file_version, _ in self._bucket.ls())
 
     def delete(self, file_name: str) -> None:
         for file_version, _ in self._bucket.ls(recursive=True):
