@@ -3,6 +3,12 @@ name = "dailybkup"
 version = "0.1.0"
 description = ""
 authors = ["Vitor Barbosa <vitorqb@gmail.com>"]
+exclude = [
+  "**/test_*.py",
+  "**/functional_test_*.py",
+  "**/testdata/**",
+  "**/testutils.py",
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
