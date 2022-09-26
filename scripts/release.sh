@@ -49,4 +49,5 @@ poetry version "$VERSION" || exit 1
 git add .
 git commit -m "Version $VERSION"
 git push
-gh release create v$VERSION --generate-notes
+poetry build
+gh release create v$VERSION --generate-notes ./dist/dailybkup-$VERSION-py3-none-any.whl ./dist/dailybkup-$VERSION.tar.gz
