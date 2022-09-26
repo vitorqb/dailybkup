@@ -1,7 +1,10 @@
+import pytest
+
 from unittest import mock
 from dailybkup import config as configmod
 from dailybkup import cleaner as sut
 from dailybkup import state as statemod
+from dailybkup.phases import Phase
 
 
 def b2context_mock(*, file_names):
@@ -19,7 +22,7 @@ class TestB2Cleaner():
             "2020-01-03T12:00:00",
             "2020-01-04T12:00:00",
         ])
-        config = configmod.B2CleanerConfig(retain_last=3)
+        config = configmod.B2CleanerConfig(retain_last=3, bucket="foo")
         cleaner = sut.B2Cleaner(config, b2context=b2context)
         state = statemod.State.initial_state()
 
@@ -37,7 +40,7 @@ class TestB2Cleaner():
             "2020-01-03T12:00:00",
             "2020-01-04T12:00:00",
         ])
-        config = configmod.B2CleanerConfig(retain_last=2)
+        config = configmod.B2CleanerConfig(retain_last=2, bucket="foo")
         cleaner = sut.B2Cleaner(config, b2context=b2context)
         state = statemod.State.initial_state()
 
@@ -54,7 +57,7 @@ class TestB2Cleaner():
             "2020-01-01T12:00:00",
             "2020-01-04T12:00:00",
         ])
-        config = configmod.B2CleanerConfig(retain_last=2)
+        config = configmod.B2CleanerConfig(retain_last=2, bucket="foo")
         cleaner = sut.B2Cleaner(config, b2context=b2context)
         state = statemod.State.initial_state()
 
@@ -62,3 +65,30 @@ class TestB2Cleaner():
 
         delete_calls = b2context.delete.call_args_list
         assert delete_calls == []
+
+
+class TestNoOpCleaner():
+
+    def test_sets_last_phase(self):
+        state = statemod.State.initial_state()
+        cleaner = sut.NoOpCleaner()
+
+        new_state = cleaner.run(state)
+
+        assert new_state.last_phase == Phase.CLEANUP
+
+
+class TestBuildFromConfig():
+
+    def test_builds_no_op(self):
+        cleaner = sut.build_from_config(None, mock.Mock())
+        assert isinstance(cleaner, sut.NoOpCleaner)
+
+    def test_builds_b2_cleaner(self):
+        config = configmod.B2CleanerConfig(retain_last=2, bucket="foo")
+        cleaner = sut.build_from_config(config, mock.Mock())
+        assert isinstance(cleaner, sut.B2Cleaner)
+
+    def test_raises_if_unknown(self):
+        with pytest.raises(RuntimeError):
+            sut.build_from_config(mock.Mock(), mock.Mock())
