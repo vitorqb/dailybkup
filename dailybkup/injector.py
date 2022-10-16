@@ -1,10 +1,11 @@
 import dailybkup.config as configmod
-import dailybkup.runner as runnermod
+import dailybkup.finisher as finishermod
 import dailybkup.state as statemod
 import dailybkup.compression as compression
 import dailybkup.storer as storermod
 import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
+import dailybkup.pipeline as pipeline
 from dailybkup import cleaner as cleanermod
 from dailybkup import encryption as encryptionmod
 import yaml
@@ -99,6 +100,9 @@ class _Injector():
         config = self._config_loader.load().encryption
         return encryptionmod.build_from_config(config, self.temp_file_generator())
 
+    def finisher(self) -> finishermod.Finisher:
+        return finishermod.Finisher()
+
     def phase_transition_hooks(self) -> Sequence[statemod.IPhaseTransitionHook]:
         return [
             statemod.CompressedFileCleanupHook(),
@@ -106,27 +110,23 @@ class _Injector():
             statemod.FinalFileCleanupHook(),
         ]
 
-    def runner(self) -> runnermod.Runner:
-        compressor = self.compressor()
-        storer = self.storer()
-        cleaner = self.cleaner()
-        encryptor = self.encryptor()
-        phase_transition_hooks = self.phase_transition_hooks()
-        LOGGER.info(
-            "Loaded runner with: compressor=%s storers=%s encryptor=%s cleaner=%s phase_transition_hooks=%s",
-            compressor,
-            storer,
-            encryptor,
-            cleaner,
-            phase_transition_hooks,
-        )
-        return runnermod.Runner(
-            compressor=compressor,
-            storer=storer,
-            cleaner=cleaner,
-            encryptor=encryptor,
-            phase_transition_hooks=phase_transition_hooks
-        )
+    def pipeline_runner(self) -> pipeline.Runner:
+        steps: Sequence[pipeline.IRunnable] = [
+            self.compressor(),
+            self.encryptor(),
+            self.storer(),
+            self.cleaner(),
+            self.finisher(),
+        ]
+        hooks = [
+            statemod.CompressedFileCleanupHook(),
+            statemod.EncryptedFileCleanupHook(),
+            statemod.FinalFileCleanupHook(),
+        ]
+        return pipeline.Runner(steps=steps, hooks=hooks)
+
+    def initial_state(self) -> statemod.State:
+        return statemod.State.initial_state()
 
 
 _injector: Optional[_Injector] = None
