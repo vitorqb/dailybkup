@@ -1,4 +1,4 @@
-import dailybkup.injector as sut
+import dailybkup.injector.injector as sut
 import dailybkup.config as configmod
 import dailybkup.testutils as testutils
 import dataclasses
