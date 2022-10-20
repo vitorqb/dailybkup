@@ -64,15 +64,3 @@ class CompositeCleaner(ICleaner):
             final_state = cleaner.run(final_state)
         final_state = dataclasses.replace(final_state, last_phase=Phase.CLEANUP)
         return final_state
-
-
-def build_from_config(
-        config: Optional[configmod.ICleanerConfig],
-        l_b2context: Callable[[str], b2utils.B2Context],
-) -> ICleaner:
-    if config is None:
-        return NoOpCleaner()
-    if isinstance(config, configmod.B2CleanerConfig):
-        b2context = l_b2context(config.bucket)
-        return B2Cleaner(config, b2context=b2context)
-    raise RuntimeError(f"Invalid config class {config.__class__}")

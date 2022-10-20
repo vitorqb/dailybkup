@@ -45,14 +45,3 @@ class PasswordEncryptor(IEncryptor):
 class NoOpEncryptor(IEncryptor):
     def run(self, state: statemod.State) -> statemod.State:
         return dataclasses.replace(state, last_phase=Phase.ENCRYPTION)
-
-
-def build_from_config(
-        config: Optional[configmod.IEncryptionConfig],
-        tempFileGenerator: fileutils.ITempFileGenerator,
-) -> IEncryptor:
-    if config is None:
-        return NoOpEncryptor()
-    if isinstance(config, configmod.PasswordEncryptionConfig):
-        return PasswordEncryptor(config, tempFileGenerator)
-    raise ValueError(f"Unknown encryptor config: {config}")

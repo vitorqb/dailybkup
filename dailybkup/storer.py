@@ -97,21 +97,3 @@ class B2Storer(IStorer):
         LOGGER.info("Copying %s to %s in bucket %s", src, file_name, bucket)
         self._b2context.upload(src, file_name)
         return dataclasses.replace(state, last_phase=Phase.STORAGE)
-
-
-def build_from_config(
-        config: configmod.IStorageConfig,
-        l_b2context: Callable[[str], b2utils.B2Context],
-        l_backup_file_name_generator: Callable[[str], IBackupFileNameGenerator],
-):
-    if isinstance(config, configmod.FileStorageConfig):
-        return FileStorer(config)
-    if isinstance(config, configmod.B2StorageConfig):
-        b2context = l_b2context(config.bucket)
-        backup_file_name_generator = l_backup_file_name_generator(config.suffix)
-        return B2Storer(
-            config,
-            b2context,
-            backup_file_name_generator=backup_file_name_generator,
-        )
-    raise RuntimeError(f"Uknown config class: {config}")

@@ -1,8 +1,10 @@
 import typer
-import dailybkup.injector as injector
+import dailybkup.injector as injectormod
 import os.path
 import os
 import logging
+from dailybkup import state as statemod
+
 
 
 def _get_default_config_file() -> str:
@@ -21,7 +23,9 @@ def new_app() -> typer.Typer:
 
 
 def backup() -> None:
-    injector.get().runner().run()
+    injector = injectormod.get()
+    initial_state = injector.initial_state()
+    injector.pipeline_runner().run(initial_state)
 
 
 def version() -> None:
@@ -42,7 +46,7 @@ def global_setup(
 
 
 def _setup_injector(config_file: str):
-    injector.init(config_file=config_file)
+    injectormod.init(config_file=config_file)
 
 
 def _setup_logging(verbose: bool) -> None:

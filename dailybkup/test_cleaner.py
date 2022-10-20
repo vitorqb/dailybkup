@@ -76,19 +76,3 @@ class TestNoOpCleaner():
         new_state = cleaner.run(state)
 
         assert new_state.last_phase == Phase.CLEANUP
-
-
-class TestBuildFromConfig():
-
-    def test_builds_no_op(self):
-        cleaner = sut.build_from_config(None, mock.Mock())
-        assert isinstance(cleaner, sut.NoOpCleaner)
-
-    def test_builds_b2_cleaner(self):
-        config = configmod.B2CleanerConfig(retain_last=2, bucket="foo")
-        cleaner = sut.build_from_config(config, mock.Mock())
-        assert isinstance(cleaner, sut.B2Cleaner)
-
-    def test_raises_if_unknown(self):
-        with pytest.raises(RuntimeError):
-            sut.build_from_config(mock.Mock(), mock.Mock())
