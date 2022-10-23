@@ -6,11 +6,9 @@ import logging
 from dailybkup import state as statemod
 
 
-
 def _get_default_config_file() -> str:
     return os.environ.get(
-        "DAILYBKUP_CONFIG_FILE",
-        os.path.expanduser("~/.dailybkup/config.yaml")
+        "DAILYBKUP_CONFIG_FILE", os.path.expanduser("~/.dailybkup/config.yaml")
     )
 
 
@@ -35,8 +33,8 @@ def version() -> None:
 
 
 def global_setup(
-        config_file: str = typer.Option(_get_default_config_file(), "-c", "--config-file"),
-        verbose: bool = typer.Option(False, "-v", "--verbose")
+    config_file: str = typer.Option(_get_default_config_file(), "-c", "--config-file"),
+    verbose: bool = typer.Option(False, "-v", "--verbose"),
 ) -> None:
     """
     Global setup for the app.

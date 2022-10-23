@@ -20,7 +20,7 @@ def encrypt(infile: str, password: str, outfile: str):
         "--passphrase-fd",
         "0",
         "-c",
-        infile
+        infile,
     ]
     LOGGER.debug("Running: %s", cmd)
     process = subprocess.Popen(cmd, stdin=subprocess.PIPE)
@@ -40,7 +40,7 @@ def decrypt(infile: str, password: str, outfile: str):
         "--passphrase-fd",
         "0",
         "-d",
-        infile
+        infile,
     ]
     LOGGER.debug("Running: %s", cmd)
     process = subprocess.Popen(cmd, stdin=subprocess.PIPE)

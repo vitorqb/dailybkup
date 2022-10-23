@@ -17,8 +17,7 @@ def destfile():
         yield f
 
 
-class TestTarUtils():
-
+class TestTarUtils:
     def test_list_files_return_list_of_files(self):
         result = sut.list_files(p("example.tar.gz"))
         assert result == ["dir1/", "dir1/file1", "dir1/dir2/", "dir1/dir2/file2"]
@@ -30,7 +29,7 @@ class TestTarUtils():
     def test_compress_creates_compressed_file(self, destfile):
         files = [p("dir1")]
         sut.compress(files=files, destfile=destfile)
-        assert (p_('dir1') + "/") in sut.list_files(destfile)
+        assert (p_("dir1") + "/") in sut.list_files(destfile)
 
     def test_compress_fails_if_no_files(self, destfile):
         files = []

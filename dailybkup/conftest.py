@@ -25,13 +25,12 @@ def temp_file():
 @pytest.fixture
 def config1():
     with testutils.with_temp_file() as dest_file:
-        return configmod.config_builder.build({
-            "compression": {
-                "files": [p("afile")],
-                "exclude": [],
-            },
-            "storage": [{
-                "type_": "file",
-                "path": dest_file
-            }]
-        })
+        return configmod.config_builder.build(
+            {
+                "compression": {
+                    "files": [p("afile")],
+                    "exclude": [],
+                },
+                "storage": [{"type_": "file", "path": dest_file}],
+            }
+        )

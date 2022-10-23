@@ -9,7 +9,6 @@ import logging
 
 
 class ICleaner(ABC):
-
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         ...
@@ -19,13 +18,10 @@ class B2Cleaner(ICleaner):
 
     _b2context: b2utils.B2Context
     _config: configmod.B2CleanerConfig
-    LOGGER: logging.Logger = logging.getLogger('B2Cleaner')
+    LOGGER: logging.Logger = logging.getLogger("B2Cleaner")
 
     def __init__(
-            self,
-            config: configmod.B2CleanerConfig,
-            *,
-            b2context: b2utils.B2Context
+        self, config: configmod.B2CleanerConfig, *, b2context: b2utils.B2Context
     ):
         self._config = config
         self._b2context = b2context
@@ -52,7 +48,7 @@ class NoOpCleaner(ICleaner):
 class CompositeCleaner(ICleaner):
 
     _cleaners: Sequence[ICleaner]
-    _logging: logging.Logger = logging.getLogger(__name__ + '.CompositeCleaner')
+    _logging: logging.Logger = logging.getLogger(__name__ + ".CompositeCleaner")
 
     def __init__(self, cleaners: Sequence[ICleaner]):
         self._cleaners = cleaners

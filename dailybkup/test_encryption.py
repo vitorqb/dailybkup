@@ -8,7 +8,7 @@ import dailybkup.fileutils as fileutils
 import os
 
 
-class TestPasswordEncryptor():
+class TestPasswordEncryptor:
     def test_encrypts_tar_file(self):
         config = configmod.PasswordEncryptionConfig(password="foo")
         state = statemod.State(current_file=p("file1"))
@@ -19,7 +19,7 @@ class TestPasswordEncryptor():
         assert newstate.current_file == newstate.encrypted_file
 
 
-class TestNoOpEncryptor():
+class TestNoOpEncryptor:
     def test_updates_phase(self):
         state_1 = statemod.State.initial_state()
         exp_state = dataclasses.replace(state_1, last_phase=Phase.ENCRYPTION)

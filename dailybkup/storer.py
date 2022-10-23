@@ -15,7 +15,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 class IBackupFileNameGenerator(ABC):
-
     def __init__(self, *, suffix: str, now_fn: Callable[[], datetime.datetime]):
         self._suffix = suffix
         self._now_fn = now_fn
@@ -40,7 +39,7 @@ class IStorer(ABC):
 class CompositeStorer(IStorer):
 
     _storers: Sequence[IStorer]
-    _logging: logging.Logger = logging.getLogger(__name__ + '.CompositeStorer')
+    _logging: logging.Logger = logging.getLogger(__name__ + ".CompositeStorer")
 
     def __init__(self, storers: Sequence[IStorer]):
         self._storers = storers
@@ -80,10 +79,10 @@ class B2Storer(IStorer):
     _backup_file_name_generator: IBackupFileNameGenerator
 
     def __init__(
-            self,
-            config: configmod.B2StorageConfig,
-            b2context: b2utils.B2Context,
-            backup_file_name_generator: IBackupFileNameGenerator
+        self,
+        config: configmod.B2StorageConfig,
+        b2context: b2utils.B2Context,
+        backup_file_name_generator: IBackupFileNameGenerator,
     ):
         self._config = config
         self._b2context = b2context

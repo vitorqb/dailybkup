@@ -7,7 +7,7 @@ from typing import List, Optional
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class State():
+class State:
     last_phase: Optional[Phase] = None
     files: Optional[List[str]] = None
     compression_logfile: Optional[str] = None
@@ -16,7 +16,7 @@ class State():
     current_file: Optional[str] = None
 
     @classmethod
-    def initial_state(cls, **kwargs) -> 'State':
+    def initial_state(cls, **kwargs) -> "State":
         return cls(**kwargs)
 
 
@@ -35,15 +35,13 @@ class IPhaseTransitionHook(abc.ABC):
 
 class CompressedFileCleanupHook(IPhaseTransitionHook):
 
-    _logger = logging.getLogger(__name__ + '.CompressedFileCleanupHook')
+    _logger = logging.getLogger(__name__ + ".CompressedFileCleanupHook")
 
     def should_run(self, old_state: State, new_state: State) -> bool:
         return (
             new_state.compressed_file is not None
-            and
-            old_state.last_phase == Phase.COMPRESSION
-            and
-            new_state.current_file != new_state.compressed_file
+            and old_state.last_phase == Phase.COMPRESSION
+            and new_state.current_file != new_state.compressed_file
         )
 
     def run(self, state: State) -> State:
@@ -57,15 +55,13 @@ class CompressedFileCleanupHook(IPhaseTransitionHook):
 
 class EncryptedFileCleanupHook(IPhaseTransitionHook):
 
-    _logger = logging.getLogger(__name__ + '.EncryptedFileCleanupHook')
+    _logger = logging.getLogger(__name__ + ".EncryptedFileCleanupHook")
 
     def should_run(self, old_state: State, new_state: State) -> bool:
         return (
             new_state.encrypted_file is not None
-            and
-            old_state.last_phase == Phase.ENCRYPTION
-            and
-            new_state.current_file != new_state.encrypted_file
+            and old_state.last_phase == Phase.ENCRYPTION
+            and new_state.current_file != new_state.encrypted_file
         )
 
     def run(self, state: State) -> State:
@@ -79,7 +75,7 @@ class EncryptedFileCleanupHook(IPhaseTransitionHook):
 
 class FinalFileCleanupHook(IPhaseTransitionHook):
 
-    _logger = logging.getLogger(__name__ + '.FinalFileCleanupHook')
+    _logger = logging.getLogger(__name__ + ".FinalFileCleanupHook")
 
     def should_run(self, old_state: State, new_state: State) -> bool:
         return new_state.last_phase == Phase.END
@@ -87,11 +83,13 @@ class FinalFileCleanupHook(IPhaseTransitionHook):
     def run(self, state: State) -> State:
         new_state = state
         if state.compression_logfile is not None:
-            self._logger.info("Deleting compression log file: %s", state.compression_logfile)
+            self._logger.info(
+                "Deleting compression log file: %s", state.compression_logfile
+            )
             os.remove(state.compression_logfile)
             new_state = dataclasses.replace(state, compression_logfile=None)
         return new_state
-    
+
 
 class MockPhaseTransitionHook(IPhaseTransitionHook):
 

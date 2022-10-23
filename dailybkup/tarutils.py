@@ -8,12 +8,12 @@ TAR_FLAGS = ["--dereference", "--checkpoint=1000", "-v", "-z", "-c"]
 
 
 def compress(
-        *,
-        files: Sequence[str],
-        destfile,
-        logfile: str = None,
-        excludes: Sequence[str] = [],
-        tar_executable: str = "tar"
+    *,
+    files: Sequence[str],
+    destfile,
+    logfile: str = None,
+    excludes: Sequence[str] = [],
+    tar_executable: str = "tar",
 ) -> None:
     cmd = [tar_executable, *TAR_FLAGS, f"-f{destfile}"]
     if logfile:

@@ -10,8 +10,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Runner(IRunnable):
-
-    def __init__(self, *, steps: Sequence[IRunnable], hooks: Sequence[statemod.IPhaseTransitionHook]):
+    def __init__(
+        self,
+        *,
+        steps: Sequence[IRunnable],
+        hooks: Sequence[statemod.IPhaseTransitionHook]
+    ):
         self._steps = steps
         self._hooks = hooks
 
@@ -27,7 +31,9 @@ class Runner(IRunnable):
         LOGGER.info("Pipeline finished")
         return new_state
 
-    def _run_hooks(self, old_state: statemod.State, new_state: statemod.State) -> statemod.State:
+    def _run_hooks(
+        self, old_state: statemod.State, new_state: statemod.State
+    ) -> statemod.State:
         final_state = new_state
         for hook in self._hooks:
             if hook.should_run(old_state, new_state):

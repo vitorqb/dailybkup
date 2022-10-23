@@ -35,16 +35,16 @@ class ICleanerConfig(ABC):
 # Config classes
 #
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class Config():
-    compression: 'CompressionConfig'
+class Config:
+    compression: "CompressionConfig"
     encryption: Optional[IEncryptionConfig] = None
-    storage: Sequence['IStorageConfig']
+    storage: Sequence["IStorageConfig"]
     cleaner: Sequence[ICleanerConfig] = dataclasses.field(default_factory=list)
     tempdir: Optional[str] = None
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class CompressionConfig():
+class CompressionConfig:
     files: Sequence[str]
     exclude: Sequence[str]
     tar_executable: str = "tar"
@@ -80,20 +80,20 @@ class PasswordEncryptionConfig(IEncryptionConfig):
 # Builder classes
 #
 class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
-    def build(cls, d: Dict[str, Any]) -> 'Config':
-        missing_keys = {'compression', 'storage'} - {x for x in d.keys()}
+    def build(cls, d: Dict[str, Any]) -> "Config":
+        missing_keys = {"compression", "storage"} - {x for x in d.keys()}
         if missing_keys:
-            raise MissingConfigKey(f'Missing configuration keys:  {missing_keys}')
+            raise MissingConfigKey(f"Missing configuration keys:  {missing_keys}")
         kwargs = dict(
-            compression=compression_config_builder.build(d['compression']),
-            storage=[storage_config_builder.build(x) for x in d['storage']],
-            tempdir=d.get('tempdir'),
+            compression=compression_config_builder.build(d["compression"]),
+            storage=[storage_config_builder.build(x) for x in d["storage"]],
+            tempdir=d.get("tempdir"),
         )
-        if d.get('encryption') is not None:
-            kwargs['encryption'] = encryption_config_builder.build(d['encryption'])
-        cleaner_configs = d.get('cleaner')
+        if d.get("encryption") is not None:
+            kwargs["encryption"] = encryption_config_builder.build(d["encryption"])
+        cleaner_configs = d.get("cleaner")
         if cleaner_configs is not None:
-            kwargs['cleaner'] = [
+            kwargs["cleaner"] = [
                 cleaner_config_builder.build(x) for x in cleaner_configs
             ]
         return Config(**kwargs)
@@ -102,13 +102,13 @@ class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
 class StorageConfigBuilder(dictutils.PDictBuilder[IStorageConfig]):
     def build(cls, d: Dict[str, Any]) -> IStorageConfig:
         dict_ = copy.deepcopy(d)
-        type_ = dict_.pop('type_', 'MISSING')
-        if type_ == 'file':
+        type_ = dict_.pop("type_", "MISSING")
+        if type_ == "file":
             return file_storage_config_builder.build(dict_)
-        elif type_ == 'b2':
+        elif type_ == "b2":
             return b2_storage_config_builder.build(dict_)
-        elif type_ == 'MISSING':
-            raise MissingConfigKey('Missing key type_ for storage config')
+        elif type_ == "MISSING":
+            raise MissingConfigKey("Missing key type_ for storage config")
         else:
             raise ValueError(f'Invalid type_ "{type_}" for storage config')
 
@@ -116,11 +116,11 @@ class StorageConfigBuilder(dictutils.PDictBuilder[IStorageConfig]):
 class EncryptionConfigBuilder(dictutils.PDictBuilder[IEncryptionConfig]):
     def build(self, d: Dict[str, Any]) -> IEncryptionConfig:
         dict_ = copy.deepcopy(d)
-        type_ = dict_.pop('type_', 'MISSING')
-        if type_ == 'password':
+        type_ = dict_.pop("type_", "MISSING")
+        if type_ == "password":
             return password_encryption_config_builder.build(dict_)
-        elif type_ == 'MISSING':
-            raise MissingConfigKey('Missing key type_ for storage config')
+        elif type_ == "MISSING":
+            raise MissingConfigKey("Missing key type_ for storage config")
         else:
             raise ValueError(f'Invalid type_ "{type_}" for storage config')
 
@@ -128,11 +128,11 @@ class EncryptionConfigBuilder(dictutils.PDictBuilder[IEncryptionConfig]):
 class CleanerConfigBuilder(dictutils.PDictBuilder[ICleanerConfig]):
     def build(self, d: Dict[str, Any]) -> ICleanerConfig:
         dict_ = copy.deepcopy(d)
-        type_ = dict_.pop('type_', 'MISSING')
-        if type_ == 'b2':
+        type_ = dict_.pop("type_", "MISSING")
+        if type_ == "b2":
             return b2_cleaner_config_builder.build(dict_)
-        if type_ == 'MISSING':
-            raise MissingConfigKey('Missing key type_ for cleaner config')
+        if type_ == "MISSING":
+            raise MissingConfigKey("Missing key type_ for cleaner config")
         raise ValueError(f'Invalid type_ "{type_}" for cleaner config')
 
 
@@ -142,8 +142,8 @@ class CleanerConfigBuilder(dictutils.PDictBuilder[ICleanerConfig]):
 config_builder = ConfigDictBuilder()
 compression_config_builder: dictutils.DictBuilder = dictutils.DictBuilder(
     cls_=CompressionConfig,
-    req_fields=['files', 'exclude'],
-    opt_fields=['tar_executable'],
+    req_fields=["files", "exclude"],
+    opt_fields=["tar_executable"],
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,
 )
@@ -151,29 +151,29 @@ storage_config_builder = StorageConfigBuilder()
 cleaner_config_builder = CleanerConfigBuilder()
 encryption_config_builder = EncryptionConfigBuilder()
 password_encryption_config_builder = dictutils.DictBuilder(
-    ['password'],
+    ["password"],
     [],
     PasswordEncryptionConfig,
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,
 )
 file_storage_config_builder = dictutils.DictBuilder(
-    ['path'],
-    ['type_'],
+    ["path"],
+    ["type_"],
     FileStorageConfig,
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,
 )
 b2_storage_config_builder = dictutils.DictBuilder(
-    ['bucket', 'suffix'],
-    ['type_'],
+    ["bucket", "suffix"],
+    ["type_"],
     B2StorageConfig,
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,
 )
 b2_cleaner_config_builder = dictutils.DictBuilder(
-    ['bucket', 'retain_last'],
-    ['type_'],
+    ["bucket", "retain_last"],
+    ["type_"],
     B2CleanerConfig,
     missing_key_exception=MissingConfigKey,
     unknown_key_exception=UnkownConfigKey,

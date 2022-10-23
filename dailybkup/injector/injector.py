@@ -19,7 +19,7 @@ import os.path
 LOGGER = logging.getLogger(__name__)
 
 
-class _ConfigLoader():
+class _ConfigLoader:
 
     _config_file: str
     _config: Optional[configmod.Config]
@@ -40,7 +40,7 @@ class _ConfigLoader():
         return self._config
 
 
-class _Injector():
+class _Injector:
     """
     Class responsible to inject dependencies to commands.
     """
@@ -68,11 +68,13 @@ class _Injector():
         )
 
     def b2context(self, bucket_name: str) -> b2utils.B2Context:
-        application_key_id = os.environ['DAILYBKUP_B2_APPLICATION_KEY_ID']
-        application_key = os.environ['DAILYBKUP_B2_APPLICATION_KEY']
+        application_key_id = os.environ["DAILYBKUP_B2_APPLICATION_KEY_ID"]
+        application_key = os.environ["DAILYBKUP_B2_APPLICATION_KEY"]
         return b2utils.B2Context(application_key_id, application_key, bucket_name)
 
-    def backup_file_name_generator(self, suffix: str) -> storermod.IBackupFileNameGenerator:
+    def backup_file_name_generator(
+        self, suffix: str
+    ) -> storermod.IBackupFileNameGenerator:
         return storermod.BackupFileNameGenerator(
             suffix=suffix,
             now_fn=datetime.datetime.now,

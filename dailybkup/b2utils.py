@@ -1,4 +1,4 @@
-import b2sdk.v2 as b2sdk # type: ignore
+import b2sdk.v2 as b2sdk  # type: ignore
 import os
 import dataclasses
 import tempfile
@@ -14,10 +14,10 @@ class B2Context:
     """
 
     def __init__(
-            self,
-            application_key_id: str,
-            application_key: str,
-            bucket_name: str,
+        self,
+        application_key_id: str,
+        application_key: str,
+        bucket_name: str,
     ):
         self._bucket_name: str = bucket_name
         info = b2sdk.InMemoryAccountInfo()
@@ -53,4 +53,6 @@ class B2Context:
     def delete(self, file_name: str) -> None:
         for file_version, _ in self._bucket.ls(recursive=True):
             if file_version.file_name == file_name:
-                self._bucket.delete_file_version(file_version.id_, file_version.file_name)
+                self._bucket.delete_file_version(
+                    file_version.id_, file_version.file_name
+                )

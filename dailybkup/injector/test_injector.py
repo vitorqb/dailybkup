@@ -5,14 +5,15 @@ import dataclasses
 import tempfile
 
 
-class TestConfigLoader():
-
+class TestConfigLoader:
     def test_loads_config(self, config1: configmod.Config):
         with testutils.config_to_file(config1) as config_file:
             loader = sut._ConfigLoader(config_file)
             assert loader.load() == config1
 
-    def test_temporary_file_generator_reads_from_config(self, config1: configmod.Config):
+    def test_temporary_file_generator_reads_from_config(
+        self, config1: configmod.Config
+    ):
         with tempfile.TemporaryDirectory() as tempdir:
             config1 = dataclasses.replace(config1, tempdir=tempdir)
             with testutils.config_to_file(config1) as config1_file:

@@ -7,12 +7,10 @@ from dailybkup.phases import Phase
 from dailybkup.testutils import p, p_
 
 
-class TestTarCompressor():
-
+class TestTarCompressor:
     def test_compresses_to_file(self):
         config = configmod.CompressionConfig(
-            files=[p("file1"), p("dir1")],
-            exclude=[p("dir1/dir2")]
+            files=[p("file1"), p("dir1")], exclude=[p("dir1/dir2")]
         )
         state_1 = State()
         compressor = sut.TarCompressor(config, fileutils.TempFileGenerator())

@@ -18,39 +18,31 @@ compression_config1 = sut.CompressionConfig(
     tar_executable="special_tar",
 )
 
-storage_config_dict1: Dict[str, Any] = {
-    "type_": "file",
-    "path": p("out")
-}
+storage_config_dict1: Dict[str, Any] = {"type_": "file", "path": p("out")}
 
 storage_config1 = sut.FileStorageConfig(path=p("out"))
 
 config_dict1: Dict[str, Any] = {
     "compression": compression_config_dict1,
-    "storage": [storage_config_dict1]
+    "storage": [storage_config_dict1],
 }
 
-config1 = sut.Config(
-    compression=compression_config1,
-    storage=[storage_config1]
-)
+config1 = sut.Config(compression=compression_config1, storage=[storage_config1])
 
 config_dict2 = {
     **copy.deepcopy(config_dict1),
     "encryption": {
         "type_": "password",
         "password": "123456",
-    }
+    },
 }
 
 config2 = dataclasses.replace(
-    config1,
-    encryption=sut.PasswordEncryptionConfig(password="123456")
+    config1, encryption=sut.PasswordEncryptionConfig(password="123456")
 )
 
 
-class TestCompressionConfig():
-
+class TestCompressionConfig:
     def test_from_dict(self):
         result = sut.compression_config_builder.build(compression_config_dict1)
         assert result == compression_config1
@@ -64,8 +56,7 @@ class TestCompressionConfig():
             sut.compression_config_builder.build({})
 
 
-class TestConfig():
-
+class TestConfig:
     def test_from_dict(self):
         result = sut.config_builder.build(config_dict1)
         assert result == config1
@@ -74,9 +65,9 @@ class TestConfig():
         result = sut.config_builder.build(config_dict2)
         assert result == config2
 
-    @pytest.mark.parametrize("missing_keys", [["storage", "compression"],
-                                              ["compression"],
-                                              ["storage"]])
+    @pytest.mark.parametrize(
+        "missing_keys", [["storage", "compression"], ["compression"], ["storage"]]
+    )
     def test_from_dict_missing_key(self, missing_keys):
         dict_ = copy.deepcopy(config_dict1)
         for key in missing_keys:
@@ -85,8 +76,7 @@ class TestConfig():
             sut.config_builder.build(dict_)
 
 
-class TestFileStorageConfigBuilder():
-
+class TestFileStorageConfigBuilder:
     def test_from_dict(self):
         result = sut.file_storage_config_builder.build(storage_config_dict1)
         assert result == storage_config1
@@ -101,8 +91,7 @@ class TestFileStorageConfigBuilder():
             sut.storage_config_builder.build(dict_)
 
 
-class TestEncryptionConfigBuilder():
-
+class TestEncryptionConfigBuilder:
     def test_password_config_from_dict(self):
         dict_ = {"type_": "password", "password": "123"}
         config = sut.EncryptionConfigBuilder().build(dict_)
@@ -120,8 +109,7 @@ class TestEncryptionConfigBuilder():
             sut.EncryptionConfigBuilder().build(dict_)
 
 
-class TestCleanerConfigBuilder():
-
+class TestCleanerConfigBuilder:
     def test_build_b2_config(self):
         dict_ = {"type_": "b2", "bucket": "foo", "retain_last": 2}
         config = sut.CleanerConfigBuilder().build(dict_)

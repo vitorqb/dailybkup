@@ -5,8 +5,7 @@ from unittest import mock
 from dailybkup.injector import _builders as sut
 
 
-class TestBuildFromConfig():
-
+class TestBuildFromConfig:
     def test_builds_no_op(self):
         builder = sut.CleanerBuilder(mock.Mock())
         cleaner = builder.build(None)
