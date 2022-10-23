@@ -19,9 +19,9 @@ class ICompressor(ABC):
     _tempFileGenerator: fileutils.ITempFileGenerator
 
     def __init__(
-            self,
-            config: configmod.CompressionConfig,
-            tempFileGenerator: fileutils.ITempFileGenerator,
+        self,
+        config: configmod.CompressionConfig,
+        tempFileGenerator: fileutils.ITempFileGenerator,
     ) -> None:
         self._config = config
         self._tempFileGenerator = tempFileGenerator
@@ -32,7 +32,6 @@ class ICompressor(ABC):
 
 
 class TarCompressor(ICompressor):
-
     def run(self, state: State) -> State:
         # TODO logfile cleanup
         logfile = self._tempFileGenerator.gen_name()
@@ -42,7 +41,7 @@ class TarCompressor(ICompressor):
             destfile=destfile,
             logfile=logfile,
             excludes=self._config.exclude,
-            tar_executable=self._config.tar_executable
+            tar_executable=self._config.tar_executable,
         )
         files = tarutils.list_files(destfile)
         new_state = dataclasses.replace(
@@ -59,11 +58,10 @@ class TarCompressor(ICompressor):
 
 
 class MockCompressor(ICompressor):
-
     def __init__(
-            self,
-            config: configmod.CompressionConfig,
-            tempFileGenerator: fileutils.ITempFileGenerator,
+        self,
+        config: configmod.CompressionConfig,
+        tempFileGenerator: fileutils.ITempFileGenerator,
     ) -> None:
         super().__init__(config, tempFileGenerator)
         self.calls: List[Any] = []

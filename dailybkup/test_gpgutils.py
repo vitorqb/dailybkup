@@ -6,8 +6,7 @@ import filecmp
 import os
 
 
-class TestGpgUtils():
-
+class TestGpgUtils:
     def test_encrypt_and_decrypt_file(self):
         infile = p("file1")
         with testutils.with_temp_file() as encrypted_file:
@@ -28,4 +27,3 @@ class TestGpgUtils():
         with testutils.with_temp_file() as encrypted_file:
             with pytest.raises(sut.GPGExecutionFailed):
                 sut.encrypt(infile, "abc123def", encrypted_file)
-

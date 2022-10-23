@@ -20,11 +20,10 @@ class IEncryptor(ABC):
 
 
 class PasswordEncryptor(IEncryptor):
-
     def __init__(
-            self,
-            config: configmod.PasswordEncryptionConfig,
-            tempFileGenerator: fileutils.ITempFileGenerator,
+        self,
+        config: configmod.PasswordEncryptionConfig,
+        tempFileGenerator: fileutils.ITempFileGenerator,
     ):
         self._config = config
         self._tempFileGenerator = tempFileGenerator
@@ -32,7 +31,7 @@ class PasswordEncryptor(IEncryptor):
     def run(self, state: statemod.State) -> statemod.State:
         assert state.current_file, "Missing current file for encryption"
         outfile = self._tempFileGenerator.gen_name()
-        LOGGER.info("Starting encryption to %s",  outfile)
+        LOGGER.info("Starting encryption to %s", outfile)
         gpgutils.encrypt(state.current_file, self._config.password, outfile)
         return dataclasses.replace(
             state,

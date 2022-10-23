@@ -24,7 +24,7 @@ class MockCompressionTransitionHook(statemod.IPhaseTransitionHook):
 
     def run(self, state: statemod.State) -> statemod.State:
         self.calls.append(state)
-        return dataclasses.replace(state, compressed_file='bar')
+        return dataclasses.replace(state, compressed_file="bar")
 
 
 class MockCompressionStep(IRunnable):
@@ -32,8 +32,7 @@ class MockCompressionStep(IRunnable):
         return dataclasses.replace(state, last_phase=Phase.COMPRESSION)
 
 
-class TestRunner():
-
+class TestRunner:
     def test_zero_steps(self):
         # ARRANGE
         initial_state = statemod.State.initial_state()
@@ -90,7 +89,7 @@ class TestRunner():
         # ARRANGE
         assert len(hooks[0].calls) == 1
         assert hooks[0].calls[0].last_phase == Phase.COMPRESSION
-        final_state.compressed_file == 'bar'
+        final_state.compressed_file == "bar"
 
     def test_does_run_hook_if_hook_should_not_run(self):
         # ARRANGE

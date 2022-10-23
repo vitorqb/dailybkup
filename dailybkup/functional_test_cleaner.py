@@ -24,8 +24,7 @@ name_generator_2 = storer.BackupFileNameGenerator(suffix="", now_fn=fake_now_2)
 name_generator_3 = storer.BackupFileNameGenerator(suffix="", now_fn=fake_now_3)
 
 
-class TestFunctionalB2Cleaner():
-
+class TestFunctionalB2Cleaner:
     def test_cleans_old_files(self):
         with testutils.b2_test_setup() as b2context:
             b2context.create_empty_file(name_generator_1.generate())

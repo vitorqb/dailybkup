@@ -14,9 +14,9 @@ class UnkownKey(Exception):
 #
 # Types
 #
-T = TypeVar('T', covariant=True)
-G = TypeVar('G', contravariant=True)
-H = TypeVar('H')
+T = TypeVar("T", covariant=True)
+G = TypeVar("G", contravariant=True)
+H = TypeVar("H")
 
 
 #
@@ -47,12 +47,12 @@ class DictBuilder(PDictBuilder[H]):
     _unknown_key_exception: type
 
     def __init__(
-            self,
-            req_fields: Sequence[str],
-            opt_fields: Sequence[str],
-            cls_: Type[H],
-            missing_key_exception: type = MissingKey,
-            unknown_key_exception: type = UnkownKey
+        self,
+        req_fields: Sequence[str],
+        opt_fields: Sequence[str],
+        cls_: Type[H],
+        missing_key_exception: type = MissingKey,
+        unknown_key_exception: type = UnkownKey,
     ):
         self._req_fields = req_fields
         self._opt_fields = opt_fields

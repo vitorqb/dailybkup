@@ -39,15 +39,15 @@ def with_temp_file():
 @contextlib.contextmanager
 def config_to_file(config: configmod.Config):
     with with_temp_file() as f:
-        with open(f, 'w') as f_:
+        with open(f, "w") as f_:
             yaml.safe_dump(configmod.dumper.dump(config), f_)
         yield f
 
 
 @contextlib.contextmanager
 def b2_test_setup():
-    application_key_id = os.environ['DAILYBKUP_B2_APPLICATION_KEY_ID']
-    application_key = os.environ['DAILYBKUP_B2_APPLICATION_KEY']
+    application_key_id = os.environ["DAILYBKUP_B2_APPLICATION_KEY_ID"]
+    application_key = os.environ["DAILYBKUP_B2_APPLICATION_KEY"]
     context = b2utils.B2Context(application_key_id, application_key, B2_TEST_BUCKET)
     try:
         yield context
