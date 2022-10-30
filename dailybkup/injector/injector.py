@@ -8,7 +8,6 @@ import dailybkup.b2utils as b2utils
 import dailybkup.pipeline as pipeline
 from dailybkup import cleaner as cleanermod
 from dailybkup import encryption as encryptionmod
-from dailybkup.injector import _builders
 import yaml
 import datetime
 from typing import Optional, Sequence
@@ -82,7 +81,7 @@ class _Injector:
 
     def storer(self) -> storermod.IStorer:
         configs = self._config_loader.load().storage
-        builder = _builders.StorerBuilder(
+        builder = storermod.StorerBuilder(
             l_b2context=self.b2context,
             l_backup_file_name_generator=self.backup_file_name_generator,
         )
@@ -90,13 +89,13 @@ class _Injector:
         return storermod.CompositeStorer(storers)
 
     def cleaner(self) -> cleanermod.ICleaner:
-        builder = _builders.CleanerBuilder(l_b2context=self.b2context)
+        builder = cleanermod.CleanerBuilder(l_b2context=self.b2context)
         configs = self._config_loader.load().cleaner
         cleaners = [builder.build(config) for config in configs]
         return cleanermod.CompositeCleaner(cleaners)
 
     def encryptor(self) -> encryptionmod.IEncryptor:
-        builder = _builders.EncryptorBuilder(self.temp_file_generator())
+        builder = encryptionmod.EncryptorBuilder(self.temp_file_generator())
         config = self._config_loader.load().encryption
         return builder.build(config)
 

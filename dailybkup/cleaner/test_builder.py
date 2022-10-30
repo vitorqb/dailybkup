@@ -1,11 +1,11 @@
 import pytest
-from dailybkup import config as configmod
-from dailybkup import cleaner as cleanermod
+import dailybkup.cleaner.cleaner as cleanermod
+import dailybkup.cleaner.config as configmod
 from unittest import mock
-from dailybkup.injector import _builders as sut
+import dailybkup.cleaner.builder as sut
 
 
-class TestBuildFromConfig:
+class TestCleanerBuilder:
     def test_builds_no_op(self):
         builder = sut.CleanerBuilder(mock.Mock())
         cleaner = builder.build(None)
@@ -13,7 +13,7 @@ class TestBuildFromConfig:
 
     def test_builds_b2_cleaner(self):
         builder = sut.CleanerBuilder(mock.Mock())
-        config = cleanermod.B2CleanerConfig(retain_last=2, bucket="foo")
+        config = configmod.B2CleanerConfig(retain_last=2, bucket="foo")
         cleaner = builder.build(config)
         assert isinstance(cleaner, cleanermod.B2Cleaner)
 

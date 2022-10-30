@@ -6,6 +6,8 @@ from .storer import (
     CompositeStorer,
     B2Storer,
 )
+from .builder import StorerBuilder
+
 from .config import IStorageConfig
 
 __all__ = [
@@ -16,4 +18,5 @@ __all__ = [
     "CompositeStorer",
     "B2Storer",
     "IStorageConfig",
+    "StorerBuilder",
 ]

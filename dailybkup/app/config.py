@@ -33,7 +33,7 @@ class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
                 f"Missing configuration keys:  {missing_keys}"
             )
         kwargs = dict(
-            compression=compressionmod.config.compression_config_builder.build(
+            compression=compressionmod.compression_config_builder.build(
                 d["compression"]
             ),
             storage=[
@@ -48,8 +48,7 @@ class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
         cleaner_configs = d.get("cleaner")
         if cleaner_configs is not None:
             kwargs["cleaner"] = [
-                cleanermod.config.cleaner_config_builder.build(x)
-                for x in cleaner_configs
+                cleanermod.cleaner_config_builder.build(x) for x in cleaner_configs
             ]
         return Config(**kwargs)
 
