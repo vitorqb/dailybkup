@@ -1,6 +1,6 @@
 import pytest
 import dailybkup.injector as injector
-import dailybkup.config as configmod
+import dailybkup.app as app
 import dailybkup.testutils as testutils
 from dailybkup.testutils import p
 
@@ -25,7 +25,7 @@ def temp_file():
 @pytest.fixture
 def config1():
     with testutils.with_temp_file() as dest_file:
-        return configmod.config_builder.build(
+        return app.config.config_builder.build(
             {
                 "compression": {
                     "files": [p("afile")],

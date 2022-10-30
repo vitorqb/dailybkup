@@ -2,7 +2,7 @@ import dataclasses
 from dailybkup import encryption as sut
 from dailybkup import state as statemod
 from dailybkup.testutils import p
-from dailybkup import config as configmod
+from dailybkup.encryption import config as configmod
 from dailybkup.phases import Phase
 import dailybkup.fileutils as fileutils
 import os

@@ -2,7 +2,7 @@ from datetime import datetime
 import dataclasses
 import dailybkup.testutils as testutils
 import dailybkup.state as statemod
-import dailybkup.config as configmod
+import dailybkup.storer.config as configmod
 import dailybkup.storer as sut
 from dailybkup.phases import Phase
 import unittest.mock as mock

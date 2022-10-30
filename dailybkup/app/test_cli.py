@@ -1,4 +1,4 @@
-import dailybkup.app as sut
+import dailybkup.app.cli as sut
 import dailybkup.injector
 import unittest.mock as mock
 import pytest

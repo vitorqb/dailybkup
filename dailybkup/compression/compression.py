@@ -3,7 +3,7 @@ from dailybkup.state import State
 import dataclasses
 from typing import List
 import logging
-import dailybkup.config as configmod
+import dailybkup.compression.config as configmod
 from dailybkup.phases import Phase
 from typing import Any
 import dailybkup.tarutils as tarutils

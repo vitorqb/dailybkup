@@ -4,10 +4,11 @@ Functional tests for the app
 import dailybkup.tarutils as tarutils
 import pytest
 import typer.testing
+import dailybkup.app.cli as climod
 import dailybkup.app as appmod
-import dailybkup.config as configmod
 import dailybkup.testutils as testutils
 import dailybkup.gpgutils as gpgutils
+import dailybkup.storer as storermod
 import dataclasses
 import os
 import tempfile
@@ -17,7 +18,7 @@ from dailybkup import injector
 
 @pytest.fixture
 def app():
-    return appmod.new_app()
+    return climod.new_app()
 
 
 @pytest.fixture
@@ -28,7 +29,7 @@ def cli_runner():
 @pytest.fixture
 def config2():
     with testutils.with_temp_file() as storage_file:
-        return configmod.config_builder.build(
+        return appmod.config.config_builder.build(
             {
                 "compression": {
                     "files": [p("file1"), p("dir1")],
@@ -42,7 +43,7 @@ def config2():
 @pytest.fixture
 def config3():
     with testutils.with_temp_file() as storage_file:
-        return configmod.config_builder.build(
+        return appmod.config.config_builder.build(
             {
                 "compression": {
                     "files": [p("file1"), p("dir1")],
@@ -112,7 +113,7 @@ class TestFunctionalApp:
 
     def test_uploads_file_to_b2(self, app, cli_runner, config2):
         with testutils.b2_test_setup() as b2_context:
-            b2_storage_config = configmod.B2StorageConfig(
+            b2_storage_config = storermod.config.B2StorageConfig(
                 bucket=b2_context.bucket_name,
                 suffix=".tar",
             )

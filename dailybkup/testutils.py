@@ -1,5 +1,5 @@
 import yaml
-import dailybkup.config as configmod
+import dailybkup.app as app
 import os.path
 import contextlib
 import dailybkup.fileutils as fileutils
@@ -37,10 +37,10 @@ def with_temp_file():
 
 
 @contextlib.contextmanager
-def config_to_file(config: configmod.Config):
+def config_to_file(config: app.config.Config):
     with with_temp_file() as f:
         with open(f, "w") as f_:
-            yaml.safe_dump(configmod.dumper.dump(config), f_)
+            yaml.safe_dump(app.config.dumper.dump(config), f_)
         yield f
 
 

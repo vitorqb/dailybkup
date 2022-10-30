@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 import dailybkup.state as statemod
 import dataclasses
 from dailybkup.phases import Phase
-import dailybkup.config as configmod
+import dailybkup.cleaner.config as configmod
 import dailybkup.b2utils as b2utils
-from typing import Optional, Callable, Sequence
+from typing import Sequence
 import logging
 
 

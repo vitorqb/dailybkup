@@ -13,7 +13,7 @@ class TestBuildFromConfig:
 
     def test_builds_b2_cleaner(self):
         builder = sut.CleanerBuilder(mock.Mock())
-        config = configmod.B2CleanerConfig(retain_last=2, bucket="foo")
+        config = cleanermod.B2CleanerConfig(retain_last=2, bucket="foo")
         cleaner = builder.build(config)
         assert isinstance(cleaner, cleanermod.B2Cleaner)
 

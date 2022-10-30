@@ -1,10 +1,10 @@
 import datetime
 from dailybkup import storer
 from dailybkup import testutils
-from dailybkup import cleaner as sut
+from dailybkup.cleaner import cleaner as sut
 from dailybkup import state as statemod
 from dailybkup.phases import Phase
-from dailybkup import config as configmod
+from dailybkup.cleaner import config as configmod
 
 
 def fake_now_1():

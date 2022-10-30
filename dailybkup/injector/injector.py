@@ -1,4 +1,4 @@
-import dailybkup.config as configmod
+import dailybkup.app as app
 import dailybkup.finisher as finishermod
 import dailybkup.state as statemod
 import dailybkup.compression as compression
@@ -22,21 +22,21 @@ LOGGER = logging.getLogger(__name__)
 class _ConfigLoader:
 
     _config_file: str
-    _config: Optional[configmod.Config]
+    _config: Optional[app.config.Config]
 
     def __init__(self, config_file: str):
         self._config_file = config_file
         self._config = None
 
-    def load(self) -> configmod.Config:
+    def load(self) -> app.config.Config:
         if self._config is None:
             LOGGER.info(f"Loading config from file {self._config_file}")
             if not os.path.exists(self._config_file):
-                self._config = configmod.config_builder.build({})
+                self._config = app.config.config_builder.build({})
             else:
                 with open(self._config_file) as f:
                     d = yaml.load(f, Loader=yaml.Loader)
-                    self._config = configmod.config_builder.build(d)
+                    self._config = app.config.config_builder.build(d)
         return self._config
 
 

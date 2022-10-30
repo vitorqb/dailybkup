@@ -1,5 +1,5 @@
-import dailybkup.config as configmod
-import dailybkup.compression as sut
+import dailybkup.compression.config as configmod
+import dailybkup.compression.compression as sut
 from dailybkup.state import State
 import dailybkup.fileutils as fileutils
 import os
