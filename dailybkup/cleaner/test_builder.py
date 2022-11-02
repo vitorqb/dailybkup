@@ -1,11 +1,11 @@
 import pytest
-from dailybkup import config as configmod
-from dailybkup import cleaner as cleanermod
+import dailybkup.cleaner.cleaner as cleanermod
+import dailybkup.cleaner.config as configmod
 from unittest import mock
-from dailybkup.injector import _builders as sut
+import dailybkup.cleaner.builder as sut
 
 
-class TestBuildFromConfig:
+class TestCleanerBuilder:
     def test_builds_no_op(self):
         builder = sut.CleanerBuilder(mock.Mock())
         cleaner = builder.build(None)

@@ -1,5 +1,5 @@
-import dailybkup.app as appmod
+import dailybkup.app.cli as climod
 
 if __name__ == "__main__":
-    app = appmod.new_app()
+    app = climod.new_app()
     app()

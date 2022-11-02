@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import dataclasses
 import dailybkup.state as statemod
-import dailybkup.config as configmod
+import dailybkup.storer.config as configmod
 from dailybkup.phases import Phase
 import shutil
 import logging

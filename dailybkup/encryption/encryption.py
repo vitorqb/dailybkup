@@ -2,9 +2,9 @@ from typing import Optional
 from abc import ABC, abstractmethod
 import dailybkup.state as statemod
 import dailybkup.fileutils as fileutils
-from dailybkup import config as configmod
 from dailybkup import gpgutils
 from dailybkup.phases import Phase
+from dailybkup.encryption import config as configmod
 import dailybkup.fileutils as fileutils
 import dataclasses
 import logging

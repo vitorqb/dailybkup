@@ -3,7 +3,6 @@ import dailybkup.injector as injectormod
 import os.path
 import os
 import logging
-from dailybkup import state as statemod
 
 
 def _get_default_config_file() -> str:

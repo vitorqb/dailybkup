@@ -1,7 +1,7 @@
 import pytest
 
 from unittest import mock
-from dailybkup import config as configmod
+from dailybkup.cleaner import config as configmod
 from dailybkup import cleaner as sut
 from dailybkup import state as statemod
 from dailybkup.phases import Phase
