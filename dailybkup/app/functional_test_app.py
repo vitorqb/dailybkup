@@ -2,6 +2,7 @@
 Functional tests for the app
 """
 import dailybkup.tarutils as tarutils
+import dailybkup.services.email_sender as email_sender
 import pytest
 import typer.testing
 import dailybkup.app.cli as climod
@@ -9,6 +10,8 @@ import dailybkup.app as appmod
 import dailybkup.testutils as testutils
 import dailybkup.gpgutils as gpgutils
 import dailybkup.storer as storermod
+import dailybkup.notifier as notifiermod
+
 import dataclasses
 import os
 import tempfile
@@ -133,3 +136,23 @@ class TestFunctionalApp:
                 assert result2.exit_code == 0
                 assert b2_context.count_files() == 1  # Cleaner cleaned 1 file
                 assert list(b2_context.get_file_names())[0].endswith(".tar.gz")
+
+    def test_notifies(self, app, cli_runner, config2):
+        with testutils.with_temp_dir() as temp_dir:
+            sender_config = email_sender.MockEmailSenderConfig(directory=temp_dir)
+            notification_config = [
+                notifiermod.EmailNotifierConfig(
+                    recipient_address="foo@bar.baz",
+                    sender_config=sender_config,
+                )
+            ]
+            mock_sender = email_sender.MockEmailSender(directory=temp_dir)
+            config2 = dataclasses.replace(config2, notification=notification_config)
+            with testutils.config_to_file(config2) as config2_file:
+                result = cli_runner.invoke(app, ["-c", config2_file, "backup"])
+                assert result.exit_code == 0
+                assert mock_sender.count == 1
+                assert mock_sender.last_email_petition.subject == "Backup completed!"
+                assert (
+                    mock_sender.last_email_petition.recipient_address == "foo@bar.baz"
+                )

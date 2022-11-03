@@ -1,6 +1,7 @@
 import yaml
 import dailybkup.app as app
 import os.path
+import shutil
 import contextlib
 import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
@@ -34,6 +35,16 @@ def with_temp_file():
             os.remove(tempfile)
         except FileNotFoundError:
             pass
+
+
+@contextlib.contextmanager
+def with_temp_dir():
+    dirname = fileutils.TempFileGenerator().gen_name()
+    os.mkdir(dirname)
+    try:
+        yield dirname
+    finally:
+        shutil.rmtree(dirname)
 
 
 @contextlib.contextmanager
