@@ -6,6 +6,7 @@ import dailybkup.storer.config as storer_config
 import dailybkup.encryption as encryptionmod
 import dailybkup.cleaner as cleanermod
 import dailybkup.compression as compressionmod
+import dailybkup.notifier as notifiermod
 
 
 #
@@ -20,6 +21,9 @@ class Config:
         default_factory=list
     )
     tempdir: Optional[str] = None
+    notification: Sequence[notifiermod.INotifierConfig] = dataclasses.field(
+        default_factory=list
+    )
 
 
 #
@@ -40,6 +44,10 @@ class ConfigDictBuilder(dictutils.PDictBuilder[Config]):
                 storer_config.storage_config_builder.build(x) for x in d["storage"]
             ],
             tempdir=d.get("tempdir"),
+            notification=[
+                notifiermod.notification_config_builder.build(x)
+                for x in d.get("notification", [])
+            ],
         )
         if d.get("encryption") is not None:
             kwargs["encryption"] = encryptionmod.encryption_config_builder.build(

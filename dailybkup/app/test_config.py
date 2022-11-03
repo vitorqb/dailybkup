@@ -4,6 +4,8 @@ import dailybkup.app.config as sut
 from dailybkup import storer
 from dailybkup import encryption as encryptionmod
 from dailybkup import compression as compressionmod
+from dailybkup import notifier as notifiermod
+from dailybkup.services import email_sender as email_sender_mod
 import dailybkup.config.exceptions as config_exceptions
 import dataclasses
 import pytest
@@ -25,13 +27,31 @@ compression_config1 = compressionmod.CompressionConfig(
 config_dict1: Dict[str, Any] = {
     "compression": compression_config_dict1,
     "storage": [{"type_": "file", "path": p("out")}],
+    "notification": [
+        {
+            "type_": "email",
+            "recipient_address": "foo@bar.baz",
+            "sender_config": {
+                "type_": "mock",
+                "directory": "./foo",
+            },
+        },
+    ],
 }
 
 storer_config1 = storer.config.FileStorageConfig(path=p("out"))
 storer_config_dict1: Dict[str, Any] = {"type_": "file", "path": p("out")}
 
+notification_config1 = notifiermod.EmailNotifierConfig(
+    recipient_address="foo@bar.baz",
+    sender_config=email_sender_mod.MockEmailSenderConfig(directory="./foo"),
+)
 
-config1 = sut.Config(compression=compression_config1, storage=[storer_config1])
+config1 = sut.Config(
+    compression=compression_config1,
+    storage=[storer_config1],
+    notification=[notification_config1],
+)
 
 config_dict2 = {
     **copy.deepcopy(config_dict1),
