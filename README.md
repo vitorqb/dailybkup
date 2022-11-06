@@ -23,7 +23,22 @@ export DAILYBKUP_B2_APPLICATION_KEY_ID="..."
 export DAILYBKUP_B2_APPLICATION_KEY="..."
 ```
 
-Running tests:
+For functional tests, you will need to start wiremock
+
+```
+$ ./scripts/wiremock.sh -h
+./scripts/wiremock.sh [-h] [-p PORT]
+
+Uses docker to run wiremock, used for tests.
+
+  -h)
+    Displays this help message.
+
+  -p PORT)
+    The port in which to run it. Defaults to 9000.
+```
+
+Running the tests:
 ```
 $ ./scripts/test.sh -h
 ./scripts/test.sh [-h] [-p] [-g PATTERN] [-f] [-u]

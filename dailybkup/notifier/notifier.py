@@ -3,8 +3,12 @@ import dataclasses
 import dailybkup.pipeline as pipeline
 import dailybkup.state as statemod
 import dailybkup.services.email_sender as email_sender_mod
+import logging
 from dailybkup.phases import Phase
 from typing import Sequence
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class INotifier(abc.ABC, pipeline.IRunnable):
@@ -26,6 +30,7 @@ class EmailNotifier(INotifier):
             subject="Backup completed!",
             body="Your backup has finished!",
         )
+        logging.info(f"Sending email with subject '{email_petition.subject}' to '{email_petition.recipient_address}' using {self.sender}")
         self.sender.send(email_petition)
         return state
 

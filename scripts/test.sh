@@ -1,7 +1,7 @@
 #!/bin/bash
-USAGE="$0"' [-h] [-p] [-g PATTERN] [-f] [-u]
+USAGE="$0"' [-h] [-p] [-g PATTERN] [-f] [-u] -- [FILES]
 
-Runs tests.
+Runs tests. If not FILE is given, run all tests otherwise only tests from file.
 
   -h)
     Displays this help message.
@@ -49,6 +49,8 @@ while getopts "hpg:fu" opt; do
   esac
 done
 
+FILES="${@:$OPTIND}"
+
 # Find root directory
 GIT_ROOT="$(git rev-parse --show-toplevel)"
 
@@ -81,5 +83,6 @@ if ! [ -z "$FUNCTIONAL" ]
 then
     ARGS+=( -c "${GIT_ROOT}/pytest.functional.ini" )
 fi
+ARGS+=( ${FILES[@]} )
 echo ${ARGS[@]}
 ${ARGS[@]}

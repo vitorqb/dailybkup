@@ -5,7 +5,7 @@ import copy
 from typing import Dict, Any
 import dailybkup.dictutils as dictutils
 import dailybkup.config.exceptions as config_exceptions
-import dailybkup.services.email_sender as email_sender
+import dailybkup.services.email_sender as email_sender_mod
 
 
 class INotifierConfig(abc.ABC):
@@ -32,19 +32,6 @@ class NotificationConfigBuilder(dictutils.PDictBuilder[INotifierConfig]):
         raise ValueError(f'Invalid type_ "{type_}" for cleaner config')
 
 
-class EmailSenderConfigBuilder(dictutils.PDictBuilder[email_sender.IEmailSenderConfig]):
-    def build(self, d: Dict[str, Any]) -> email_sender.IEmailSenderConfig:
-        dict_ = copy.deepcopy(d)
-        type_ = dict_.get("type_", "MISSING")
-        if type_ == "mock":
-            return mock_email_sender_config_builder.build(dict_)
-        if type_ == "MISSING":
-            raise config_exceptions.MissingConfigKey(
-                "Missing key type_ for email sender config"
-            )
-        raise ValueError(f'Invalid type_ "{type_}" for email sender config')
-
-
 class EmailNotificationConfigBuilder(dictutils.PDictBuilder[EmailNotifierConfig]):
     def build(self, d: Dict[str, Any]) -> EmailNotifierConfig:
         dict_ = copy.deepcopy(d)
@@ -53,7 +40,7 @@ class EmailNotificationConfigBuilder(dictutils.PDictBuilder[EmailNotifierConfig]
             raise config_exceptions.MissingConfigKey(
                 "Missing key sender_config for email notification config"
             )
-        sender_config = email_sender_config_builder.build(sender_config_raw)
+        sender_config = email_sender_mod.email_sender_config_builder.build(sender_config_raw)
         recipient_address = dict_.get("recipient_address")
         if recipient_address is None:
             raise config_exceptions.MissingConfigKey(
@@ -64,13 +51,5 @@ class EmailNotificationConfigBuilder(dictutils.PDictBuilder[EmailNotifierConfig]
         )
 
 
-email_sender_config_builder = EmailSenderConfigBuilder()
-mock_email_sender_config_builder = dictutils.DictBuilder(
-    ["directory"],
-    ["type_"],
-    email_sender.MockEmailSenderConfig,
-    missing_key_exception=config_exceptions.MissingConfigKey,
-    unknown_key_exception=config_exceptions.UnkownConfigKey,
-)
 email_notification_config_builder = EmailNotificationConfigBuilder()
 notification_config_builder = NotificationConfigBuilder()
