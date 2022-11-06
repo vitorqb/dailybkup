@@ -1,0 +1,18 @@
+# action.yml
+name: 'Run Wiremock'
+description: 'Runs Wiremock for functional tests'
+inputs:
+  port:
+    description: "Port to use"
+    default: 9000
+  version:
+    description: "Wiremock Version"
+    default: 2.35.0
+  image:
+    description: "Wiremock Image to use"
+    default: wiremock/wiremock
+runs:
+  using: 'docker'
+  image: ${{ inputs.image }}:${{ inputs.version }}
+  args:
+    - ${{ inputs.who-to-greet }}
