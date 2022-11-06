@@ -30,7 +30,9 @@ class EmailNotifier(INotifier):
             subject="Backup completed!",
             body="Your backup has finished!",
         )
-        logging.info(f"Sending email with subject '{email_petition.subject}' to '{email_petition.recipient_address}' using {self.sender}")
+        logging.info(
+            f"Sending email with subject '{email_petition.subject}' to '{email_petition.recipient_address}' using {self.sender}"
+        )
         self.sender.send(email_petition)
         return state
 

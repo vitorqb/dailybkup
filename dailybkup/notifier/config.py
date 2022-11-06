@@ -40,7 +40,9 @@ class EmailNotificationConfigBuilder(dictutils.PDictBuilder[EmailNotifierConfig]
             raise config_exceptions.MissingConfigKey(
                 "Missing key sender_config for email notification config"
             )
-        sender_config = email_sender_mod.email_sender_config_builder.build(sender_config_raw)
+        sender_config = email_sender_mod.email_sender_config_builder.build(
+            sender_config_raw
+        )
         recipient_address = dict_.get("recipient_address")
         if recipient_address is None:
             raise config_exceptions.MissingConfigKey(

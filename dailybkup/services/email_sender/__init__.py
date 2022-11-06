@@ -4,7 +4,11 @@ from .email_sender import (
     EmailPetition,
     MailGunEmailSender,
 )
-from .config import MockEmailSenderConfig, IEmailSenderConfig, email_sender_config_builder
+from .config import (
+    MockEmailSenderConfig,
+    IEmailSenderConfig,
+    email_sender_config_builder,
+)
 from .builder import EmailSenderBuilder
 
 
