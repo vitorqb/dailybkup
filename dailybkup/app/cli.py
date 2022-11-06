@@ -1,5 +1,6 @@
 import typer
 import dailybkup.injector as injectormod
+import dailybkup.version as versionmod
 import os.path
 import os
 import logging
@@ -26,9 +27,7 @@ def backup() -> None:
 
 
 def version() -> None:
-    # THE NEXT LINE IS WRITTEN AUTOMATICALLY BY THE RELEASE SCRIPT. DO NOT EDIT IT.
-    version = "0.0.1"  # ___VERSION___
-    typer.echo(version)
+    typer.echo(versionmod.VERSION)
 
 
 def global_setup(
