@@ -6,8 +6,8 @@ Uses docker to run wiremock, used for tests.
   -h)
     Displays this help message.
 
-  -p)
-    The port in which to run it.
+  -p PORT)
+    The port in which to run it. Defaults to 9000.
 '
 
 # Defaults
