@@ -1,8 +1,6 @@
 import b2sdk.v2 as b2sdk  # type: ignore
-import os
-import dataclasses
 import tempfile
-from typing import Optional, Iterator
+from typing import Iterator
 
 
 DELETE_ALL_FILES_WHITELIST = ["dailybkup-test"]
@@ -18,8 +16,10 @@ class B2Context:
         application_key_id: str,
         application_key: str,
         bucket_name: str,
+        prefix: str,
     ):
         self._bucket_name: str = bucket_name
+        self.prefix = prefix
         info = b2sdk.InMemoryAccountInfo()
         b2_api = b2sdk.B2Api(info)
         b2_api.authorize_account("production", application_key_id, application_key)
@@ -33,26 +33,31 @@ class B2Context:
     def delete_all_files(self) -> None:
         if self._bucket_name not in DELETE_ALL_FILES_WHITELIST:
             raise RuntimeError(f"Refusing to delete all files from {self._bucket_name}")
-        for file_version, _ in self._bucket.ls(recursive=True):
+        for file_version, _ in self._bucket.ls(self.prefix, recursive=True):
             self._bucket.delete_file_version(file_version.id_, file_version.file_name)
 
     def upload(self, local_file: str, remote_file_name: str) -> None:
-        self._bucket.upload_local_file(local_file, remote_file_name)
+        self._bucket.upload_local_file(local_file, f"{self.prefix}{remote_file_name}")
 
     def create_empty_file(self, remote_file_name: str) -> None:
         with tempfile.NamedTemporaryFile() as f:
             f.write("".encode())
-            self._bucket.upload_local_file(f.name, remote_file_name)
+            self._bucket.upload_local_file(f.name, f"{self.prefix}{remote_file_name}")
 
     def count_files(self) -> int:
-        return sum(1 for _ in self._bucket.ls(latest_only=True, recursive=True))
+        return sum(
+            1 for _ in self._bucket.ls(self.prefix, latest_only=True, recursive=True)
+        )
 
     def get_file_names(self) -> Iterator[str]:
-        return (file_version.file_name for file_version, _ in self._bucket.ls())
+        return (
+            file_version.file_name.removeprefix(self.prefix)
+            for file_version, _ in self._bucket.ls(self.prefix)
+        )
 
     def delete(self, file_name: str) -> None:
-        for file_version, _ in self._bucket.ls(recursive=True):
-            if file_version.file_name == file_name:
+        for file_version, _ in self._bucket.ls(self.prefix, recursive=True):
+            if file_version.file_name == f"{self.prefix}{file_name}":
                 self._bucket.delete_file_version(
                     file_version.id_, file_version.file_name
                 )

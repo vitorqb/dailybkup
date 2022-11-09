@@ -14,6 +14,7 @@ class ICleanerConfig(ABC):
 class B2CleanerConfig(ICleanerConfig):
     retain_last: int
     bucket: str
+    prefix: str = ""
     type_: str = "b2"
 
 
@@ -33,7 +34,7 @@ class CleanerConfigBuilder(dictutils.PDictBuilder[ICleanerConfig]):
 cleaner_config_builder = CleanerConfigBuilder()
 b2_cleaner_config_builder = dictutils.DictBuilder(
     ["bucket", "retain_last"],
-    ["type_"],
+    ["type_", "prefix"],
     B2CleanerConfig,
     missing_key_exception=configmod.exceptions.MissingConfigKey,
     unknown_key_exception=configmod.exceptions.UnkownConfigKey,

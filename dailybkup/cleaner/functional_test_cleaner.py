@@ -32,7 +32,9 @@ class TestFunctionalB2Cleaner:
             b2context.create_empty_file(name_generator_3.generate())
             assert b2context.count_files() == 3
             state = statemod.State.initial_state()
-            config = configmod.B2CleanerConfig(retain_last=1, bucket="foo")
+            config = configmod.B2CleanerConfig(
+                retain_last=1, bucket="foo", prefix=b2context.prefix
+            )
 
             new_state = sut.B2Cleaner(config, b2context=b2context).run(state)
 
