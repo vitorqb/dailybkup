@@ -30,6 +30,12 @@ def cli_runner():
 
 
 @pytest.fixture
+def b2_context():
+    with testutils.b2_test_setup() as result:
+        yield result
+
+
+@pytest.fixture
 def config2():
     with testutils.with_temp_file() as storage_file:
         return appmod.config.config_builder.build(
@@ -44,7 +50,7 @@ def config2():
 
 
 @pytest.fixture
-def config3():
+def config3(b2_context):
     with testutils.with_temp_file() as storage_file:
         return appmod.config.config_builder.build(
             {
@@ -59,15 +65,17 @@ def config3():
                 "storage": [
                     {
                         "type_": "b2",
-                        "bucket": testutils.B2_TEST_BUCKET,
                         "suffix": ".tar.gz",
+                        "bucket": b2_context.bucket_name,
+                        "prefix": b2_context.prefix,
                     }
                 ],
                 "cleaner": [
                     {
                         "type_": "b2",
-                        "bucket": testutils.B2_TEST_BUCKET,
                         "retain_last": 1,
+                        "bucket": b2_context.bucket_name,
+                        "prefix": b2_context.prefix,
                     }
                 ],
             }
@@ -114,28 +122,29 @@ class TestFunctionalApp:
                 assert os.path.isdir(tempdir)
                 assert len(os.listdir(tempdir)) == 0
 
-    def test_uploads_file_to_b2(self, app, cli_runner, config2):
-        with testutils.b2_test_setup() as b2_context:
-            b2_storage_config = storermod.config.B2StorageConfig(
-                bucket=b2_context.bucket_name,
-                suffix=".tar",
-            )
-            config2 = dataclasses.replace(config2, storage=[b2_storage_config])
-            with testutils.config_to_file(config2) as config2_file:
-                result = cli_runner.invoke(app, ["-c", config2_file, "backup"])
-                assert result.exit_code == 0
-                assert b2_context.count_files() == 1
+    def test_uploads_file_to_b2(self, app, cli_runner, config2, b2_context):
+        b2_storage_config = storermod.config.B2StorageConfig(
+            bucket=b2_context.bucket_name,
+            suffix=".tar",
+            prefix=b2_context.prefix,
+        )
+        config2 = dataclasses.replace(config2, storage=[b2_storage_config])
+        with testutils.config_to_file(config2) as config2_file:
+            result = cli_runner.invoke(app, ["-c", config2_file, "backup"])
+            assert result.exit_code == 0
+            assert b2_context.count_files() == 1
 
-    def test_runs_with_encryption_and_cleaner(self, app, cli_runner, config3):
-        with testutils.b2_test_setup() as b2_context:
-            with testutils.config_to_file(config3) as config3_file:
-                result1 = cli_runner.invoke(app, ["-c", config3_file, "backup"])
-                assert result1.exit_code == 0
-                injector.end()
-                result2 = cli_runner.invoke(app, ["-c", config3_file, "backup"])
-                assert result2.exit_code == 0
-                assert b2_context.count_files() == 1  # Cleaner cleaned 1 file
-                assert list(b2_context.get_file_names())[0].endswith(".tar.gz")
+    def test_runs_with_encryption_and_cleaner(
+        self, app, cli_runner, b2_context, config3
+    ):
+        with testutils.config_to_file(config3) as config3_file:
+            result1 = cli_runner.invoke(app, ["-c", config3_file, "backup"])
+            assert result1.exit_code == 0
+            injector.end()
+            result2 = cli_runner.invoke(app, ["-c", config3_file, "backup"])
+            assert result2.exit_code == 0
+            assert b2_context.count_files() == 1  # Cleaner cleaned 1 file
+            assert list(b2_context.get_file_names())[0].endswith(".tar.gz")
 
     def test_notifies(self, app, cli_runner, config2):
         with testutils.with_temp_dir() as temp_dir:

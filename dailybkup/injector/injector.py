@@ -68,10 +68,12 @@ class _Injector:
             self.temp_file_generator(),
         )
 
-    def b2context(self, bucket_name: str) -> b2utils.B2Context:
+    def b2context(self, bucket_name: str, prefix: str) -> b2utils.B2Context:
         application_key_id = os.environ["DAILYBKUP_B2_APPLICATION_KEY_ID"]
         application_key = os.environ["DAILYBKUP_B2_APPLICATION_KEY"]
-        return b2utils.B2Context(application_key_id, application_key, bucket_name)
+        return b2utils.B2Context(
+            application_key_id, application_key, bucket_name, prefix
+        )
 
     def backup_file_name_generator(
         self, suffix: str

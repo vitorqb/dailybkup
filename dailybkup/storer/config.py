@@ -20,6 +20,7 @@ class FileStorageConfig(IStorageConfig):
 class B2StorageConfig(IStorageConfig):
     bucket: str
     suffix: str
+    prefix: str = ""
     type_: str = "b2"
 
 
@@ -48,7 +49,7 @@ file_storage_config_builder = dictutils.DictBuilder(
 )
 b2_storage_config_builder = dictutils.DictBuilder(
     ["bucket", "suffix"],
-    ["type_"],
+    ["type_", "prefix"],
     B2StorageConfig,
     missing_key_exception=config_exceptions.MissingConfigKey,
     unknown_key_exception=config_exceptions.UnkownConfigKey,

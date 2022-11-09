@@ -12,7 +12,7 @@ from typing import Callable
 class StorerBuilder:
     def __init__(
         self,
-        l_b2context: Callable[[str], b2utils.B2Context],
+        l_b2context: Callable[[str, str], b2utils.B2Context],
         l_backup_file_name_generator: Callable[[str], IBackupFileNameGenerator],
     ):
         self._l_b2context = l_b2context
@@ -22,7 +22,7 @@ class StorerBuilder:
         if isinstance(config, FileStorageConfig):
             return FileStorer(config)
         if isinstance(config, B2StorageConfig):
-            b2context = self._l_b2context(config.bucket)
+            b2context = self._l_b2context(config.bucket, config.prefix)
             backup_file_name_generator = self._l_backup_file_name_generator(
                 config.suffix
             )

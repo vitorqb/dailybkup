@@ -5,6 +5,7 @@ import shutil
 import contextlib
 import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
+import uuid
 
 
 B2_TEST_BUCKET = "dailybkup-test"
@@ -59,7 +60,10 @@ def config_to_file(config: app.config.Config):
 def b2_test_setup():
     application_key_id = os.environ["DAILYBKUP_B2_APPLICATION_KEY_ID"]
     application_key = os.environ["DAILYBKUP_B2_APPLICATION_KEY"]
-    context = b2utils.B2Context(application_key_id, application_key, B2_TEST_BUCKET)
+    prefix = str(uuid.uuid1()) + "/"
+    context = b2utils.B2Context(
+        application_key_id, application_key, B2_TEST_BUCKET, prefix
+    )
     try:
         yield context
     finally:
