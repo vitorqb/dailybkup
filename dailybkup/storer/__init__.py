@@ -8,7 +8,7 @@ from .storer import (
 )
 from .builder import StorerBuilder
 
-from .config import IStorageConfig
+from .config import IStorageConfig, FileStorageConfig, B2StorageConfig
 
 __all__ = [
     "IBackupFileNameGenerator",
@@ -19,4 +19,6 @@ __all__ = [
     "B2Storer",
     "IStorageConfig",
     "StorerBuilder",
+    "FileStorageConfig",
+    "B2StorageConfig",
 ]

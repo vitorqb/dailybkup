@@ -1,5 +1,5 @@
 from .cleaner import NoOpCleaner, ICleaner, B2Cleaner, CompositeCleaner
-from .config import ICleanerConfig, cleaner_config_builder
+from .config import ICleanerConfig, cleaner_config_builder, B2CleanerConfig
 from .builder import CleanerBuilder
 
 
@@ -11,4 +11,5 @@ __all__ = [
     "ICleanerConfig",
     "CleanerBuilder",
     "cleaner_config_builder",
+    "B2CleanerConfig",
 ]
