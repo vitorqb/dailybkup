@@ -1,4 +1,4 @@
-from .encryption import IEncryptor, PasswordEncryptor, NoOpEncryptor
+from .encryption import Encryptor, PasswordEncryptor, NoOpEncryptor
 from .config import (
     IEncryptionConfig,
     PasswordEncryptionConfig,
@@ -9,7 +9,7 @@ from .config import (
 from .builder import EncryptorBuilder
 
 __all__ = [
-    "IEncryptor",
+    "Encryptor",
     "PasswordEncryptor",
     "NoOpEncryptor",
     "IEncryptionConfig",

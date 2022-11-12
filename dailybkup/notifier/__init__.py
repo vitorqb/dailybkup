@@ -1,12 +1,12 @@
-from .config import EmailNotifierConfig, INotifierConfig, notification_config_builder
-from .notifier import INotifier, CompositeNotifier
+from .config import EmailNotifierConfig, NotifierConfig, notification_config_builder
+from .notifier import Notifier, CompositeNotifier
 from .builder import NotifierBuilder
 
 
 __all__ = [
     "EmailNotifierConfig",
-    "INotifierConfig",
-    "INotifier",
+    "NotifierConfig",
+    "Notifier",
     "NotifierBuilder",
     "CompositeNotifier",
     "notification_config_builder",

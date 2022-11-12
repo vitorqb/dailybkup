@@ -6,7 +6,6 @@ from unittest import mock
 from dailybkup import state as statemod
 from dailybkup.pipeline import runner as sut
 from dailybkup.phases import Phase
-from dailybkup.pipeline import IRunnable
 
 
 @pytest.fixture
@@ -27,7 +26,10 @@ class MockCompressionTransitionHook(statemod.IPhaseTransitionHook):
         return dataclasses.replace(state, compressed_file="bar")
 
 
-class MockCompressionStep(IRunnable):
+class MockCompressionStep:
+    def should_run(self, state: statemod.State) -> bool:
+        return state.error is None
+
     def run(self, state: statemod.State) -> statemod.State:
         return dataclasses.replace(state, last_phase=Phase.COMPRESSION)
 
@@ -103,3 +105,33 @@ class TestRunner:
 
         # ARRANGE
         assert hooks[0].calls == []
+
+    def test_sets_error_on_error(self):
+        # ARRANGE
+        initial_state = statemod.State.initial_state()
+        error = RuntimeError("FOO")
+        steps = [mock.Mock()]
+        steps[0].run.side_effect = error
+        hooks = []
+        runner = sut.Runner(steps=steps, hooks=hooks)
+
+        # ACT
+        final_state = runner.run(initial_state)
+
+        # ARRANGE
+        final_state.error == error
+
+    def test_only_runs_if_should_run_is_true(self):
+        # ARRANGE
+        initial_state = statemod.State.initial_state()
+        steps = [mock.Mock()]
+        steps[0].should_run.return_value = False
+        hooks = []
+        runner = sut.Runner(steps=steps, hooks=hooks)
+
+        # ACT
+        final_state = runner.run(initial_state)
+
+        # ARRANGE
+        assert steps[0].run.call_args is None
+        assert final_state is initial_state

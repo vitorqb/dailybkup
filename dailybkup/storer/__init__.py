@@ -1,6 +1,6 @@
 from .storer import (
     IBackupFileNameGenerator,
-    IStorer,
+    Storer,
     BackupFileNameGenerator,
     FileStorer,
     CompositeStorer,
@@ -12,7 +12,7 @@ from .config import IStorageConfig, FileStorageConfig, B2StorageConfig
 
 __all__ = [
     "IBackupFileNameGenerator",
-    "IStorer",
+    "Storer",
     "BackupFileNameGenerator",
     "FileStorer",
     "CompositeStorer",

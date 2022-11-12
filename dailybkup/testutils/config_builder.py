@@ -107,6 +107,9 @@ class ConfigBuilder:
         )
         self.replace(notification=[*self._config.notification, notification_config])
 
+    def with_missconfigured_encryption(self) -> None:
+        self.with_password_encryption("")
+
     def with_tempdir(self, tempdir=None) -> None:
         self.replace(tempdir=self._tempfile_controller.new_dir())
 

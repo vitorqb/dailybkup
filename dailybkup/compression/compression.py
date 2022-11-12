@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dailybkup.state import State
+import dailybkup.state as statemod
 import dataclasses
 from typing import List
 import logging
@@ -13,7 +13,7 @@ import dailybkup.fileutils as fileutils
 LOGGER = logging.getLogger(__name__)
 
 
-class ICompressor(ABC):
+class Compressor(ABC):
 
     _config: configmod.CompressionConfig
     _tempFileGenerator: fileutils.ITempFileGenerator
@@ -26,13 +26,16 @@ class ICompressor(ABC):
         self._config = config
         self._tempFileGenerator = tempFileGenerator
 
+    def should_run(self, state: statemod.State) -> bool:
+        return state.error is None
+
     @abstractmethod
-    def run(self, state: State) -> State:
+    def run(self, state: statemod.State) -> statemod.State:
         raise NotImplementedError()
 
 
-class TarCompressor(ICompressor):
-    def run(self, state: State) -> State:
+class TarCompressor(Compressor):
+    def run(self, state: statemod.State) -> statemod.State:
         # TODO logfile cleanup
         logfile = self._tempFileGenerator.gen_name()
         destfile = self._tempFileGenerator.gen_name()
@@ -57,7 +60,7 @@ class TarCompressor(ICompressor):
         return new_state
 
 
-class MockCompressor(ICompressor):
+class MockCompressor(Compressor):
     def __init__(
         self,
         config: configmod.CompressionConfig,
@@ -66,6 +69,6 @@ class MockCompressor(ICompressor):
         super().__init__(config, tempFileGenerator)
         self.calls: List[Any] = []
 
-    def run(self, state: State) -> State:
+    def run(self, state: statemod.State) -> statemod.State:
         self.calls.append(state)
         return dataclasses.replace(state, last_phase=Phase.COMPRESSION, files=["foo"])

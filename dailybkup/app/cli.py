@@ -23,7 +23,9 @@ def new_app() -> typer.Typer:
 def backup() -> None:
     injector = injectormod.get()
     initial_state = injector.initial_state()
-    injector.pipeline_runner().run(initial_state)
+    final_state = injector.pipeline_runner().run(initial_state)
+    if final_state.error is not None:
+        raise final_state.error
 
 
 def version() -> None:

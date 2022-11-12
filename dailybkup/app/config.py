@@ -17,11 +17,11 @@ class Config:
     compression: compressionmod.CompressionConfig
     encryption: Optional[encryptionmod.IEncryptionConfig] = None
     storage: Sequence[storer_config.IStorageConfig]
-    cleaner: Sequence[cleanermod.ICleanerConfig] = dataclasses.field(
+    cleaner: Sequence[cleanermod.CleanerConfig] = dataclasses.field(
         default_factory=list
     )
     tempdir: Optional[str] = None
-    notification: Sequence[notifiermod.INotifierConfig] = dataclasses.field(
+    notification: Sequence[notifiermod.NotifierConfig] = dataclasses.field(
         default_factory=list
     )
 

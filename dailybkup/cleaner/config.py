@@ -6,20 +6,20 @@ from typing import Dict, Any
 import dailybkup.config as configmod
 
 
-class ICleanerConfig(ABC):
+class CleanerConfig(ABC):
     pass
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class B2CleanerConfig(ICleanerConfig):
+class B2CleanerConfig(CleanerConfig):
     retain_last: int
     bucket: str
     prefix: str = ""
     type_: str = "b2"
 
 
-class CleanerConfigBuilder(dictutils.PDictBuilder[ICleanerConfig]):
-    def build(self, d: Dict[str, Any]) -> ICleanerConfig:
+class CleanerConfigBuilder(dictutils.PDictBuilder[CleanerConfig]):
+    def build(self, d: Dict[str, Any]) -> CleanerConfig:
         dict_ = copy.deepcopy(d)
         type_ = dict_.pop("type_", "MISSING")
         if type_ == "b2":

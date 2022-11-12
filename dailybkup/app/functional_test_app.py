@@ -98,3 +98,14 @@ class TestFunctionalApp:
             assert mock_sender.count == 1
             assert mock_sender.last_email_petition.subject == "Backup completed!"
             assert mock_sender.last_email_petition.recipient_address == "foo@bar.baz"
+
+    def test_notifies_failure(self, app, cli_runner, config_builder):
+        config_builder.with_mock_email_notifier()
+        config_builder.with_missconfigured_encryption()
+        with config_builder.build() as (config, config_file):
+            mock_sender_dir = config.notification[0].sender_config.directory
+            mock_sender = email_sender.MockEmailSender(directory=mock_sender_dir)
+            result1 = cli_runner.invoke(app, ["-c", config_file, "backup"])
+            assert result1.exit_code == 1
+            assert mock_sender.count == 1
+            assert mock_sender.last_email_petition.subject == "Backup Failed!"

@@ -1,5 +1,6 @@
 import dailybkup.app.cli as sut
 import dailybkup.injector
+import dailybkup.state as statemod
 import unittest.mock as mock
 import pytest
 import typer.testing
@@ -22,6 +23,7 @@ def cli_runner():
 @pytest.fixture
 def injector():
     injector = mock.Mock()
+    injector.pipeline_runner().run.return_value = statemod.State.initial_state()
     with mock.patch("dailybkup.injector.get") as get:
         get.return_value = injector
         yield injector

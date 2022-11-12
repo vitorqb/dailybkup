@@ -1,5 +1,5 @@
 from dailybkup.storer.storer import (
-    IStorer,
+    Storer,
     IBackupFileNameGenerator,
     FileStorer,
     B2Storer,
@@ -18,7 +18,7 @@ class StorerBuilder:
         self._l_b2context = l_b2context
         self._l_backup_file_name_generator = l_backup_file_name_generator
 
-    def build(self, config: IStorageConfig) -> IStorer:
+    def build(self, config: IStorageConfig) -> Storer:
         if isinstance(config, FileStorageConfig):
             return FileStorer(config)
         if isinstance(config, B2StorageConfig):
