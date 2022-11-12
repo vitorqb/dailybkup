@@ -8,6 +8,7 @@ from .testutils import (
     B2_TEST_BUCKET,
 )
 from .wiremock import Wiremock
+from .config_builder import ConfigBuilder
 
 __all__ = [
     "p",
@@ -18,4 +19,5 @@ __all__ = [
     "b2_test_setup",
     "Wiremock",
     "B2_TEST_BUCKET",
+    "ConfigBuilder",
 ]

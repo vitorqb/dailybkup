@@ -61,7 +61,7 @@ class _Injector:
             )
         return self._temp_file_generator_instance
 
-    def compressor(self) -> compression.ICompressor:
+    def compressor(self) -> compression.Compressor:
         config = self._config_loader.load()
         return compression.TarCompressor(
             config.compression,
@@ -83,7 +83,7 @@ class _Injector:
             now_fn=datetime.datetime.now,
         )
 
-    def storer(self) -> storermod.IStorer:
+    def storer(self) -> storermod.Storer:
         configs = self._config_loader.load().storage
         builder = storermod.StorerBuilder(
             l_b2context=self.b2context,
@@ -92,20 +92,20 @@ class _Injector:
         storers = [builder.build(config) for config in configs]
         return storermod.CompositeStorer(storers)
 
-    def cleaner(self) -> cleanermod.ICleaner:
+    def cleaner(self) -> cleanermod.Cleaner:
         builder = cleanermod.CleanerBuilder(l_b2context=self.b2context)
         configs = self._config_loader.load().cleaner
         cleaners = [builder.build(config) for config in configs]
         return cleanermod.CompositeCleaner(cleaners)
 
-    def notifier(self) -> notifiermod.INotifier:
+    def notifier(self) -> notifiermod.Notifier:
         email_sender_builder = email_sender_mod.EmailSenderBuilder()
         builder = notifiermod.NotifierBuilder(email_sender_builder)
         configs = self._config_loader.load().notification
         notifiers = [builder.build(config, dict(os.environ)) for config in configs]
         return notifiermod.CompositeNotifier(notifiers)
 
-    def encryptor(self) -> encryptionmod.IEncryptor:
+    def encryptor(self) -> encryptionmod.Encryptor:
         builder = encryptionmod.EncryptorBuilder(self.temp_file_generator())
         config = self._config_loader.load().encryption
         return builder.build(config)
@@ -121,7 +121,7 @@ class _Injector:
         ]
 
     def pipeline_runner(self) -> pipeline.Runner:
-        steps: Sequence[pipeline.IRunnable] = [
+        steps: Sequence[pipeline.PRunnable] = [
             self.compressor(),
             self.encryptor(),
             self.storer(),

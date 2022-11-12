@@ -1,11 +1,9 @@
-from typing import Optional
 from abc import ABC, abstractmethod
 import dailybkup.state as statemod
 import dailybkup.fileutils as fileutils
 from dailybkup import gpgutils
 from dailybkup.phases import Phase
 from dailybkup.encryption import config as configmod
-import dailybkup.fileutils as fileutils
 import dataclasses
 import logging
 
@@ -13,13 +11,16 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-class IEncryptor(ABC):
+class Encryptor(ABC):
+    def should_run(self, state: statemod.State) -> bool:
+        return state.error is None
+
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         ...
 
 
-class PasswordEncryptor(IEncryptor):
+class PasswordEncryptor(Encryptor):
     def __init__(
         self,
         config: configmod.PasswordEncryptionConfig,
@@ -41,6 +42,6 @@ class PasswordEncryptor(IEncryptor):
         )
 
 
-class NoOpEncryptor(IEncryptor):
+class NoOpEncryptor(Encryptor):
     def run(self, state: statemod.State) -> statemod.State:
         return dataclasses.replace(state, last_phase=Phase.ENCRYPTION)

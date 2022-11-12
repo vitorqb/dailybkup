@@ -1,4 +1,4 @@
-from .runnable import IRunnable
+from .runnable import PRunnable
 from .runner import Runner
 
-__all__ = ["IRunnable", "Runner"]
+__all__ = ["PRunnable", "Runner"]

@@ -8,7 +8,7 @@ class CleanerBuilder:
     def __init__(self, l_b2context: Callable[[str, str], b2utils.B2Context]):
         self._l_b2context = l_b2context
 
-    def build(self, config: Optional[configmod.ICleanerConfig]) -> cleanermod.ICleaner:
+    def build(self, config: Optional[configmod.CleanerConfig]) -> cleanermod.Cleaner:
         if config is None:
             return cleanermod.NoOpCleaner()
         if isinstance(config, configmod.B2CleanerConfig):

@@ -14,10 +14,14 @@ class State:
     compressed_file: Optional[str] = None
     encrypted_file: Optional[str] = None
     current_file: Optional[str] = None
+    error: Optional[Exception] = None
 
     @classmethod
     def initial_state(cls, **kwargs) -> "State":
         return cls(**kwargs)
+
+    def with_error(self, error: Exception) -> "State":
+        return dataclasses.replace(self, error=error)
 
 
 class IPhaseTransitionHook(abc.ABC):

@@ -8,19 +8,19 @@ import dailybkup.config.exceptions as config_exceptions
 import dailybkup.services.email_sender as email_sender_mod
 
 
-class INotifierConfig(abc.ABC):
+class NotifierConfig(abc.ABC):
     pass
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class EmailNotifierConfig(INotifierConfig):
+class EmailNotifierConfig(NotifierConfig):
     type_: str = "email"
     recipient_address: str
     sender_config: email_sender.IEmailSenderConfig
 
 
-class NotificationConfigBuilder(dictutils.PDictBuilder[INotifierConfig]):
-    def build(self, d: Dict[str, Any]) -> INotifierConfig:
+class NotificationConfigBuilder(dictutils.PDictBuilder[NotifierConfig]):
+    def build(self, d: Dict[str, Any]) -> NotifierConfig:
         dict_ = copy.deepcopy(d)
         type_ = dict_.pop("type_", "MISSING")
         if type_ == "email":

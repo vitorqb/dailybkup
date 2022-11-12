@@ -30,18 +30,21 @@ class BackupFileNameGenerator(IBackupFileNameGenerator):
         return f"{formatted_now}{self._suffix}"
 
 
-class IStorer(ABC):
+class Storer(ABC):
+    def should_run(self, state: statemod.State) -> bool:
+        return state.error is None
+
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         ...
 
 
-class CompositeStorer(IStorer):
+class CompositeStorer(Storer):
 
-    _storers: Sequence[IStorer]
+    _storers: Sequence[Storer]
     _logging: logging.Logger = logging.getLogger(__name__ + ".CompositeStorer")
 
-    def __init__(self, storers: Sequence[IStorer]):
+    def __init__(self, storers: Sequence[Storer]):
         self._storers = storers
 
     def run(self, state: statemod.State) -> statemod.State:
@@ -57,7 +60,7 @@ class CompositeStorer(IStorer):
         return final_state
 
 
-class FileStorer(IStorer):
+class FileStorer(Storer):
 
     _config: configmod.FileStorageConfig
 
@@ -72,7 +75,7 @@ class FileStorer(IStorer):
         return dataclasses.replace(state, last_phase=Phase.STORAGE)
 
 
-class B2Storer(IStorer):
+class B2Storer(Storer):
 
     _config: configmod.B2StorageConfig
     _b2context: b2utils.B2Context

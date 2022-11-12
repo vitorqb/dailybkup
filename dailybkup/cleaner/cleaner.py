@@ -8,13 +8,16 @@ from typing import Sequence
 import logging
 
 
-class ICleaner(ABC):
+class Cleaner(ABC):
+    def should_run(self, state: statemod.State) -> bool:
+        return state.error is None
+
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         ...
 
 
-class B2Cleaner(ICleaner):
+class B2Cleaner(Cleaner):
 
     _b2context: b2utils.B2Context
     _config: configmod.B2CleanerConfig
@@ -40,17 +43,17 @@ class B2Cleaner(ICleaner):
         return dataclasses.replace(state, last_phase=Phase.CLEANUP)
 
 
-class NoOpCleaner(ICleaner):
+class NoOpCleaner(Cleaner):
     def run(self, state: statemod.State) -> statemod.State:
         return dataclasses.replace(state, last_phase=Phase.CLEANUP)
 
 
-class CompositeCleaner(ICleaner):
+class CompositeCleaner(Cleaner):
 
-    _cleaners: Sequence[ICleaner]
+    _cleaners: Sequence[Cleaner]
     _logging: logging.Logger = logging.getLogger(__name__ + ".CompositeCleaner")
 
-    def __init__(self, cleaners: Sequence[ICleaner]):
+    def __init__(self, cleaners: Sequence[Cleaner]):
         self._cleaners = cleaners
 
     def run(self, state: statemod.State) -> statemod.State:
