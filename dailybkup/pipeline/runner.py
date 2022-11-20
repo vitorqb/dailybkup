@@ -4,6 +4,7 @@ import logging
 
 from typing import Sequence
 from .runnable import PRunnable
+import dailybkup.state.mutations as m
 
 
 LOGGER = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ class Runner:
                     new_state = step.run(old_state)
                 except Exception as e:
                     LOGGER.error("Catched exception: %s", e)
-                    new_state = old_state.with_error(e)
+                    new_state = old_state.mutate(m.with_error(e))
                 new_state = self._run_hooks(old_state, new_state)
             else:
                 LOGGER.info("Skipping pipeline step: %s", step)

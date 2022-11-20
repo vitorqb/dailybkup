@@ -3,12 +3,15 @@ import dataclasses
 import logging
 import os
 from dailybkup.phases import Phase
-from typing import List, Optional
+from typing import List, Optional, Callable
+
+
+StateMutation = Callable[["State"], "State"]
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class State:
-    last_phase: Optional[Phase] = None
+    last_phase: Phase = Phase.BEGIN
     files: Optional[List[str]] = None
     compression_logfile: Optional[str] = None
     compressed_file: Optional[str] = None
@@ -20,8 +23,11 @@ class State:
     def initial_state(cls, **kwargs) -> "State":
         return cls(**kwargs)
 
-    def with_error(self, error: Exception) -> "State":
-        return dataclasses.replace(self, error=error)
+    def mutate(self, *mutations: StateMutation) -> "State":
+        out = self
+        for mutation in mutations:
+            out = mutation(out)
+        return out
 
 
 class IPhaseTransitionHook(abc.ABC):

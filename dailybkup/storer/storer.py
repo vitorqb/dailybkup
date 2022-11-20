@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import dataclasses
 import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
+import dailybkup.state.mutations as m
 from dailybkup.phases import Phase
 import shutil
 import logging
@@ -52,12 +53,10 @@ class CompositeStorer(Storer):
         for storer in self._storers:
             self._logging.info(f"Running storer {storer}")
             final_state = storer.run(final_state)
-        final_state = dataclasses.replace(
-            final_state,
-            last_phase=Phase.STORAGE,
-            current_file=None,
+        return final_state.mutate(
+            m.with_last_phase(Phase.STORAGE),
+            m.with_current_file(None),
         )
-        return final_state
 
 
 class FileStorer(Storer):
@@ -72,7 +71,7 @@ class FileStorer(Storer):
         dst = self._config.path
         LOGGER.info("Copying %s to %s", state.current_file, dst)
         shutil.copyfile(state.current_file, dst)
-        return dataclasses.replace(state, last_phase=Phase.STORAGE)
+        return state.mutate(m.with_last_phase(Phase.STORAGE))
 
 
 class B2Storer(Storer):
@@ -98,4 +97,4 @@ class B2Storer(Storer):
         file_name = self._backup_file_name_generator.generate()
         LOGGER.info("Copying %s to %s in bucket %s", src, file_name, bucket)
         self._b2context.upload(src, file_name)
-        return dataclasses.replace(state, last_phase=Phase.STORAGE)
+        return state.mutate(m.with_last_phase(Phase.STORAGE))

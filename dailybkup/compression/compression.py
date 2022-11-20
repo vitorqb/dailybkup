@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import dailybkup.state as statemod
-import dataclasses
 from typing import List
 import logging
 import dailybkup.compression.config as configmod
@@ -8,6 +7,7 @@ from dailybkup.phases import Phase
 from typing import Any
 import dailybkup.tarutils as tarutils
 import dailybkup.fileutils as fileutils
+import dailybkup.state.mutations as m
 
 
 LOGGER = logging.getLogger(__name__)
@@ -46,18 +46,16 @@ class TarCompressor(Compressor):
             excludes=self._config.exclude,
             tar_executable=self._config.tar_executable,
         )
-        files = tarutils.list_files(destfile)
-        new_state = dataclasses.replace(
-            state,
-            last_phase=Phase.COMPRESSION,
-            files=files,
-            compression_logfile=logfile,
-            compressed_file=destfile,
-            current_file=destfile,
-        )
+        files = [x for x in tarutils.list_files(destfile)]
         LOGGER.info(f"Compression done to file {destfile}")
         LOGGER.info(f"Logs saved to file {logfile}")
-        return new_state
+        return state.mutate(
+            m.with_last_phase(Phase.COMPRESSION),
+            m.with_files(files),
+            m.with_compression_logfile(logfile),
+            m.with_compressed_file(destfile),
+            m.with_current_file(destfile),
+        )
 
 
 class MockCompressor(Compressor):
@@ -71,4 +69,7 @@ class MockCompressor(Compressor):
 
     def run(self, state: statemod.State) -> statemod.State:
         self.calls.append(state)
-        return dataclasses.replace(state, last_phase=Phase.COMPRESSION, files=["foo"])
+        return state.mutate(
+            m.with_last_phase(Phase.COMPRESSION),
+            m.with_files(["foo"]),
+        )

@@ -4,6 +4,7 @@ import dailybkup.fileutils as fileutils
 from dailybkup import gpgutils
 from dailybkup.phases import Phase
 from dailybkup.encryption import config as configmod
+import dailybkup.state.mutations as m
 import dataclasses
 import logging
 
@@ -34,14 +35,13 @@ class PasswordEncryptor(Encryptor):
         outfile = self._tempFileGenerator.gen_name()
         LOGGER.info("Starting encryption to %s", outfile)
         gpgutils.encrypt(state.current_file, self._config.password, outfile)
-        return dataclasses.replace(
-            state,
-            last_phase=Phase.ENCRYPTION,
-            encrypted_file=outfile,
-            current_file=outfile,
+        return state.mutate(
+            m.with_last_phase(Phase.ENCRYPTION),
+            m.with_encrypted_file(outfile),
+            m.with_current_file(outfile),
         )
 
 
 class NoOpEncryptor(Encryptor):
     def run(self, state: statemod.State) -> statemod.State:
-        return dataclasses.replace(state, last_phase=Phase.ENCRYPTION)
+        return state.mutate(m.with_last_phase(Phase.ENCRYPTION))

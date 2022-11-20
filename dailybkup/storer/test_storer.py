@@ -4,6 +4,7 @@ import dailybkup.testutils as testutils
 import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
 import dailybkup.storer as sut
+import dailybkup.state.mutations as m
 from dailybkup.phases import Phase
 import unittest.mock as mock
 
@@ -25,12 +26,11 @@ class TestFileStorer:
                 with open(current_file, "wb") as f:
                     f.write(b"foo")
                 config = configmod.FileStorageConfig(path=dest_file)
-                state_1 = dataclasses.replace(
-                    statemod.State.initial_state(),
-                    current_file=current_file,
+                state_1 = statemod.State.initial_state().mutate(
+                    m.with_current_file(current_file)
                 )
                 state_2 = sut.FileStorer(config).run(state_1)
-                exp_state = dataclasses.replace(state_1, last_phase=Phase.STORAGE)
+                exp_state = state_1.mutate(m.with_last_phase(Phase.STORAGE))
                 assert state_2 == exp_state
 
 
