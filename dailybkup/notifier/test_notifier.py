@@ -1,7 +1,7 @@
 from unittest import mock
 import dailybkup.notifier.notifier as sut
 from dailybkup import state as statemod
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 from dailybkup.services import email_sender as email_sender_mod
 
 

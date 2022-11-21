@@ -1,7 +1,7 @@
 import dataclasses
 from dailybkup import state as statemod
 import dailybkup.state.mutations as m
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 
 
 class Finisher:

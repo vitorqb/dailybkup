@@ -5,7 +5,7 @@ from unittest import mock
 
 from dailybkup import state as statemod
 from dailybkup.pipeline import runner as sut
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 import dailybkup.state.mutations as m
 
 

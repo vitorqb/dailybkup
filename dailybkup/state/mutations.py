@@ -1,6 +1,6 @@
 import dataclasses
-from dailybkup.phases import Phase
 from typing import List, Optional
+from .phases import Phase
 from .state import StateMutation
 
 

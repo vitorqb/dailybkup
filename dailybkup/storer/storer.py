@@ -3,7 +3,7 @@ import dataclasses
 import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
 import dailybkup.state.mutations as m
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 import shutil
 import logging
 import datetime

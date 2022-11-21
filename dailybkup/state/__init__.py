@@ -5,7 +5,7 @@ from .state import (
     EncryptedFileCleanupHook,
     FinalFileCleanupHook,
 )
-
+from .phases import Phase
 
 __all__ = [
     "State",
@@ -14,4 +14,5 @@ __all__ = [
     "CompressedFileCleanupHook",
     "EncryptedFileCleanupHook",
     "FinalFileCleanupHook",
+    "Phase",
 ]

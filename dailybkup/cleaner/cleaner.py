@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import dailybkup.state as statemod
 import dataclasses
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 import dailybkup.cleaner.config as configmod
 import dailybkup.b2utils as b2utils
 from typing import Sequence

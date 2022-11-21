@@ -2,7 +2,7 @@ import abc
 import dataclasses
 import logging
 import os
-from dailybkup.phases import Phase
+from .phases import Phase
 from typing import List, Optional, Callable
 
 

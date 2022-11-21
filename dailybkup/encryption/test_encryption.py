@@ -4,7 +4,7 @@ from dailybkup import state as statemod
 from dailybkup.testutils import p
 import dailybkup.state.mutations as m
 from dailybkup.encryption import config as configmod
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 import dailybkup.fileutils as fileutils
 import os
 

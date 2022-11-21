@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import dailybkup.state as statemod
 import dailybkup.fileutils as fileutils
 from dailybkup import gpgutils
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 from dailybkup.encryption import config as configmod
 import dailybkup.state.mutations as m
 import dataclasses

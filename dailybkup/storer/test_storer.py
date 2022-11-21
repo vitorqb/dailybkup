@@ -5,7 +5,7 @@ import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
 import dailybkup.storer as sut
 import dailybkup.state.mutations as m
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 import unittest.mock as mock
 
 

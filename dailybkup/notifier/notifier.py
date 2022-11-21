@@ -5,7 +5,7 @@ import dailybkup.state as statemod
 import dailybkup.services.email_sender as email_sender_mod
 import dailybkup.state.mutations as m
 import logging
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 from typing import Sequence
 
 

@@ -1,6 +1,6 @@
 import dailybkup.state as statemod
 import dailybkup.state.mutations as m
-from dailybkup.phases import Phase
+from .phases import Phase
 
 
 class TestMutations:
