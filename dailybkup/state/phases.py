@@ -1,4 +1,6 @@
 import enum
+import dataclasses
+import datetime
 
 
 @enum.unique
@@ -10,3 +12,10 @@ class Phase(enum.Enum):
     CLEANUP: str = "CLEANUP"
     NOTIFICATION: str = "NOTIFICATION"
     END: str = "END"
+
+
+@dataclasses.dataclass
+class PhaseTransitionLog:
+    datetime_: datetime.datetime
+    from_: Phase
+    to_: Phase

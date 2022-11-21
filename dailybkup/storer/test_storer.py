@@ -1,5 +1,4 @@
 from datetime import datetime
-import dataclasses
 import dailybkup.testutils as testutils
 import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
@@ -21,17 +20,20 @@ class TestBackupFileNameGenerator:
 
 class TestFileStorer:
     def test_updates_state(self):
-        with testutils.with_temp_file() as current_file:
-            with testutils.with_temp_file() as dest_file:
-                with open(current_file, "wb") as f:
-                    f.write(b"foo")
-                config = configmod.FileStorageConfig(path=dest_file)
-                state_1 = statemod.State.initial_state().mutate(
-                    m.with_current_file(current_file)
-                )
-                state_2 = sut.FileStorer(config).run(state_1)
-                exp_state = state_1.mutate(m.with_last_phase(Phase.STORAGE))
-                assert state_2 == exp_state
+        with (
+            testutils.with_temp_file() as current_file,
+            testutils.with_temp_file() as dest_file,
+            testutils.mock_now(datetime(2021, 12, 31)),
+            open(current_file, "wb") as f,
+        ):
+            f.write(b"foo")
+            config = configmod.FileStorageConfig(path=dest_file)
+            state_1 = statemod.State.initial_state().mutate(
+                m.with_current_file(current_file)
+            )
+            state_2 = sut.FileStorer(config).run(state_1)
+            exp_state = state_1.mutate(m.with_last_phase(Phase.STORAGE))
+            assert state_2 == exp_state
 
 
 class TestCompositeStorer:

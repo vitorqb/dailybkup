@@ -1,11 +1,21 @@
 import dataclasses
 from typing import List, Optional
-from .phases import Phase
-from .state import StateMutation
+import dailybkup.timeutils as timeutils
+from .phases import Phase, PhaseTransitionLog
+from .state import StateMutation, State
 
 
-def with_last_phase(last_phase: Optional[Phase]) -> StateMutation:
-    return lambda x: dataclasses.replace(x, last_phase=last_phase)
+def with_last_phase(last_phase: Phase) -> StateMutation:
+    def inner_with_last_phase(state: State):
+        phase_transition_logs = [
+            *state.phase_transition_logs,
+            PhaseTransitionLog(timeutils.now(), state.last_phase, last_phase),
+        ]
+        return dataclasses.replace(
+            state, last_phase=last_phase, phase_transition_logs=phase_transition_logs
+        )
+
+    return inner_with_last_phase
 
 
 def with_files(files: List[str]) -> StateMutation:

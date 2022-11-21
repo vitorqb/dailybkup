@@ -2,7 +2,7 @@ import abc
 import dataclasses
 import logging
 import os
-from .phases import Phase
+from .phases import Phase, PhaseTransitionLog
 from typing import List, Optional, Callable
 
 
@@ -12,6 +12,9 @@ StateMutation = Callable[["State"], "State"]
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class State:
     last_phase: Phase = Phase.BEGIN
+    phase_transition_logs: List[PhaseTransitionLog] = dataclasses.field(
+        default_factory=list
+    )
     files: Optional[List[str]] = None
     compression_logfile: Optional[str] = None
     compressed_file: Optional[str] = None

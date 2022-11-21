@@ -1,6 +1,8 @@
+import datetime
 import dailybkup.state as statemod
 import dailybkup.state.mutations as m
-from .phases import Phase
+import dailybkup.testutils as testutils
+from .phases import Phase, PhaseTransitionLog
 
 
 class TestMutations:
@@ -23,3 +25,11 @@ class TestMutations:
         assert final_state.encrypted_file == "boz"
         assert final_state.current_file == "buz"
         assert final_state.error == an_error
+
+    def test_mutating_last_phase_creates_record(self):
+        with testutils.mock_now(datetime.datetime(222, 1, 1)) as now:
+            initial_state = statemod.State.initial_state()
+            final_state = initial_state.mutate(m.with_last_phase(Phase.COMPRESSION))
+            assert final_state.phase_transition_logs == [
+                PhaseTransitionLog(now(), Phase.BEGIN, Phase.COMPRESSION)
+            ]
