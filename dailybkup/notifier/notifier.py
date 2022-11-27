@@ -3,8 +3,9 @@ import dataclasses
 import dailybkup.pipeline as pipeline
 import dailybkup.state as statemod
 import dailybkup.services.email_sender as email_sender_mod
+import dailybkup.state.mutations as m
 import logging
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 from typing import Sequence
 
 
@@ -69,4 +70,4 @@ class CompositeNotifier(Notifier):
         final_state = state
         for notifier in self._notifiers:
             final_state = notifier.run(final_state)
-        return dataclasses.replace(final_state, last_phase=Phase.NOTIFICATION)
+        return final_state.mutate(m.with_last_phase(Phase.NOTIFICATION))

@@ -5,7 +5,8 @@ from unittest import mock
 
 from dailybkup import state as statemod
 from dailybkup.pipeline import runner as sut
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
+import dailybkup.state.mutations as m
 
 
 @pytest.fixture
@@ -23,7 +24,7 @@ class MockCompressionTransitionHook(statemod.IPhaseTransitionHook):
 
     def run(self, state: statemod.State) -> statemod.State:
         self.calls.append(state)
-        return dataclasses.replace(state, compressed_file="bar")
+        return state.mutate(m.with_compressed_file("bar"))
 
 
 class MockCompressionStep:
@@ -31,7 +32,7 @@ class MockCompressionStep:
         return state.error is None
 
     def run(self, state: statemod.State) -> statemod.State:
-        return dataclasses.replace(state, last_phase=Phase.COMPRESSION)
+        return state.mutate(m.with_last_phase(Phase.COMPRESSION))
 
 
 class TestRunner:

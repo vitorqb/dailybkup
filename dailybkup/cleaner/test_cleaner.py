@@ -4,7 +4,7 @@ from unittest import mock
 from dailybkup.cleaner import config as configmod
 from dailybkup import cleaner as sut
 from dailybkup import state as statemod
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 
 
 def b2context_mock(*, file_names):

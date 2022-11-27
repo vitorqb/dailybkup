@@ -3,7 +3,7 @@ import dailybkup.compression.compression as sut
 from dailybkup.state import State
 import dailybkup.fileutils as fileutils
 import os
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 from dailybkup.testutils import p, p_
 
 

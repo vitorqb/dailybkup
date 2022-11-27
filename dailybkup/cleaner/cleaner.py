@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 import dailybkup.state as statemod
 import dataclasses
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 import dailybkup.cleaner.config as configmod
 import dailybkup.b2utils as b2utils
 from typing import Sequence
 import logging
+import dailybkup.state.mutations as m
 
 
 class Cleaner(ABC):
@@ -40,12 +41,12 @@ class B2Cleaner(Cleaner):
                 self._b2context.bucket_name,
             )
             self._b2context.delete(file_to_delete)
-        return dataclasses.replace(state, last_phase=Phase.CLEANUP)
+        return state.mutate(m.with_last_phase(Phase.CLEANUP))
 
 
 class NoOpCleaner(Cleaner):
     def run(self, state: statemod.State) -> statemod.State:
-        return dataclasses.replace(state, last_phase=Phase.CLEANUP)
+        return state.mutate(m.with_last_phase(Phase.CLEANUP))
 
 
 class CompositeCleaner(Cleaner):
@@ -61,5 +62,4 @@ class CompositeCleaner(Cleaner):
         for cleaner in self._cleaners:
             self._logging.info("Running cleaner {cleaner}")
             final_state = cleaner.run(final_state)
-        final_state = dataclasses.replace(final_state, last_phase=Phase.CLEANUP)
-        return final_state
+        return final_state.mutate(m.with_last_phase(Phase.CLEANUP))

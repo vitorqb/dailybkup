@@ -5,7 +5,9 @@ import shutil
 import contextlib
 import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
+import dailybkup.timeutils as timeutils
 import uuid
+import datetime
 
 
 B2_TEST_BUCKET = "dailybkup-test"
@@ -68,3 +70,15 @@ def b2_test_setup():
         yield context
     finally:
         context.delete_all_files()
+
+
+@contextlib.contextmanager
+def mock_now(dt: datetime.datetime):
+    def now_fn():
+        return dt
+
+    timeutils.set_now_fn(now_fn)
+    try:
+        yield now_fn
+    finally:
+        timeutils.set_now_fn(datetime.datetime.now)

@@ -1,6 +1,7 @@
 import dataclasses
 from dailybkup import state as statemod
-from dailybkup.phases import Phase
+import dailybkup.state.mutations as m
+from dailybkup.state import Phase
 
 
 class Finisher:
@@ -8,4 +9,4 @@ class Finisher:
         return True
 
     def run(self, state: statemod.State) -> statemod.State:
-        return dataclasses.replace(state, last_phase=Phase.END)
+        return state.mutate(m.with_last_phase(Phase.END))

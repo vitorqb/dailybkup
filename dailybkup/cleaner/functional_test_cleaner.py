@@ -3,7 +3,7 @@ from dailybkup import storer
 from dailybkup import testutils
 from dailybkup.cleaner import cleaner as sut
 from dailybkup import state as statemod
-from dailybkup.phases import Phase
+from dailybkup.state import Phase
 from dailybkup.cleaner import config as configmod
 
 
