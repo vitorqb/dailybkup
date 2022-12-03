@@ -8,6 +8,7 @@ import dailybkup.b2utils as b2utils
 import dailybkup.pipeline as pipeline
 import dailybkup.notifier as notifiermod
 import dailybkup.services.email_sender as email_sender_mod
+import dailybkup.services.desktop_notifier as desktop_notifier_mod
 from dailybkup import cleaner as cleanermod
 from dailybkup import encryption as encryptionmod
 import yaml
@@ -100,7 +101,10 @@ class _Injector:
 
     def notifier(self) -> notifiermod.Notifier:
         email_sender_builder = email_sender_mod.EmailSenderBuilder()
-        builder = notifiermod.NotifierBuilder(email_sender_builder)
+        desktop_notifier_builder = desktop_notifier_mod.DesktopNotifierBuilder()
+        builder = notifiermod.NotifierBuilder(
+            email_sender_builder, desktop_notifier_builder
+        )
         configs = self._config_loader.load().notification
         notifiers = [builder.build(config, dict(os.environ)) for config in configs]
         return notifiermod.CompositeNotifier(notifiers)

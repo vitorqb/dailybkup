@@ -1,10 +1,11 @@
 from .petition import DesktopNotificationPetition
-from .desktop_notifier import PDesktopNotifier
+from .desktop_notifier import PDesktopNotifier, NotifySendNotifier
 from .config import (
     NotifySendNotifierConfig,
     IDesktopNotifierConfig,
     desktop_notifier_config_builder,
 )
+from .builder import DesktopNotifierBuilder
 
 
 __all__ = [
@@ -13,4 +14,6 @@ __all__ = [
     "NotifySendNotifierConfig",
     "IDesktopNotifierConfig",
     "desktop_notifier_config_builder",
+    "DesktopNotifierBuilder",
+    "NotifySendNotifier",
 ]
