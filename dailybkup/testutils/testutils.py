@@ -6,8 +6,10 @@ import contextlib
 import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
 import dailybkup.timeutils as timeutils
+import dailybkup.osutils as osutils
 import uuid
 import datetime
+from unittest import mock
 
 
 B2_TEST_BUCKET = "dailybkup-test"
@@ -82,3 +84,13 @@ def mock_now(dt: datetime.datetime):
         yield now_fn
     finally:
         timeutils.set_now_fn(datetime.datetime.now)
+
+
+@contextlib.contextmanager
+def mock_os_run():
+    out = mock.Mock()
+    osutils.set_run_fn(out)
+    try:
+        yield out
+    finally:
+        osutils.reset_run_fn()

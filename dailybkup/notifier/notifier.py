@@ -1,9 +1,8 @@
 import abc
-import dataclasses
-import dailybkup.pipeline as pipeline
 import dailybkup.state as statemod
 import dailybkup.services.email_sender as email_sender_mod
 import dailybkup.state.mutations as m
+import dailybkup.services.desktop_notifier as desktop_notifier_mod
 import logging
 from dailybkup.state import Phase
 from typing import Sequence
@@ -59,6 +58,43 @@ class EmailNotifier(Notifier):
         email_petition = self._email_petition_builder.build(state)
         logging.info("Sending email: %s", email_petition)
         self.sender.send(email_petition)
+        return state
+
+
+class _DesktopPetitionBuilder:
+    def build(
+        self, state: statemod.State
+    ) -> desktop_notifier_mod.DesktopNotificationPetition:
+        if state.error:
+            return self._build_error(state)
+        return self._build_success(state)
+
+    def _build_error(
+        self, state: statemod.State
+    ) -> desktop_notifier_mod.DesktopNotificationPetition:
+        return desktop_notifier_mod.DesktopNotificationPetition(
+            summary="Backup Failed!",
+            body="Something has failed during your backup! =(",
+        )
+
+    def _build_success(
+        self, state: statemod.State
+    ) -> desktop_notifier_mod.DesktopNotificationPetition:
+        return desktop_notifier_mod.DesktopNotificationPetition(
+            summary="Backup completed!",
+            body="Your backup has finished!",
+        )
+
+
+class DesktopNotifier(Notifier):
+    def __init__(self, sender: desktop_notifier_mod.PDesktopNotifier):
+        self._sender = sender
+        self._petition_builder = _DesktopPetitionBuilder()
+
+    def run(self, state: statemod.State) -> statemod.State:
+        petition = self._petition_builder.build(state)
+        logging.info("Sending desktop notification: %s", petition)
+        self._sender.send(petition)
         return state
 
 

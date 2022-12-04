@@ -3,6 +3,7 @@ Functional tests for the app
 """
 import dailybkup.tarutils as tarutils
 import dailybkup.services.email_sender as email_sender
+import dailybkup.services.desktop_notifier as desktop_notifier
 import pytest
 import typer.testing
 import dailybkup.app.cli as climod
@@ -109,3 +110,15 @@ class TestFunctionalApp:
             assert result1.exit_code == 1
             assert mock_sender.count == 1
             assert mock_sender.last_email_petition.subject == "Backup Failed!"
+
+    def test_notifies_using_notify_send(self, app, cli_runner, config_builder):
+        config_builder.with_mock_desktop_notifier()
+        with config_builder.build() as (config, config_file):
+            mock_sender_dir = config.notification[0].sender_config.directory
+            mock_sender = desktop_notifier.MockDesktopNotifier(
+                directory=mock_sender_dir
+            )
+            result = cli_runner.invoke(app, ["-c", config_file, "backup"])
+            assert result.exit_code == 0
+            assert mock_sender.count == 1
+            assert mock_sender.last_petition.summary == "Backup completed!"

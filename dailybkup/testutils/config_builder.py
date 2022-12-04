@@ -9,6 +9,7 @@ import dailybkup.cleaner as cleanermod
 import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
 import dailybkup.services.email_sender as email_sender
+import dailybkup.services.desktop_notifier as desktop_notifier
 import dailybkup.notifier as notifiermod
 import contextlib
 from typing import Iterator, Tuple
@@ -104,6 +105,14 @@ class ConfigBuilder:
         notification_config = notifiermod.EmailNotifierConfig(
             recipient_address=recipient_address,
             sender_config=sender_config,
+        )
+        self.replace(notification=[*self._config.notification, notification_config])
+
+    def with_mock_desktop_notifier(self, directory=None) -> None:
+        directory = directory or self._tempfile_controller.new_dir()
+        sender_config = desktop_notifier.MockDesktopNotifierConfig(directory=directory)
+        notification_config = notifiermod.DesktopNotifierConfig(
+            sender_config=sender_config
         )
         self.replace(notification=[*self._config.notification, notification_config])
 
