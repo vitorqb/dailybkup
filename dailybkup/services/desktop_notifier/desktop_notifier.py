@@ -5,6 +5,7 @@ import os
 import uuid
 from typing import Protocol
 from .petition import DesktopNotificationPetition
+import dailybkup.osutils as osutils
 
 
 class PDesktopNotifier(Protocol):
@@ -13,11 +14,14 @@ class PDesktopNotifier(Protocol):
 
 
 class NotifySendNotifier:
-    def __init__(self, command: str):
+    def __init__(
+        self,
+        command: str,
+    ):
         self._command = command
 
     def send(self, petition: DesktopNotificationPetition) -> None:
-        raise NotImplementedError()
+        osutils.run([self._command, petition.summary, petition.body])
 
 
 class MockDesktopNotifier:
