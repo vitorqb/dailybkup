@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 if TYPE_CHECKING:
     RunFn = Callable[[Arg(List[str], "args")], None]
 else:
-    RUnFn = Any
+    RunFn = Any
 
 
 def _run(args: List[str]) -> None:
