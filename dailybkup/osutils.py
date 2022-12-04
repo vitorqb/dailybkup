@@ -1,11 +1,13 @@
 import subprocess
 
-from typing import List, Callable, TYPE_CHECKING
+from typing import List, Callable, TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from mypy_extensions import Arg
 
-
-RunFn = Callable[[Arg(List[str], "args")], None]
+if TYPE_CHECKING:
+    RunFn = Callable[[Arg(List[str], "args")], None]
+else:
+    RUnFn = Any
 
 
 def _run(args: List[str]) -> None:
