@@ -1,7 +1,8 @@
 import subprocess
 
-from typing import List, Callable
-from mypy_extensions import Arg
+from typing import List, Callable, TYPE_CHECKING
+if TYPE_CHECKING:
+    from mypy_extensions import Arg
 
 
 RunFn = Callable[[Arg(List[str], "args")], None]
