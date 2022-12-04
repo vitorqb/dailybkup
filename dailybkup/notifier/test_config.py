@@ -10,7 +10,7 @@ class TestNotificationConfigBuilder:
             "recipient_address": "foo@bar.baz",
             "sender_config": {"type_": "mock", "directory": "./foo"},
         }
-        config = sut.NotificationConfigBuilder().build(d)
+        config = sut.notification_config_builder.build(d)
         assert config == sut.EmailNotifierConfig(
             recipient_address="foo@bar.baz",
             sender_config=email_sender.MockEmailSenderConfig(directory="./foo"),
@@ -18,7 +18,7 @@ class TestNotificationConfigBuilder:
 
     def test_build_desktop(self):
         d = {"type_": "desktop", "sender_config": {"type_": "notify-send"}}
-        config = sut.NotificationConfigBuilder().build(d)
+        config = sut.notification_config_builder.build(d)
         assert config == sut.DesktopNotifierConfig(
             sender_config=desktop_notifier.NotifySendNotifierConfig()
         )

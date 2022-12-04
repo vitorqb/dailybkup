@@ -4,7 +4,7 @@ from dailybkup.services import email_sender
 import copy
 from typing import Dict, Any
 import dailybkup.dictutils as dictutils
-import dailybkup.config.exceptions as config_exceptions
+import dailybkup.config as configmod
 import dailybkup.services.email_sender as email_sender_mod
 import dailybkup.services.desktop_notifier as desktop_notifier
 
@@ -26,27 +26,12 @@ class DesktopNotifierConfig(NotifierConfig):
     sender_config: desktop_notifier.IDesktopNotifierConfig
 
 
-class NotificationConfigBuilder(dictutils.PDictBuilder[NotifierConfig]):
-    def build(self, d: Dict[str, Any]) -> NotifierConfig:
-        dict_ = copy.deepcopy(d)
-        type_ = dict_.pop("type_", "MISSING")
-        if type_ == "email":
-            return email_notification_config_builder.build(dict_)
-        if type_ == "desktop":
-            return desktop_notifier_config_builder.build(dict_)
-        if type_ == "MISSING":
-            raise config_exceptions.MissingConfigKey(
-                "Missing key type_ for notification config"
-            )
-        raise ValueError(f'Invalid type_ "{type_}" for cleaner config')
-
-
 class EmailNotificationConfigBuilder(dictutils.PDictBuilder[EmailNotifierConfig]):
     def build(self, d: Dict[str, Any]) -> EmailNotifierConfig:
         dict_ = copy.deepcopy(d)
         sender_config_raw = dict_.pop("sender_config")
         if sender_config_raw is None:
-            raise config_exceptions.MissingConfigKey(
+            raise configmod.MissingConfigKey(
                 "Missing key sender_config for email notification config"
             )
         sender_config = email_sender_mod.email_sender_config_builder.build(
@@ -54,7 +39,7 @@ class EmailNotificationConfigBuilder(dictutils.PDictBuilder[EmailNotifierConfig]
         )
         recipient_address = dict_.get("recipient_address")
         if recipient_address is None:
-            raise config_exceptions.MissingConfigKey(
+            raise configmod.MissingConfigKey(
                 "Missing key recipient_address for email notification config"
             )
         return EmailNotifierConfig(
@@ -67,7 +52,7 @@ class DesktopNotifierConfigBuilder(dictutils.PDictBuilder[DesktopNotifierConfig]
         dict_ = copy.deepcopy(d)
         sender_config_raw = dict_.pop("sender_config")
         if sender_config_raw is None:
-            raise config_exceptions.MissingConfigKey(
+            raise configmod.MissingConfigKey(
                 "Missing key sender_config for desktop notification config"
             )
         sender_config = desktop_notifier.desktop_notifier_config_builder.build(
@@ -76,6 +61,12 @@ class DesktopNotifierConfigBuilder(dictutils.PDictBuilder[DesktopNotifierConfig]
         return DesktopNotifierConfig(sender_config=sender_config)
 
 
-email_notification_config_builder = EmailNotificationConfigBuilder()
 desktop_notifier_config_builder = DesktopNotifierConfigBuilder()
-notification_config_builder = NotificationConfigBuilder()
+email_notification_config_builder = EmailNotificationConfigBuilder()
+notification_config_builder: configmod.TypeDispatcherConfigBuilder[NotifierConfig]
+notification_config_builder = configmod.TypeDispatcherConfigBuilder(
+    {
+        "email": email_notification_config_builder,
+        "desktop": desktop_notifier_config_builder,
+    }
+)

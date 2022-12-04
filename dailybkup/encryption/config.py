@@ -3,7 +3,7 @@ from abc import ABC
 import dailybkup.dictutils as dictutils
 from typing import Dict, Any
 import copy
-import dailybkup.config.exceptions as config_exceptions
+import dailybkup.config as configmod
 
 
 class IEncryptionConfig(ABC):
@@ -16,25 +16,14 @@ class PasswordEncryptionConfig(IEncryptionConfig):
     password: str
 
 
-class EncryptionConfigBuilder(dictutils.PDictBuilder[IEncryptionConfig]):
-    def build(self, d: Dict[str, Any]) -> IEncryptionConfig:
-        dict_ = copy.deepcopy(d)
-        type_ = dict_.pop("type_", "MISSING")
-        if type_ == "password":
-            return password_encryption_config_builder.build(dict_)
-        elif type_ == "MISSING":
-            raise config_exceptions.MissingConfigKey(
-                "Missing key type_ for storage config"
-            )
-        else:
-            raise ValueError(f'Invalid type_ "{type_}" for storage config')
-
-
-encryption_config_builder = EncryptionConfigBuilder()
 password_encryption_config_builder = dictutils.DictBuilder(
     ["password"],
     [],
     PasswordEncryptionConfig,
-    missing_key_exception=config_exceptions.MissingConfigKey,
-    unknown_key_exception=config_exceptions.UnkownConfigKey,
+    missing_key_exception=configmod.MissingConfigKey,
+    unknown_key_exception=configmod.UnkownConfigKey,
+)
+encryption_config_builder: configmod.TypeDispatcherConfigBuilder[IEncryptionConfig]
+encryption_config_builder = configmod.TypeDispatcherConfigBuilder(
+    {"password": password_encryption_config_builder}
 )
