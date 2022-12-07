@@ -56,19 +56,17 @@ cat >dailybkup/version.py <<EOF
 VERSION = "$VERSION"
 EOF
 
-exit 1
-
 msg "Setting version in poetry..."
 poetry version "$VERSION" || exit 1
 
 msg "Creating release commit..."
-git add . && git commit -m "Version $VERSION" && git push
+git add . && git commit -m "Version $VERSION" && git push  || exit 1
 
 msg "Building..."
-poetry build
+poetry build  || exit 1
 
 msg "Releasing..."
-gh release create v$VERSION --generate-notes ./dist/dailybkup-$VERSION-py3-none-any.whl ./dist/dailybkup-$VERSION.tar.gz
+gh release create v$VERSION --generate-notes ./dist/dailybkup-$VERSION-py3-none-any.whl ./dist/dailybkup-$VERSION.tar.gz  || exit 1
 
 msg "Releasing docs..."
-./scripts/docs-release.sh "$VERSION"
+./scripts/docs-release.sh "$VERSION"  || exit 1
