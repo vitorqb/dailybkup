@@ -1,0 +1,8 @@
+theme:
+  name: readthedocs
+site_name: DailyBkup Documentation
+markdown_extensions:
+  - admonition # Nice info/warning boxes
+extra:
+  version:
+    provider: mike # Creates a version selector on the header
