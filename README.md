@@ -1,5 +1,9 @@
 # DailyBackup
 
+## User Documentation
+
+https://vitorqb.github.io/dailybkup/latest
+
 ## Phases
 
 A backup consist of the following phases:
