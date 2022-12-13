@@ -65,11 +65,11 @@ git add . && git commit -m "Version $VERSION" && git push  || exit 1
 msg "Building..."
 poetry build  || exit 1
 
-msg "Releasing..."
+msg "Creating github release..."
 gh release create v$VERSION --generate-notes ./dist/dailybkup-$VERSION-py3-none-any.whl ./dist/dailybkup-$VERSION.tar.gz  || exit 1
 
 msg "Releasing docs..."
 ./scripts/docs-release.sh -v"$VERSION"  || exit 1
 
-msg "Publishing to AWS"
+msg "Publishing to AWS..."
 ./scripts/_publish-to-aws.sh || exit 1
