@@ -24,7 +24,7 @@ class DesktopNotifierConfig(NotifierConfig):
 
 
 desktop_notifier_config_builder: configmod.PConfigBuilder[DesktopNotifierConfig]
-desktop_notifier_config_builder = configmod.GenericBuilder(
+desktop_notifier_config_builder = configmod.LEGACYGenericBuilder(
     DesktopNotifierConfig,
     configmod.b.SubBuilder(
         "sender_config",
@@ -33,7 +33,7 @@ desktop_notifier_config_builder = configmod.GenericBuilder(
 )
 
 email_notification_config_builder: configmod.PConfigBuilder[EmailNotifierConfig]
-email_notification_config_builder = configmod.GenericBuilder(
+email_notification_config_builder = configmod.LEGACYGenericBuilder(
     EmailNotifierConfig,
     configmod.b.SubBuilder(
         "sender_config", email_sender_mod.email_sender_config_builder

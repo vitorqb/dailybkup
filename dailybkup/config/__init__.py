@@ -1,5 +1,5 @@
 from .exceptions import UnkownConfigKey, MissingConfigKey
-from .config import TypeDispatcherConfigBuilder, PConfigBuilder, GenericBuilder
+from .config import TypeDispatcherConfigBuilder, PConfigBuilder, LEGACYGenericBuilder
 from . import builders as b
 
 
