@@ -5,17 +5,17 @@ import pytest
 from typing import Dict, Any
 
 
-class FakeSettings():
+class FakeSettings:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
 
-class FakeBuilder():
+class FakeBuilder:
     def build(self, d: Dict[str, Any]) -> FakeSettings:
         return FakeSettings(**d)
 
 
-class TestRequired():
+class TestRequired:
     def test_fails_if_attribute_already_parsed(self):
         state = ConfigBuildState({}, {"foo": "bar"})
         step = sut.Required("foo")
@@ -39,7 +39,7 @@ class TestRequired():
         assert state.parsed.get("foo") == "bar"
 
 
-class TestSubBuilder():
+class TestSubBuilder:
     def test_fails_if_attribute_already_parsed(self):
         state = ConfigBuildState({"foo": {}}, {"foo": "bar"})
         step = sut.SubBuilder("foo", FakeBuilder())

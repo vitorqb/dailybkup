@@ -1,6 +1,10 @@
 from .exceptions import UnkownConfigKey, MissingConfigKey
-from .config import TypeDispatcherConfigBuilder, PConfigBuilder, LEGACYGenericBuilder
-from . import builders as b
+from .config import (
+    TypeDispatcherConfigBuilder,
+    PConfigBuilder,
+    GenericBuilder,
+)
+from . import build_steps as bs
 
 
 __all__ = [
@@ -9,5 +13,5 @@ __all__ = [
     "TypeDispatcherConfigBuilder",
     "PConfigBuilder",
     "GenericBuilder",
-    "b",
+    "bs",
 ]

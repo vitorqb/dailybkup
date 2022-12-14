@@ -5,12 +5,12 @@ import dailybkup.config as configmod
 import dailybkup.config.build_steps as bs
 
 
-class FakeSetting():
+class FakeSetting:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
 
-class FakeBuilder():
+class FakeBuilder:
     def build(self, d):
         return FakeSetting(**d)
 
@@ -37,7 +37,7 @@ class TestTypeDispatcherConfigBuilder:
             builder.build({})
 
 
-class TestGenericBuilder():
+class TestGenericBuilder:
     def test_fails_because_unknown_key(self):
         builder = sut.GenericBuilder(FakeSetting)
         with pytest.raises(sut.UnkownConfigKey) as e:
