@@ -1,6 +1,5 @@
 from abc import ABC
 import dataclasses
-import dailybkup.dictutils as dictutils
 import dailybkup.config as configmod
 
 
@@ -22,19 +21,18 @@ class B2StorageConfig(IStorageConfig):
     type_: str = "b2"
 
 
-file_storage_config_builder = dictutils.DictBuilder(
-    ["path"],
-    ["type_"],
+file_storage_config_builder: configmod.PConfigBuilder[FileStorageConfig]
+file_storage_config_builder = configmod.GenericBuilder(
     FileStorageConfig,
-    missing_key_exception=configmod.MissingConfigKey,
-    unknown_key_exception=configmod.UnkownConfigKey,
+    configmod.bs.Required("path"),
+    configmod.bs.Optional("type_", "file"),
 )
-b2_storage_config_builder = dictutils.DictBuilder(
-    ["bucket", "suffix"],
-    ["type_", "prefix"],
+b2_storage_config_builder: configmod.PConfigBuilder[B2StorageConfig]
+b2_storage_config_builder = configmod.GenericBuilder(
     B2StorageConfig,
-    missing_key_exception=configmod.MissingConfigKey,
-    unknown_key_exception=configmod.UnkownConfigKey,
+    configmod.bs.Required("bucket", "suffix"),
+    configmod.bs.Optional("type_", "b2"),
+    configmod.bs.Optional("prefix", ""),
 )
 storage_config_builder: configmod.TypeDispatcherConfigBuilder[IStorageConfig]
 storage_config_builder = configmod.TypeDispatcherConfigBuilder(

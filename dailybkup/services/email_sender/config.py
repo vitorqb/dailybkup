@@ -1,6 +1,5 @@
 import dataclasses
 import abc
-import dailybkup.dictutils as dictutils
 import dailybkup.config as configmod
 
 
@@ -21,19 +20,15 @@ class MailGunEmailSenderConfig(IEmailSenderConfig):
     from_: str
 
 
-mock_email_sender_config_builder = dictutils.DictBuilder(
-    ["directory"],
-    ["type_"],
+mock_email_sender_config_builder = configmod.GenericBuilder(
     MockEmailSenderConfig,
-    missing_key_exception=configmod.MissingConfigKey,
-    unknown_key_exception=configmod.UnkownConfigKey,
+    configmod.bs.Required("directory"),
+    configmod.bs.Optional("type_", "mock"),
 )
-mailgun_email_sender_config_builder = dictutils.DictBuilder(
-    ["base_url", "from_"],
-    ["type_"],
+mailgun_email_sender_config_builder = configmod.GenericBuilder(
     MailGunEmailSenderConfig,
-    missing_key_exception=configmod.MissingConfigKey,
-    unknown_key_exception=configmod.UnkownConfigKey,
+    configmod.bs.Required("base_url", "from"),
+    configmod.bs.Optional("type_", "mailgun"),
 )
 email_sender_config_builder: configmod.TypeDispatcherConfigBuilder[IEmailSenderConfig]
 email_sender_config_builder = configmod.TypeDispatcherConfigBuilder(

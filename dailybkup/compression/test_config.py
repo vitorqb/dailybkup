@@ -22,7 +22,7 @@ class TestCompressionConfig:
 
     def test_fails_on_unknown_arg(self):
         with pytest.raises(configmod.exceptions.UnkownConfigKey):
-            sut.compression_config_builder.build({"a": "b"})
+            sut.compression_config_builder.build({**compression_config_dict1, "a": "b"})
 
     def test_raises_on_missing_arg(self):
         with pytest.raises(configmod.exceptions.MissingConfigKey):

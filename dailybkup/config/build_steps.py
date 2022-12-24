@@ -1,5 +1,5 @@
 from .common import ConfigBuildState, PConfigBuilder
-from typing import TypeVar
+from typing import TypeVar, Any
 from .exceptions import MissingConfigKey
 
 
@@ -17,6 +17,17 @@ class Required:
             if attr_name not in s.unparsed:
                 raise MissingConfigKey(f"Missing key: {attr_name}")
             s.parsed[attr_name] = s.unparsed.pop(attr_name)
+
+
+class Optional:
+    def __init__(self, attr_name: str, default: Any):
+        self._attr_name = attr_name
+        self._default = default
+
+    def __call__(self, s: ConfigBuildState) -> None:
+        if self._attr_name in s.parsed:
+            raise ValueError(f"Duplicated value for {self._attr_name}")
+        s.parsed[self._attr_name] = s.unparsed.pop(self._attr_name, self._default)
 
 
 class SubBuilder:
