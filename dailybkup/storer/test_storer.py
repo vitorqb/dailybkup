@@ -27,7 +27,7 @@ class TestFileStorer:
             open(current_file, "wb") as f,
         ):
             f.write(b"foo")
-            config = configmod.FileStorageConfig(path=dest_file)
+            config = configmod.FileStorageConfig(LEGACYpath=dest_file)
             state_1 = statemod.State.initial_state().mutate(
                 m.with_current_file(current_file)
             )

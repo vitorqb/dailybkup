@@ -68,7 +68,7 @@ class FileStorer(Storer):
 
     def run(self, state: statemod.State) -> statemod.State:
         assert state.current_file is not None, "State has no current file"
-        dst = self._config.path
+        dst = self._config.LEGACYpath
         LOGGER.info("Copying %s to %s", state.current_file, dst)
         shutil.copyfile(state.current_file, dst)
         return state.mutate(m.with_last_phase(Phase.STORAGE))

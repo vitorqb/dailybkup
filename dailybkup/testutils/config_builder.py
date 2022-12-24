@@ -70,7 +70,7 @@ class ConfigBuilder:
 
     def with_file_storage(self, path=None) -> None:
         path = path or self._tempfile_controller.new()
-        storage_config = storermod.FileStorageConfig(path=path)
+        storage_config = storermod.FileStorageConfig(LEGACYpath=path)
         self.replace(storage=[*self._config.storage, storage_config])
 
     def with_b2_storage(

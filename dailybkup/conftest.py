@@ -32,7 +32,7 @@ def config1():
                     "files": [p("afile")],
                     "exclude": [],
                 },
-                "storage": [{"type_": "file", "path": dest_file}],
+                "storage": [{"type_": "file", "LEGACYpath": dest_file}],
             }
         )
 
