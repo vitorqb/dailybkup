@@ -9,6 +9,7 @@ import dailybkup.timeutils as timeutils
 import dailybkup.osutils as osutils
 import uuid
 import datetime
+import dataclasses
 from unittest import mock
 
 
@@ -56,7 +57,7 @@ def with_temp_dir():
 def config_to_file(config: app.config.Config):
     with with_temp_file() as f:
         with open(f, "w") as f_:
-            yaml.safe_dump(app.config.dumper.dump(config), f_)
+            yaml.safe_dump(dataclasses.asdict(config), f_)
         yield f
 
 

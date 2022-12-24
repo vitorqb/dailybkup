@@ -1,6 +1,7 @@
 import subprocess
 
 from typing import List, Callable, TYPE_CHECKING, Any
+
 if TYPE_CHECKING:
     from mypy_extensions import Arg
 

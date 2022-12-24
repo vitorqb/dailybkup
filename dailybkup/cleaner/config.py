@@ -1,6 +1,5 @@
 import dataclasses
 from abc import ABC
-import dailybkup.dictutils as dictutils
 import dailybkup.config as configmod
 
 
@@ -16,12 +15,11 @@ class B2CleanerConfig(CleanerConfig):
     type_: str = "b2"
 
 
-b2_cleaner_config_builder = dictutils.DictBuilder(
-    ["bucket", "retain_last"],
-    ["type_", "prefix"],
+b2_cleaner_config_builder = configmod.GenericBuilder(
     B2CleanerConfig,
-    missing_key_exception=configmod.MissingConfigKey,
-    unknown_key_exception=configmod.UnkownConfigKey,
+    configmod.bs.Required("bucket", "retain_last"),
+    configmod.bs.Optional("type_", "b2"),
+    configmod.bs.Optional("prefix", ""),
 )
 cleaner_config_builder: configmod.TypeDispatcherConfigBuilder[CleanerConfig]
 cleaner_config_builder = configmod.TypeDispatcherConfigBuilder(

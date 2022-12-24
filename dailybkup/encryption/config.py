@@ -1,8 +1,5 @@
 import dataclasses
 from abc import ABC
-import dailybkup.dictutils as dictutils
-from typing import Dict, Any
-import copy
 import dailybkup.config as configmod
 
 
@@ -16,12 +13,9 @@ class PasswordEncryptionConfig(IEncryptionConfig):
     password: str
 
 
-password_encryption_config_builder = dictutils.DictBuilder(
-    ["password"],
-    [],
+password_encryption_config_builder = configmod.GenericBuilder(
     PasswordEncryptionConfig,
-    missing_key_exception=configmod.MissingConfigKey,
-    unknown_key_exception=configmod.UnkownConfigKey,
+    configmod.bs.Required("password"),
 )
 encryption_config_builder: configmod.TypeDispatcherConfigBuilder[IEncryptionConfig]
 encryption_config_builder = configmod.TypeDispatcherConfigBuilder(

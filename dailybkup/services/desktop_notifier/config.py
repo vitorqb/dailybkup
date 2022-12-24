@@ -1,8 +1,5 @@
-import copy
-from typing import Dict, Any
 import abc
 import dataclasses
-import dailybkup.dictutils as dictutils
 import dailybkup.config as configmod
 
 
@@ -22,19 +19,15 @@ class MockDesktopNotifierConfig(IDesktopNotifierConfig):
     directory: str
 
 
-notify_send_notifier_config_builder = dictutils.DictBuilder(
-    [],
-    ["type_", "command"],
+notify_send_notifier_config_builder = configmod.GenericBuilder(
     NotifySendNotifierConfig,
-    missing_key_exception=configmod.MissingConfigKey,
-    unknown_key_exception=configmod.UnkownConfigKey,
+    configmod.bs.Optional("type_", "notify-send"),
+    configmod.bs.Optional("command", "notify-send"),
 )
-mock_notifier_config_builder = dictutils.DictBuilder(
-    ["directory"],
-    ["type_"],
+mock_notifier_config_builder = configmod.GenericBuilder(
     MockDesktopNotifierConfig,
-    missing_key_exception=configmod.MissingConfigKey,
-    unknown_key_exception=configmod.UnkownConfigKey,
+    configmod.bs.Required("directory"),
+    configmod.bs.Optional("type_", "mock"),
 )
 desktop_notifier_config_builder: configmod.TypeDispatcherConfigBuilder[
     IDesktopNotifierConfig
