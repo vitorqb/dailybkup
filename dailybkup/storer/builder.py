@@ -23,7 +23,7 @@ class StorerBuilder:
             case FileStorageConfig():
                 # TODO - support proper suffix
                 backup_file_name_generator = self._l_backup_file_name_generator(
-                    ".tar.gz"
+                    config.suffix
                 )
                 return FileStorer(
                     config, backup_file_name_generator=backup_file_name_generator
