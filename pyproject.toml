@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dailybkup"
-version = "0.4.2"
+version = "0.4.3"
 description = ""
 authors = ["Vitor Barbosa <vitorqb@gmail.com>"]
 exclude = [
