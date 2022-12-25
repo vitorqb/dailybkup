@@ -21,7 +21,6 @@ class StorerBuilder:
     def build(self, config: IStorageConfig) -> Storer:
         match config:
             case FileStorageConfig():
-                # TODO - support proper suffix
                 backup_file_name_generator = self._l_backup_file_name_generator(
                     config.suffix
                 )
