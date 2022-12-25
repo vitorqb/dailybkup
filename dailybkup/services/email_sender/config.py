@@ -27,7 +27,7 @@ mock_email_sender_config_builder = configmod.GenericBuilder(
 )
 mailgun_email_sender_config_builder = configmod.GenericBuilder(
     MailGunEmailSenderConfig,
-    configmod.bs.Required("base_url", "from"),
+    configmod.bs.Required("base_url", "from_"),
     configmod.bs.Optional("type_", "mailgun"),
 )
 email_sender_config_builder: configmod.TypeDispatcherConfigBuilder[IEmailSenderConfig]
