@@ -101,3 +101,39 @@ You can check when the timer will activate by doing
 ```sh
 systemctl --user status dailybkup.timer
 ```
+
+
+## Releases
+
+### 1.0.0
+
+**Breaking Changes**
+
+The configuration for `file` storage has changed:
+
+*Before*  
+```yaml
+storage:
+  - type_: file
+    path: /home/user/backup.tar.gpg
+```
+
+*Now*  
+```yaml
+storage:
+  - type_: file
+    directory: /home/user/bkups
+    suffix: .tar.gpg
+```
+
+The old behavior expected `path` to be the path to a file where the
+entire backup would be saved.
+
+The new behavior expects `directory` to be an existing directory. A
+backup file will be created on this directory. The file name will
+contain the date of the creation of the file, in the
+`YYYY-MM-DDTHH:MM:SS` format. If `suffix` is given, it's appended to
+the file name.
+
+In the above example, we would end up with a file like
+`/home/user/bkups/2022-12-25T23:28:39.tar.gpg`.
