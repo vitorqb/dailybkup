@@ -42,8 +42,10 @@ class TestFunctionalApp:
         with config_builder.build() as (config, config_file):
             result = cli_runner.invoke(app, ["-c", config_file, "backup"])
             assert result.exit_code == 0
-            tar_file = config.storage[0].LEGACYpath
-            assert os.path.exists(tar_file)
+            dest_dir = config.storage[0].directory
+            files_in_dest_dir = [x for x in os.listdir(dest_dir)]
+            assert len(files_in_dest_dir) == 1
+            tar_file = os.path.join(dest_dir, files_in_dest_dir[0])
             assert p_("file1") in tarutils.list_files(tar_file)
 
     def test_encrypted_file(self, app, cli_runner, config_builder):
@@ -52,7 +54,10 @@ class TestFunctionalApp:
         with config_builder.build() as (config, config_file):
             result = cli_runner.invoke(app, ["-c", config_file, "backup"])
             assert result.exit_code == 0
-            encrypted_file = config.storage[0].LEGACYpath
+            dest_dir = config.storage[0].directory
+            files_in_dest_dir = [x for x in os.listdir(dest_dir)]
+            assert len(files_in_dest_dir) == 1
+            encrypted_file = os.path.join(dest_dir, files_in_dest_dir[0])
             with testutils.with_temp_file() as decrypted_file:
                 gpgutils.decrypt(encrypted_file, "123456", decrypted_file)
                 assert os.path.exists(decrypted_file)

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import os
 import dataclasses
 import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
@@ -63,12 +64,20 @@ class FileStorer(Storer):
 
     _config: configmod.FileStorageConfig
 
-    def __init__(self, config: configmod.FileStorageConfig):
+    def __init__(
+        self,
+        config: configmod.FileStorageConfig,
+        backup_file_name_generator: IBackupFileNameGenerator,
+    ):
         self._config = config
+        self._backup_file_name_generator = backup_file_name_generator
 
     def run(self, state: statemod.State) -> statemod.State:
         assert state.current_file is not None, "State has no current file"
-        dst = self._config.LEGACYpath
+        dst = os.path.join(
+            self._config.directory,
+            self._backup_file_name_generator.generate(),
+        )
         LOGGER.info("Copying %s to %s", state.current_file, dst)
         shutil.copyfile(state.current_file, dst)
         return state.mutate(m.with_last_phase(Phase.STORAGE))

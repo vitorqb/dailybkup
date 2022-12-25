@@ -4,6 +4,7 @@ import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
 import dailybkup.storer as sut
 import dailybkup.state.mutations as m
+import dailybkup.fileutils as fileutils
 from dailybkup.state import Phase
 import unittest.mock as mock
 
@@ -25,18 +26,28 @@ class TestFileStorer:
             testutils.with_temp_dir() as dest_directory,
             testutils.with_temp_file() as dest_file,
             testutils.mock_now(datetime(2021, 12, 31)),
-            open(current_file, "wb") as f,
         ):
-            f.write(b"foo")
+            file_name_generator = sut.BackupFileNameGenerator(
+                suffix=".tar.gz", now_fn=fake_now
+            )
+            fileutils.write_str(current_file, "foo")
             config = configmod.FileStorageConfig(
                 LEGACYpath=dest_file, directory=dest_directory
             )
             state_1 = statemod.State.initial_state().mutate(
                 m.with_current_file(current_file)
             )
-            state_2 = sut.FileStorer(config).run(state_1)
+            state_2 = sut.FileStorer(
+                config, backup_file_name_generator=file_name_generator
+            ).run(state_1)
             exp_state = state_1.mutate(m.with_last_phase(Phase.STORAGE))
             assert state_2 == exp_state
+            assert (
+                fileutils.read_as_str(
+                    f"{dest_directory}/{file_name_generator.generate()}"
+                )
+                == "foo"
+            )
 
 
 class TestCompositeStorer:
