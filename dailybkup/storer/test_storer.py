@@ -31,9 +31,7 @@ class TestFileStorer:
                 suffix=".tar.gz", now_fn=fake_now
             )
             fileutils.write_str(current_file, "foo")
-            config = configmod.FileStorageConfig(
-                LEGACYpath=dest_file, directory=dest_directory
-            )
+            config = configmod.FileStorageConfig(directory=dest_directory)
             state_1 = statemod.State.initial_state().mutate(
                 m.with_current_file(current_file)
             )

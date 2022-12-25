@@ -9,7 +9,6 @@ class IStorageConfig(ABC):
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class FileStorageConfig(IStorageConfig):
-    LEGACYpath: str
     directory: str
     prefix: str = ""
     type_: str = "file"
@@ -25,7 +24,7 @@ class B2StorageConfig(IStorageConfig):
 
 file_storage_config_builder = configmod.GenericBuilder(
     FileStorageConfig,
-    configmod.bs.Required("LEGACYpath", "directory"),
+    configmod.bs.Required("directory"),
     configmod.bs.Optional("type_", "file"),
     configmod.bs.Optional("prefix", ""),
 )

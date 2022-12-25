@@ -26,7 +26,7 @@ compression_config1 = compressionmod.CompressionConfig(
 
 config_dict1: Dict[str, Any] = {
     "compression": compression_config_dict1,
-    "storage": [{"type_": "file", "LEGACYpath": p("out"), "directory": p("out")}],
+    "storage": [{"type_": "file", "directory": p("out")}],
     "notification": [
         {
             "type_": "email",
@@ -39,12 +39,9 @@ config_dict1: Dict[str, Any] = {
     ],
 }
 
-storer_config1 = storer.config.FileStorageConfig(
-    LEGACYpath=p("out"), directory=p("out")
-)
+storer_config1 = storer.config.FileStorageConfig(directory=p("out"))
 storer_config_dict1: Dict[str, Any] = {
     "type_": "file",
-    "LEGACYpath": p("out"),
     "directory": p("out"),
 }
 

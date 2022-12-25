@@ -38,7 +38,6 @@ def config1():
                 "storage": [
                     {
                         "type_": "file",
-                        "LEGACYpath": dest_file,
                         "directory": dest_directory,
                     }
                 ],
