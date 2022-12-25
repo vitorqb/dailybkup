@@ -68,9 +68,12 @@ class ConfigBuilder:
         encryption_config = encryptionmod.PasswordEncryptionConfig(password=password)
         self.replace(encryption=encryption_config)
 
-    def with_file_storage(self, path=None) -> None:
-        path = path or self._tempfile_controller.new()
-        storage_config = storermod.FileStorageConfig(LEGACYpath=path)
+    def with_file_storage(self, LEGACYpath=None, directory=None) -> None:
+        LEGACYpath = LEGACYpath or self._tempfile_controller.new()
+        directory = directory or self._tempfile_controller.new_dir()
+        storage_config = storermod.FileStorageConfig(
+            LEGACYpath=LEGACYpath, directory=directory
+        )
         self.replace(storage=[*self._config.storage, storage_config])
 
     def with_b2_storage(
