@@ -19,16 +19,23 @@ class StorerBuilder:
         self._l_backup_file_name_generator = l_backup_file_name_generator
 
     def build(self, config: IStorageConfig) -> Storer:
-        if isinstance(config, FileStorageConfig):
-            return FileStorer(config)
-        if isinstance(config, B2StorageConfig):
-            b2context = self._l_b2context(config.bucket, config.prefix)
-            backup_file_name_generator = self._l_backup_file_name_generator(
-                config.suffix
-            )
-            return B2Storer(
-                config,
-                b2context,
-                backup_file_name_generator=backup_file_name_generator,
-            )
-        raise RuntimeError(f"Uknown config class: {config}")
+        match config:
+            case FileStorageConfig():
+                backup_file_name_generator = self._l_backup_file_name_generator(
+                    config.suffix
+                )
+                return FileStorer(
+                    config, backup_file_name_generator=backup_file_name_generator
+                )
+            case B2StorageConfig():
+                b2context = self._l_b2context(config.bucket, config.prefix)
+                backup_file_name_generator = self._l_backup_file_name_generator(
+                    config.suffix
+                )
+                return B2Storer(
+                    config,
+                    b2context,
+                    backup_file_name_generator=backup_file_name_generator,
+                )
+            case _:
+                raise RuntimeError(f"Uknown config class: {config}")

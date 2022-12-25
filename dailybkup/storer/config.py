@@ -9,7 +9,8 @@ class IStorageConfig(ABC):
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class FileStorageConfig(IStorageConfig):
-    path: str
+    directory: str
+    suffix: str = ""
     type_: str = "file"
 
 
@@ -21,13 +22,12 @@ class B2StorageConfig(IStorageConfig):
     type_: str = "b2"
 
 
-file_storage_config_builder: configmod.PConfigBuilder[FileStorageConfig]
 file_storage_config_builder = configmod.GenericBuilder(
     FileStorageConfig,
-    configmod.bs.Required("path"),
+    configmod.bs.Required("directory"),
     configmod.bs.Optional("type_", "file"),
+    configmod.bs.Optional("suffix", ""),
 )
-b2_storage_config_builder: configmod.PConfigBuilder[B2StorageConfig]
 b2_storage_config_builder = configmod.GenericBuilder(
     B2StorageConfig,
     configmod.bs.Required("bucket", "suffix"),

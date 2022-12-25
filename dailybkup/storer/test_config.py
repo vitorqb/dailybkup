@@ -5,8 +5,11 @@ import dailybkup.config.exceptions as config_exceptions
 from dailybkup.testutils import p
 
 
-config1 = sut.FileStorageConfig(path=p("out"))
-config_dict1: Dict[str, Any] = {"type_": "file", "path": p("out")}
+config1 = sut.FileStorageConfig(directory=p("out"))
+config_dict1: Dict[str, Any] = {
+    "type_": "file",
+    "directory": p("out"),
+}
 
 
 class TestFileStorageConfigBuilder:
