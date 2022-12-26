@@ -1,3 +1,4 @@
+from typing import Optional
 import dailybkup.app as app
 import dailybkup.finisher as finishermod
 import dailybkup.state as statemod
@@ -9,6 +10,7 @@ import dailybkup.pipeline as pipeline
 import dailybkup.notifier as notifiermod
 import dailybkup.services.email_sender as email_sender_mod
 import dailybkup.services.desktop_notifier as desktop_notifier_mod
+import dailybkup.tarutils as tarutils
 from dailybkup import cleaner as cleanermod
 from dailybkup import encryption as encryptionmod
 import yaml
@@ -62,11 +64,20 @@ class _Injector:
             )
         return self._temp_file_generator_instance
 
+    def tar_compressor_runner(
+        self, executable: str = "tar", flags: Optional[Sequence[str]] = None
+    ) -> tarutils.TarCompressorRunner:
+        return tarutils.TarCompressorRunner(executable=executable, flags=flags)
+
     def compressor(self) -> compression.Compressor:
         config = self._config_loader.load()
+        tar_compressor_runner = self.tar_compressor_runner(
+            config.compression.tar_executable, config.compression.tar_flags
+        )
         return compression.TarCompressor(
             config.compression,
-            self.temp_file_generator(),
+            tempFileGenerator=self.temp_file_generator(),
+            tar_compressor_runner=tar_compressor_runner,
         )
 
     def b2context(self, bucket_name: str, prefix: str) -> b2utils.B2Context:

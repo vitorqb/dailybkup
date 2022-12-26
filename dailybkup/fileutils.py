@@ -28,3 +28,8 @@ def read_as_str(f: str) -> str:
 def write_str(f: str, x: str) -> None:
     with open(f, "wb") as f_:
         f_.write(x.encode())
+
+
+def count_lines(f: str) -> int:
+    with open(f) as f_:
+        return len(f_.readlines())

@@ -2,6 +2,7 @@ import dailybkup.compression.config as configmod
 import dailybkup.compression.compression as sut
 from dailybkup.state import State
 import dailybkup.fileutils as fileutils
+import dailybkup.tarutils as tarutils
 import os
 from dailybkup.state import Phase
 from dailybkup.testutils import p, p_
@@ -13,7 +14,11 @@ class TestTarCompressor:
             files=[p("file1"), p("dir1")], exclude=[p("dir1/dir2")]
         )
         state_1 = State()
-        compressor = sut.TarCompressor(config, fileutils.TempFileGenerator())
+        compressor = sut.TarCompressor(
+            config,
+            tempFileGenerator=fileutils.TempFileGenerator(),
+            tar_compressor_runner=tarutils.TarCompressorRunner(),
+        )
         state_2 = compressor.run(state_1)
         assert state_2.last_phase == Phase.COMPRESSION
         assert p_("dir1") + "/" in state_2.files
