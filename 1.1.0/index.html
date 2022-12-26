@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>DailyBkup Documentation</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link href="css/version-select.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "DailyBkup";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> DailyBkup Documentation
+        </a>
+        <div class="version">
+          {'provider': 'mike'}
+        </div><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">DailyBkup</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#options">Options</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#compression">Compression</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running">Running</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#scheduling">Scheduling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#systemd">Systemd</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#releases">Releases</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#100">1.0.0</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">DailyBkup Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>DailyBkup</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="dailybkup">DailyBkup</h1>
+<p>A tool for backing up your files daily.</p>
+<h2 id="configuration">Configuration</h2>
+<p>Backups rely on a yaml configuration file that defines what and how to
+run a backup.</p>
+<p>The program looks for a configuration file in a path specified by the
+environmental variable <code>DAILYBKUP_CONFIG_FILE</code>. If not set, it
+defaults to <code>~/.dailybkup/config.yaml</code>.</p>
+<p>A custom configuration file can be set by using the <code>-c</code> flag, which
+will take precendence over the environmental variable
+<code>DAILYBKUP_CONFIG_FILE</code>.</p>
+<pre><code class="language-sh">python -m dailybkup -c CONFIG_FILE backup
+</code></pre>
+<h3 id="options">Options</h3>
+<h4 id="compression">Compression</h4>
+<p>Defines what and how to compress.</p>
+<pre><code class="language-yaml">compression:
+    files:  # Required
+        - /files/1
+        - /files/2
+    exclude:  # Required
+        - /files/3
+    tar_executable: &quot;mytar&quot;  # Defaults to &quot;tar&quot;
+    tar_flags: [&quot;--dereference&quot;, &quot;-z&quot;]  # Defaults to [&quot;--dereference&quot;, &quot;--checkpoint=1000&quot;, &quot;-v&quot;, &quot;-z&quot;]
+</code></pre>
+<h2 id="running">Running</h2>
+<p>Running a backup as as simple as:</p>
+<pre><code>python -m dailybkup  backup
+</code></pre>
+<h2 id="scheduling">Scheduling</h2>
+<p>One of the easiest tools to run your backups daily is using
+<a href="https://en.wikipedia.org/wiki/Systemd">systemd</a> timers.</p>
+<h3 id="systemd">Systemd</h3>
+<p>Here we will schedule a backup to run with the following criteria:</p>
+<p>Create both files below:</p>
+<pre><code># file:~/.config/systemd/user/dailybkup.timer
+[Unit]
+Description=Timer for Daily Backup
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=default.target
+</code></pre>
+<pre><code># file:~/.config/systemd/user/dailybkup.service
+[Unit]
+Description=Daily Backup
+StartLimitInterval=200
+StartLimitBurst=5
+
+[Service]
+EnvironmentFile=%h/.dailybkup/env
+ExecStart=/usr/bin/python -m dailybkup -c %h/.dailybkup/config.yaml backup
+Restart=on-failure
+RestartSec=30
+</code></pre>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<ul>
+<li>We are configuring a backup that will:<ul>
+<li>Run once per day</li>
+<li>Restart up to 5 times on failure</li>
+<li>Restart after 30s</li>
+</ul>
+</li>
+<li>You may also save those in other places - see <a href="https://unix.stackexchange.com/questions/224992/where-do-i-put-my-systemd-unit-file">Where do I put my
+systemd unit
+files</a></li>
+<li>If you are configuring multiple backups, give each file a unique name.</li>
+<li>Make sure <code>/usr/bin/python</code> is valid for your system, or update it accordingly.</li>
+</ul>
+</div>
+<p>Now, set your <code>config.yaml</code> file and an <code>env</code> file on the paths
+specified above. For example:</p>
+<pre><code># file:~/.dailybkup/config.yaml
+storage:
+  - type_: b2
+    bucket: dailybkup-personal
+    suffix: .tar
+compression:
+  files: [~/Downloads]
+  exclude: []
+notification:
+  - type_: desktop
+    sender_config:
+      type_: &quot;notify-send&quot;
+</code></pre>
+<pre><code># file:~/.dailybkup/env
+DAILYBKUP_B2_APPLICATION_KEY_ID=mykeyid
+DAILYBKUP_B2_APPLICATION_KEY=mykey
+</code></pre>
+<p>Now use <code>systemctl</code> to enable the service</p>
+<pre><code class="language-sh">systemctl --user daemon-reload
+systemctl --user enable dailybkup.timer
+systemctl --user start dailybkup.timer
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since there are sensitive data on the <code>env</code> file, you may want to give it
+restrictive permissions: <code>chmod 0600 ~/.dailybkup/env</code></p>
+</div>
+<p>If you don't want to wait and want to give it a try, you can start the backup
+immediately using</p>
+<pre><code class="language-sh">systemctl --user start dailybkup
+</code></pre>
+<p>You can check when the timer will activate by doing</p>
+<pre><code class="language-sh">systemctl --user status dailybkup.timer
+</code></pre>
+<h2 id="releases">Releases</h2>
+<h3 id="100">1.0.0</h3>
+<p><strong>Breaking Changes</strong></p>
+<p>The configuration for <code>file</code> storage has changed:</p>
+<p><em>Before</em>  </p>
+<pre><code class="language-yaml">storage:
+  - type_: file
+    path: /home/user/backup.tar.gpg
+</code></pre>
+<p><em>Now</em>  </p>
+<pre><code class="language-yaml">storage:
+  - type_: file
+    directory: /home/user/bkups
+    suffix: .tar.gpg
+</code></pre>
+<p>The old behavior expected <code>path</code> to be the path to a file where the
+entire backup would be saved.</p>
+<p>The new behavior expects <code>directory</code> to be an existing directory. A
+backup file will be created on this directory. The file name will
+contain the date of the creation of the file, in the
+<code>YYYY-MM-DDTHH:MM:SS</code> format. If <code>suffix</code> is given, it's appended to
+the file name.</p>
+<p>In the above example, we would end up with a file like
+<code>/home/user/bkups/2022-12-25T23:28:39.tar.gpg</code>.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+      <script src="js/version-select.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.4.2
+Build Date UTC : 2022-12-26 11:36:12.834330+00:00
+-->
