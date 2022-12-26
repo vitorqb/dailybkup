@@ -2,6 +2,50 @@
 
 A tool for backing up your files daily.
 
+
+## Configuration
+
+Backups rely on a yaml configuration file that defines what and how to
+run a backup.
+
+The program looks for a configuration file in a path specified by the
+environmental variable `DAILYBKUP_CONFIG_FILE`. If not set, it
+defaults to `~/.dailybkup/config.yaml`.
+
+A custom configuration file can be set by using the `-c` flag, which
+will take precendence over the environmental variable
+`DAILYBKUP_CONFIG_FILE`.
+
+```sh
+python -m dailybkup -c CONFIG_FILE backup
+```
+
+### Options
+
+#### Compression
+
+Defines what and how to compress.
+
+```yaml
+compression:
+    files:  # Required
+        - /files/1
+        - /files/2
+    exclude:  # Required
+        - /files/3
+    tar_executable: "mytar"  # Defaults to "tar"
+    tar_flags: ["--dereference", "-z"]  # Defaults to ["--dereference", "--checkpoint=1000", "-v", "-z"]
+```
+
+## Running
+
+Running a backup as as simple as:
+
+```
+python -m dailybkup  backup
+```
+
+
 ## Scheduling
 
 One of the easiest tools to run your backups daily is using

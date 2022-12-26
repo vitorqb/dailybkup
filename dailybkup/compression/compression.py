@@ -14,18 +14,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Compressor(ABC):
-
-    _config: configmod.CompressionConfig
-    _tempFileGenerator: fileutils.ITempFileGenerator
-
-    def __init__(
-        self,
-        config: configmod.CompressionConfig,
-        tempFileGenerator: fileutils.ITempFileGenerator,
-    ) -> None:
-        self._config = config
-        self._tempFileGenerator = tempFileGenerator
-
     def should_run(self, state: statemod.State) -> bool:
         return state.error is None
 
@@ -35,11 +23,22 @@ class Compressor(ABC):
 
 
 class TarCompressor(Compressor):
+    def __init__(
+        self,
+        config: configmod.CompressionConfig,
+        *,
+        tempFileGenerator: fileutils.ITempFileGenerator,
+        tar_compressor_runner: tarutils.TarCompressorRunner,
+    ) -> None:
+        self._config = config
+        self._tempFileGenerator = tempFileGenerator
+        self._tar_compressor_runner = tar_compressor_runner
+
     def run(self, state: statemod.State) -> statemod.State:
         # TODO logfile cleanup
         logfile = self._tempFileGenerator.gen_name()
         destfile = self._tempFileGenerator.gen_name()
-        tarutils.compress(
+        self._tar_compressor_runner(
             files=self._config.files,
             destfile=destfile,
             logfile=logfile,
@@ -64,7 +63,8 @@ class MockCompressor(Compressor):
         config: configmod.CompressionConfig,
         tempFileGenerator: fileutils.ITempFileGenerator,
     ) -> None:
-        super().__init__(config, tempFileGenerator)
+        self._config = config
+        self._tempFileGenerator = tempFileGenerator
         self.calls: List[Any] = []
 
     def run(self, state: statemod.State) -> statemod.State:
