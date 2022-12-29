@@ -7,6 +7,7 @@ import dailybkup.fileutils as fileutils
 import dailybkup.b2utils as b2utils
 import dailybkup.timeutils as timeutils
 import dailybkup.osutils as osutils
+import dailybkup.envutils as envutils
 import uuid
 import datetime
 import dataclasses
@@ -95,3 +96,13 @@ def mock_os_run():
         yield out
     finally:
         osutils.reset_run_fn()
+
+
+@contextlib.contextmanager
+def mock_environ():
+    environ = {}
+    envutils.set_environ(environ)
+    try:
+        yield environ
+    finally:
+        envutils.reset_environ()

@@ -8,6 +8,7 @@ from .testutils import (
     B2_TEST_BUCKET,
     mock_now,
     mock_os_run,
+    mock_environ,
 )
 from .wiremock import Wiremock
 from .config_builder import ConfigBuilder
@@ -24,4 +25,5 @@ __all__ = [
     "ConfigBuilder",
     "mock_now",
     "mock_os_run",
+    "mock_environ",
 ]

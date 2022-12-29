@@ -5,6 +5,7 @@ from .config import (
     GenericBuilder,
 )
 from . import build_steps as bs
+from . import default as default
 
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "PConfigBuilder",
     "GenericBuilder",
     "bs",
+    "default",
 ]

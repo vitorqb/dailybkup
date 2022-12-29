@@ -14,18 +14,16 @@ class NotifierBuilder:
         self._email_sender_builder = email_sender_builder
         self._desktop_notifier_builder = desktop_notifier_builder
 
-    def build(self, config: NotifierConfig, environ: Dict[str, str]) -> Notifier:
+    def build(self, config: NotifierConfig) -> Notifier:
         if isinstance(config, EmailNotifierConfig):
-            email_sender = self._email_sender_builder.build(
-                config.sender_config, environ
-            )
+            email_sender = self._email_sender_builder.build(config.sender_config)
             email_notifier = EmailNotifier(
                 sender=email_sender,
                 recipient_address=config.recipient_address,
             )
             return email_notifier
         if isinstance(config, DesktopNotifierConfig):
-            sender = self._desktop_notifier_builder.build(config.sender_config, environ)
+            sender = self._desktop_notifier_builder.build(config.sender_config)
             notifier = DesktopNotifier(sender=sender)
             return notifier
         raise ValueError(f"Unknown notifier config: {config}")
