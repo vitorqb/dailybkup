@@ -117,7 +117,7 @@ class _Injector:
             email_sender_builder, desktop_notifier_builder
         )
         configs = self._config_loader.load().notification
-        notifiers = [builder.build(config, dict(os.environ)) for config in configs]
+        notifiers = [builder.build(config) for config in configs]
         return notifiermod.CompositeNotifier(notifiers)
 
     def encryptor(self) -> encryptionmod.Encryptor:

@@ -6,7 +6,6 @@ from .desktop_notifier import NotifySendNotifier
 class TestDesktopNotifierBuilder:
     def test_builds_notify_send_notifier(self):
         config = configmod.NotifySendNotifierConfig()
-        environ = {}
         builder = sut.DesktopNotifierBuilder()
-        service = builder.build(config, environ)
+        service = builder.build(config)
         assert isinstance(service, NotifySendNotifier)

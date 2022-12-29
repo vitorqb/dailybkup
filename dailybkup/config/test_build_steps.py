@@ -1,8 +1,10 @@
 from dailybkup.config.common import ConfigBuildState
 import dailybkup.config.build_steps as sut
+from . import default
 from dailybkup.config.exceptions import MissingConfigKey
 import pytest
 from typing import Dict, Any
+import dailybkup.testutils as tu
 
 
 class FakeSettings:
@@ -37,6 +39,23 @@ class TestRequired:
         assert state.unparsed.get("foo") is None
         assert state.parsed.get("bar") == "boz"
         assert state.parsed.get("foo") == "bar"
+
+
+class TestOptional:
+    def test_fails_if_no_default(self):
+        with tu.mock_environ():
+            state = ConfigBuildState({}, {})
+            optional = sut.Optional("foo", default.env("FOO"))
+            with pytest.raises(MissingConfigKey):
+                optional(state)
+
+    def test_defaults_from_env(self):
+        with tu.mock_environ() as environ:
+            environ["FOO"] = "bar"
+            state = ConfigBuildState({}, {})
+            optional = sut.Optional("foo", default.env("FOO"))
+            optional(state)
+            assert state.parsed["foo"] == "bar"
 
 
 class TestSubBuilder:

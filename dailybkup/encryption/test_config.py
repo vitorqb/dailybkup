@@ -1,6 +1,7 @@
 import dailybkup.encryption.config as sut
 import pytest
 import dailybkup.config.exceptions as config_exceptions
+import dailybkup.testutils as tu
 
 
 class TestEncryptionConfigBuilder:
@@ -9,6 +10,13 @@ class TestEncryptionConfigBuilder:
         config = sut.encryption_config_builder.build(dict_)
         expected = sut.PasswordEncryptionConfig(password="123")
         assert config == expected
+
+    def test_password_from_env(self):
+        with tu.mock_environ() as environ:
+            environ["DAILYBKUP_ENCRYPTION_PASSWORD"] = "123"
+            dict_ = {"type_": "password"}
+            config = sut.encryption_config_builder.build(dict_)
+            assert config.password == "123"
 
     def test_unknown_type(self):
         dict_ = {"type_": "foo"}

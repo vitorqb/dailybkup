@@ -15,7 +15,10 @@ class PasswordEncryptionConfig(IEncryptionConfig):
 
 password_encryption_config_builder = configmod.GenericBuilder(
     PasswordEncryptionConfig,
-    configmod.bs.Required("password"),
+    configmod.bs.Optional(
+        "password",
+        configmod.default.env("DAILYBKUP_ENCRYPTION_PASSWORD"),
+    ),
 )
 encryption_config_builder: configmod.TypeDispatcherConfigBuilder[IEncryptionConfig]
 encryption_config_builder = configmod.TypeDispatcherConfigBuilder(

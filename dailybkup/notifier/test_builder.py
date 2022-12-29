@@ -19,12 +19,11 @@ class TestNotifierBuilder:
                 recipient_address="foo@bar.baz",
                 sender_config=sender_config,
             )
-            environ = {}
             builder = sut.NotifierBuilder(
                 email_sender_builder=email_sender_builder,
                 desktop_notifier_builder=mock.Mock(),
             )
-            notifier = builder.build(config, environ)
+            notifier = builder.build(config)
             assert isinstance(notifier, EmailNotifier)
             assert isinstance(notifier.sender, email_sender_mod.MockEmailSender)
 
@@ -32,19 +31,17 @@ class TestNotifierBuilder:
         desktop_notifier_builder = desktop_notifier_mod.DesktopNotifierBuilder()
         notifier_config = desktop_notifier_mod.NotifySendNotifierConfig()
         config = DesktopNotifierConfig(sender_config=notifier_config)
-        environ = {}
         email_sender_builder = mock.Mock()
         builder = sut.NotifierBuilder(
             email_sender_builder=email_sender_builder,
             desktop_notifier_builder=desktop_notifier_builder,
         )
-        notifier = builder.build(config, environ)
+        notifier = builder.build(config)
         assert isinstance(notifier, DesktopNotifier)
         assert isinstance(notifier._sender, desktop_notifier_mod.NotifySendNotifier)
 
     def test_fails_if_unknown_config_class(self):
         config = mock.Mock()
-        environ = {}
         builder = sut.NotifierBuilder(mock.Mock(), mock.Mock())
         with pytest.raises(ValueError):
-            builder.build(config, environ)
+            builder.build(config)
