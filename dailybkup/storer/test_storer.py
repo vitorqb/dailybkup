@@ -1,3 +1,4 @@
+from unittest import mock
 from datetime import datetime
 import dailybkup.testutils as testutils
 import dailybkup.state as statemod
@@ -65,3 +66,27 @@ class TestCompositeStorer:
             storer.run.assert_called_once_with(state)
         assert final_state.last_phase == Phase.STORAGE
         assert final_state.current_file is None
+
+
+class TestGDriveStorer:
+    def test_run_calls_client(self):
+        # ARRANGE
+        state = statemod.State.initial_state(current_file="/foo")
+        now = mock.Mock(return_value=datetime(2020, 1, 1))
+        config = configmod.GDriveStorerConfig(folder_id="ID", suffix=".foo")
+        client = mock.Mock()
+        backup_file_name_generator = sut.BackupFileNameGenerator(
+            suffix=".foo", now_fn=now
+        )
+        storer = sut.GDriveStorer(config, client, backup_file_name_generator)
+
+        # ACT
+        final_state = storer.run(state)
+
+        # ASSERT
+        client.upload.assert_called_once_with(
+            parent_id="ID",
+            local_file_path="/foo",
+            remote_file_name="2020-01-01T00:00:00.foo",
+        )
+        assert final_state.last_phase == Phase.STORAGE

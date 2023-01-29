@@ -126,4 +126,16 @@ class GDriveStorer(Storer):
 
     def run(self, state: statemod.State) -> statemod.State:
         assert state.current_file, "No current file to upload!"
-        raise NotImplementedError
+        src = state.current_file
+        parent_id = self._config.folder_id
+        file_name = self._backup_file_name_generator.generate()
+        LOGGER.info(
+            "Copying %s to Google Drive: folder_id=%s filename=%s",
+            src,
+            parent_id,
+            file_name,
+        )
+        self._client.upload(
+            parent_id=parent_id, local_file_path=src, remote_file_name=file_name
+        )
+        return state.mutate(m.with_last_phase(Phase.STORAGE))
