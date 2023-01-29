@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import os
-import dataclasses
 import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
 import dailybkup.state.mutations as m
@@ -10,6 +9,7 @@ import logging
 import datetime
 from typing import Callable
 import dailybkup.b2utils as b2utils
+
 from typing import Sequence
 
 

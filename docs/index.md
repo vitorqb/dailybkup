@@ -37,6 +37,14 @@ compression:
     tar_flags: ["--dereference", "-z"]  # Defaults to ["--dereference", "--checkpoint=1000", "-v", "-z"]
 ```
 
+### Using Google Drive as storage
+
+Follow the steps
+[here](https://www.labnol.org/google-api-service-account-220404) to
+create a Service Account with the proper rights for Google Drive.
+
+
+
 ## Running
 
 Running a backup as as simple as:
