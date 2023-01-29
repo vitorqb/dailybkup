@@ -1,7 +1,15 @@
+import pytest
 from unittest import mock
-import dailybkup.gdrive_utils as sut
+
+# This try-catch allows us to have tests both w/ and w/out optional
+# gdrive dependencies
+try:
+    import dailybkup.gdrive_utils as sut
+except ModuleNotFoundError:
+    pass
 
 
+@pytest.mark.gdrive
 class TestGDriveClient:
     @mock.patch("dailybkup.gdrive_utils.MediaFileUpload")
     def test_upload_calls_service_api(self, media_file_upload_constructor):

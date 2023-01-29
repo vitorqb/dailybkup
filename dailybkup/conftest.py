@@ -25,9 +25,16 @@ def mock_google_auth_default():
     This ensures we never actually authenticate ourselves w/ google,
     and that tests are not actually sending requests.
     """
-    with mock.patch("google.auth.default") as f:
-        f.return_value = mock.Mock(), mock.Mock()  # mock tuple as return value
+    # This try-catch allows us to have tests both w/ and w/out optional
+    # gdrive dependencies
+    try:
+        import google.auth   #type: ignore
+    except ModuleNotFoundError:
         yield
+    else:
+        with mock.patch("google.auth.default") as f:
+            f.return_value = mock.Mock(), mock.Mock()  # mock tuple as return value
+            yield
 
 
 @pytest.fixture

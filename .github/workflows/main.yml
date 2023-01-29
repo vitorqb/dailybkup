@@ -19,6 +19,11 @@ jobs:
 
   Unit-Test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        optional_deps: [0, 1]
+    env:
+      DAILYBKUP_DEV_OPTIONAL_DEPS: ${{ matrix.optional_deps }}
     steps:
       - name: "Setup Python"
         uses: actions/setup-python@v4
@@ -35,6 +40,11 @@ jobs:
 
   Functional-Test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        optional_deps: [0, 1]
+    env:
+      DAILYBKUP_DEV_OPTIONAL_DEPS: ${{ matrix.optional_deps }}
     services:
       wiremock:
         image: wiremock/wiremock:2.35.0
