@@ -5,6 +5,7 @@ from .storer import (
     FileStorer,
     CompositeStorer,
     B2Storer,
+    GDriveStorer,
 )
 from .builder import StorerBuilder
 
@@ -21,4 +22,5 @@ __all__ = [
     "StorerBuilder",
     "FileStorageConfig",
     "B2StorageConfig",
+    "GDriveStorer",
 ]

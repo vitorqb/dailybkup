@@ -1,3 +1,4 @@
+from unittest import mock
 import pytest
 import dailybkup.injector as injector
 import dailybkup.app as app
@@ -15,6 +16,18 @@ def injector_cleanup():
         yield
     finally:
         injector.end()
+
+
+@pytest.fixture(autouse=True)
+def mock_google_auth_default():
+    """
+    Mocks `google.auth.default` for all tests (autouse=True).
+    This ensures we never actually authenticate ourselves w/ google,
+    and that tests are not actually sending requests.
+    """
+    with mock.patch("google.auth.default") as f:
+        f.return_value = mock.Mock(), mock.Mock()  # mock tuple as return value
+        yield
 
 
 @pytest.fixture
