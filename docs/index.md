@@ -37,6 +37,28 @@ compression:
     tar_flags: ["--dereference", "-z"]  # Defaults to ["--dereference", "--checkpoint=1000", "-v", "-z"]
 ```
 
+### Using Google Drive as storage
+
+Follow the steps
+[here](https://www.labnol.org/google-api-service-account-220404) to
+create a Service Account with the proper rights for a shared folder on
+your Google Drive.
+
+Now make sure that, when running the upload command, the environmental
+variable `GOOGLE_APPLICATION_CREDENTIALS` is set to the absolute path
+to the service account json file. This takes care of authentication.
+
+Then add a configuration section:
+
+```yaml
+storage:
+    - type_: google_drive
+      folder_id: "1-AaKa-AKOSjoajasaAO129SuQwybqLqb"
+      suffix: .tar.gpg
+```
+
+
+
 ## Running
 
 Running a backup as as simple as:

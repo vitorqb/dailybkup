@@ -9,7 +9,7 @@ jobs:
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
-        uses: abatilo/actions-poetry@v2.0.0
+        uses: abatilo/actions-poetry@v2.2.0
       - name: "Check out repository code"
         uses: "actions/checkout@v3"
       - name: "Install Dependencies"
@@ -19,13 +19,18 @@ jobs:
 
   Unit-Test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        optional_deps: [0, 1]
+    env:
+      DAILYBKUP_DEV_OPTIONAL_DEPS: ${{ matrix.optional_deps }}
     steps:
       - name: "Setup Python"
         uses: actions/setup-python@v4
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
-        uses: abatilo/actions-poetry@v2.0.0
+        uses: abatilo/actions-poetry@v2.2.0
       - name: "Check out repository code"
         uses: "actions/checkout@v3"
       - name: "Install Dependencies"
@@ -35,6 +40,11 @@ jobs:
 
   Functional-Test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        optional_deps: [0, 1]
+    env:
+      DAILYBKUP_DEV_OPTIONAL_DEPS: ${{ matrix.optional_deps }}
     services:
       wiremock:
         image: wiremock/wiremock:2.35.0
@@ -46,7 +56,7 @@ jobs:
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
-        uses: abatilo/actions-poetry@v2.1.6
+        uses: abatilo/actions-poetry@v2.2.0
       - name: "Check out repository code"
         uses: "actions/checkout@v3"
       - name: "Install Dependencies"
@@ -65,7 +75,7 @@ jobs:
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
-        uses: abatilo/actions-poetry@v2.0.0
+        uses: abatilo/actions-poetry@v2.2.0
       - name: "Check out repository code"
         uses: "actions/checkout@v3"
       - name: "Install Dependencies"

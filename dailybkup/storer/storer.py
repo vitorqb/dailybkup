@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
+from typing import Any
 import os
-import dataclasses
 import dailybkup.state as statemod
 import dailybkup.storer.config as configmod
 import dailybkup.state.mutations as m
@@ -8,9 +8,13 @@ from dailybkup.state import Phase
 import shutil
 import logging
 import datetime
-from typing import Callable
+from typing import Callable, Sequence
 import dailybkup.b2utils as b2utils
-from typing import Sequence
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import dailybkup.gdrive_utils as gdrive_utils
 
 
 LOGGER = logging.getLogger(__name__)
@@ -106,4 +110,32 @@ class B2Storer(Storer):
         file_name = self._backup_file_name_generator.generate()
         LOGGER.info("Copying %s to %s in bucket %s", src, file_name, bucket)
         self._b2context.upload(src, file_name)
+        return state.mutate(m.with_last_phase(Phase.STORAGE))
+
+
+class GDriveStorer(Storer):
+    def __init__(
+        self,
+        config: configmod.GDriveStorerConfig,
+        client: "gdrive_utils.GDriveClient",
+        backup_file_name_generator: IBackupFileNameGenerator,
+    ):
+        self._config = config
+        self._client = client
+        self._backup_file_name_generator = backup_file_name_generator
+
+    def run(self, state: statemod.State) -> statemod.State:
+        assert state.current_file, "No current file to upload!"
+        src = state.current_file
+        parent_id = self._config.folder_id
+        file_name = self._backup_file_name_generator.generate()
+        LOGGER.info(
+            "Copying %s to Google Drive: folder_id=%s filename=%s",
+            src,
+            parent_id,
+            file_name,
+        )
+        self._client.upload(
+            parent_id=parent_id, local_file_path=src, remote_file_name=file_name
+        )
         return state.mutate(m.with_last_phase(Phase.STORAGE))

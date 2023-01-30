@@ -1,5 +1,5 @@
 #!/bin/bash
-USAGE="$0"' [-h] [-p] [-g PATTERN] [-f] [-u] -- [FILES]
+USAGE="$0"' [-h] [-p] [-g PATTERN] [-f] [-u] [-o] -- [FILES]
 
 Runs tests. If not FILE is given, run all tests otherwise only tests from file.
 
@@ -18,10 +18,21 @@ Runs tests. If not FILE is given, run all tests otherwise only tests from file.
   -u)
     Run unit tests only
 
+  -n)
+    Do NOT run tests that require optional dependencies. If not given, reads the
+    value of DAILYBKUP_DEV_OPTIONAL_DEPS (1 or 0)
 '
 
+# Defaults
+if [ -z "$DAILYBKUP_DEV_OPTIONAL_DEPS" ] || [ "$DAILYBKUP_DEV_OPTIONAL_DEPS" == 1 ]
+then
+    SKIP_OPTIONAL_DEPS=0
+else
+    SKIP_OPTIONAL_DEPS=1
+fi
+
 # Getopts
-while getopts "hpg:fu" opt; do
+while getopts "hpg:fun:" opt; do
   case "$opt" in
     h)
         echo "$USAGE"
@@ -38,6 +49,9 @@ while getopts "hpg:fu" opt; do
         ;;
     u)
         UNIT=1
+        ;;
+    n)
+        SKIP_OPTIONAL_DEPS=1
         ;;
     --)
         break
@@ -75,14 +89,22 @@ if ! [ -z "$GREP" ]
 then
     ARGS+=( -k "$GREP" )
 fi
+
 if ! [ -z "$UNIT" ]
 then
     ARGS+=( -c "${GIT_ROOT}/pytest.unit.ini" )
 fi
+
 if ! [ -z "$FUNCTIONAL" ]
 then
     ARGS+=( -c "${GIT_ROOT}/pytest.functional.ini" )
 fi
+
+if [ "$SKIP_OPTIONAL_DEPS" == 1 ]
+then
+    ARGS+=( -m "not gdrive" )
+fi
+
 ARGS+=( ${FILES[@]} )
 echo ${ARGS[@]}
-${ARGS[@]}
+"${ARGS[@]}"

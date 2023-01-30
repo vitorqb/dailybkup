@@ -16,6 +16,8 @@ A backup consist of the following phases:
 
 ## Development
 
+### Running Tests
+
 For running the functional tests, you need to have a b2 account with a
 configured API key. **A bucket must exist with name `daiybkup-test`**.
 
@@ -64,3 +66,9 @@ Runs tests.
   -u)
     Run unit tests only
 ```
+
+
+### Developer Tools
+
+Some scripts are inside the `devtools` folder, and may help you with
+the app development to test some stuff.

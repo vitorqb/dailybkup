@@ -22,6 +22,13 @@ class B2StorageConfig(IStorageConfig):
     type_: str = "b2"
 
 
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class GDriveStorerConfig(IStorageConfig):
+    folder_id: str
+    suffix: str = ""
+    type_: str = "google-drive"
+
+
 file_storage_config_builder = configmod.GenericBuilder(
     FileStorageConfig,
     configmod.bs.Required("directory"),
@@ -34,10 +41,17 @@ b2_storage_config_builder = configmod.GenericBuilder(
     configmod.bs.Optional("type_", "b2"),
     configmod.bs.Optional("prefix", ""),
 )
+gdrive_storer_config_builder = configmod.GenericBuilder(
+    GDriveStorerConfig,
+    configmod.bs.Required("folder_id"),
+    configmod.bs.Optional("suffix", ""),
+    configmod.bs.Optional("type_", "google-drive"),
+)
 storage_config_builder: configmod.TypeDispatcherConfigBuilder[IStorageConfig]
 storage_config_builder = configmod.TypeDispatcherConfigBuilder(
     {
         "file": file_storage_config_builder,
         "b2": b2_storage_config_builder,
+        "google-drive": gdrive_storer_config_builder,
     }
 )
