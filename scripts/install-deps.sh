@@ -12,6 +12,9 @@ Install dependencies.
     DAILYBKUP_DEV_OPTIONAL_DEPS (1 or 0)
 '
 
+# Imports
+source ${TOOLS_FILE:-./scripts/_tools.sh}
+
 # Defaults
 if [ -z "$DAILYBKUP_DEV_OPTIONAL_DEPS" ] || [ "$DAILYBKUP_DEV_OPTIONAL_DEPS" == 1 ]
 then
@@ -48,6 +51,6 @@ then
     ARGS+=( --all-extras )
 fi
 
-echo "=> Running ${ARGS[@]}"
+msg "Running: ${ARGS[@]}"
 
 "${ARGS[@]}"

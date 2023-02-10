@@ -10,7 +10,7 @@ Creates a release.
     The version to be release (format x.y.z)
 '
 
-source ./scripts/_tools.sh
+source ${TOOLS_FILE:-./scripts/_tools.sh}
 
 # Getopts
 while getopts "hv:" opt; do
