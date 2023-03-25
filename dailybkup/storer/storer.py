@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Any
 import os
 import dailybkup.state as statemod
 import dailybkup.storer.config as configmod

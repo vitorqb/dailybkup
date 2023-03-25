@@ -1,4 +1,4 @@
-from .cleaner import NoOpCleaner, Cleaner, B2Cleaner, CompositeCleaner
+from .cleaner import NoOpCleaner, Cleaner, B2Cleaner, CompositeCleaner, GDriveCleaner
 from .config import CleanerConfig, cleaner_config_builder, B2CleanerConfig
 from .builder import CleanerBuilder
 
@@ -12,4 +12,5 @@ __all__ = [
     "CleanerBuilder",
     "cleaner_config_builder",
     "B2CleanerConfig",
+    "GDriveCleaner",
 ]

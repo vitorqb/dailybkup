@@ -10,6 +10,17 @@ class TestCleanerConfigBuilder:
         expected = sut.B2CleanerConfig(retain_last=2, bucket="foo")
         assert config == expected
 
+    def test_build_gdrive_config(self):
+        dict_ = {
+            "type_": "google-drive",
+            "prefix": "foo",
+            "retain_last": 3,
+            "folder_id": "foo",
+        }
+        config = sut.cleaner_config_builder.build(dict_)
+        expected = sut.GDriveCleanerConfig(retain_last=3, prefix="foo", folder_id="foo")
+        assert config == expected
+
     def test_unknown_type(self):
         dict_ = {}
         with pytest.raises(configmod.exceptions.MissingConfigKey):
