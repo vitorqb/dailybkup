@@ -17,6 +17,13 @@ class TestCleanerBuilder:
         cleaner = builder.build(config)
         assert isinstance(cleaner, cleanermod.B2Cleaner)
 
+    @pytest.mark.gdrive
+    def test_builds_gdrive_cleaner(self):
+        builder = sut.CleanerBuilder(mock.Mock())
+        config = configmod.GDriveCleanerConfig(retain_last=2, folder_id="foo")
+        cleaner = builder.build(config)
+        assert isinstance(cleaner, cleanermod.GDriveCleaner)
+
     def test_raises_if_unknown(self):
         builder = sut.CleanerBuilder(mock.Mock())
         with pytest.raises(RuntimeError):

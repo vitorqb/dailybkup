@@ -32,7 +32,7 @@ else
 fi
 
 # Getopts
-while getopts "hpg:fun:" opt; do
+while getopts "hpg:fun" opt; do
   case "$opt" in
     h)
         echo "$USAGE"

@@ -5,6 +5,7 @@ import dailybkup.app as app
 import dailybkup.testutils as testutils
 import os
 from dailybkup.testutils import p
+import copy
 
 
 @pytest.fixture(autouse=True)
@@ -28,7 +29,7 @@ def mock_google_auth_default():
     # This try-catch allows us to have tests both w/ and w/out optional
     # gdrive dependencies
     try:
-        import google.auth   #type: ignore
+        import google.auth  # type: ignore
     except ModuleNotFoundError:
         yield
     else:

@@ -14,4 +14,10 @@ class CleanerBuilder:
         if isinstance(config, configmod.B2CleanerConfig):
             b2context = self._l_b2context(config.bucket, config.prefix)
             return cleanermod.B2Cleaner(config, b2context=b2context)
+        if isinstance(config, configmod.GDriveCleanerConfig):
+            # Import it here since it's an optional dependency
+            import dailybkup.gdrive_utils as gdrive_utils
+
+            gdrive_client = gdrive_utils.GDriveClient()
+            return cleanermod.GDriveCleaner(config, gdrive_client)
         raise RuntimeError(f"Invalid config class {config.__class__}")

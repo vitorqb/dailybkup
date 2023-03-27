@@ -72,3 +72,18 @@ Runs tests.
 
 Some scripts are inside the `devtools` folder, and may help you with
 the app development to test some stuff.
+
+The `gdrive_client.py` is a helper that allows you to test functionality of
+`gdrive_utils.GDriveClient`.
+
+It requires a Google Service Account JSON file for the login. See
+[Using Google Drive as storage](./docs/index.md#login) to see how to
+generate the file.
+
+Example usage:
+
+```sh
+poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json delete --file-id 142Bqmt5-UdKsKEMURiIjcaYYq-epRmGq
+poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json list --parent-id=1-NvPw-NLrZ6JByHIFnMKN0mUcr9IATMT
+poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json upload --parent-id '1-NvPw-NLrZ6JByHIFnMKN0mUcr9IATMT' /home/barbosa/mytmp/foo
+```

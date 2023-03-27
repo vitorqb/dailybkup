@@ -19,11 +19,13 @@ class TestEncryptionConfigBuilder:
             assert config.password == "123"
 
     def test_unknown_type(self):
-        dict_ = {"type_": "foo"}
-        with pytest.raises(ValueError):
-            sut.encryption_config_builder.build(dict_)
+        with tu.mock_environ():
+            dict_ = {"type_": "foo"}
+            with pytest.raises(ValueError):
+                sut.encryption_config_builder.build(dict_)
 
     def test_missing_key(self):
-        dict_ = {"type_": "password"}
-        with pytest.raises(config_exceptions.MissingConfigKey):
-            sut.encryption_config_builder.build(dict_)
+        with tu.mock_environ():
+            dict_ = {"type_": "password"}
+            with pytest.raises(config_exceptions.MissingConfigKey):
+                sut.encryption_config_builder.build(dict_)
