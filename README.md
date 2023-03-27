@@ -83,7 +83,7 @@ generate the file.
 Example usage:
 
 ```sh
-poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json delete --file-id 142Bqmt5-UdKsKEMURiIjcaYYq-epRmGq
-poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json list --parent-id=1-NvPw-NLrZ6JByHIFnMKN0mUcr9IATMT
-poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json upload --parent-id '1-NvPw-NLrZ6JByHIFnMKN0mUcr9IATMT' /home/barbosa/mytmp/foo
+poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json delete --file-id 999xxxx9-xxxxxxxxxxxxxxxxx-xxxxxx
+poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json list --parent-id=9-xxxx-xxxxxxxxxxxxxxxxxxxxxxxxxx
+poetry run ./devtools/gdrive_client.py --service-account-json-file=sa.json upload --parent-id '9-xxxx-xxxxxxxxxxxxxxxxxxxxxxxxxx' ./foo
 ```
