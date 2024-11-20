@@ -97,21 +97,23 @@ WantedBy=default.target
 # file:~/.config/systemd/user/dailybkup.service
 [Unit]
 Description=Daily Backup
-StartLimitInterval=200
-StartLimitBurst=5
+# Max 3 runs per hour
+StartLimitInterval=3600
+StartLimitBurst=3
 
 [Service]
 EnvironmentFile=%h/.dailybkup/env
 ExecStart=/usr/bin/python -m dailybkup -c %h/.dailybkup/config.yaml backup
 Restart=on-failure
-RestartSec=30
+# Restart after 2min
+RestartSec=120
 ```
 
 !!! info
     - We are configuring a backup that will:
         - Run once per day
-        - Restart up to 5 times on failure
-        - Restart after 30s
+        - Restart up to 3 times per hour on failure
+        - Restart after 120s
     - You may also save those in other places - see [Where do I put my
     systemd unit
     files](https://unix.stackexchange.com/questions/224992/where-do-i-put-my-systemd-unit-file)
