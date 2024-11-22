@@ -71,5 +71,3 @@ gh release create v$VERSION --generate-notes ./dist/dailybkup-$VERSION-py3-none-
 msg "Releasing docs..."
 ./scripts/docs-release.sh -v"$VERSION"  || exit 1
 
-msg "Publishing to AWS..."
-./scripts/_publish-to-aws.sh || exit 1
