@@ -1,5 +1,7 @@
 import typer
 import dailybkup.injector as injectormod
+from dailybkup.state.state import State
+from dailybkup.state.phases import Phase
 import dailybkup.version as versionmod
 import os.path
 import os
@@ -23,9 +25,9 @@ def new_app() -> typer.Typer:
 def backup() -> None:
     injector = injectormod.get()
     initial_state = injector.initial_state()
-    final_state = injector.pipeline_runner().run(initial_state)
-    if final_state.error is not None:
-        raise final_state.error
+    pipeline_runner = injector.pipeline_runner()
+    final_state = pipeline_runner.run(initial_state)
+    _handle_error(final_state)
 
 
 def version() -> None:
@@ -50,6 +52,22 @@ def _setup_injector(config_file: str):
 def _setup_logging(verbose: bool) -> None:
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(level=level, handlers=[TyperLoggerHandler()], force=True)
+
+
+def _handle_error(state: State):
+    if state.error is None:
+        return
+    match state.last_phase:
+        # If we fal on these steps, log the error but don't raise so we don't retry
+        case Phase.CLEANUP | Phase.NOTIFICATION | Phase.END:
+            logging.warning(
+                f"skipping error at phase {state.last_phase}: {state.error}"
+            )
+            return
+        # If we fail on any other step raise
+        case _:
+            logging.error(state.error)
+            raise state.error
 
 
 class TyperLoggerHandler(logging.Handler):

@@ -34,7 +34,7 @@ class Runner:
                     new_state = step.run(old_state).mutate(phase_mutation)
                 except Exception as e:
                     LOGGER.error("Catched exception: %s", e)
-                    new_state = old_state.mutate(m.with_error(e), phase_mutation)
+                    new_state = old_state.mutate(phase_mutation, m.with_error(e))
                 new_state = self._run_hooks(old_state, new_state)
             else:
                 LOGGER.info("Skipping pipeline step: %s", step)

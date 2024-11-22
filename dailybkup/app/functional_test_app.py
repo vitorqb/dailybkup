@@ -112,7 +112,7 @@ class TestFunctionalApp:
             mock_sender_dir = config.notification[0].sender_config.directory
             mock_sender = email_sender.MockEmailSender(directory=mock_sender_dir)
             result1 = cli_runner.invoke(app, ["-c", config_file, "backup"])
-            assert result1.exit_code == 1
+            assert result1.exit_code == 0  # When failing during notifications, exit 0
             assert mock_sender.count == 1
             assert mock_sender.last_email_petition.subject == "Backup Failed!"
 

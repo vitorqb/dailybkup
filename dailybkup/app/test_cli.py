@@ -1,6 +1,7 @@
 import dailybkup.app.cli as sut
 import dailybkup.injector
 import dailybkup.state as statemod
+import dailybkup.state.mutations as m
 import unittest.mock as mock
 import pytest
 import typer.testing
@@ -39,3 +40,52 @@ class TestApp:
         result = cli_runner.invoke(app, "version")
         assert result.exit_code == 0
         assert semver_regexp.match(result.stdout.strip())
+
+    @pytest.mark.parametrize(
+        "phase",
+        [
+            statemod.Phase.BEGIN,
+            statemod.Phase.COMPRESSION,
+            statemod.Phase.ENCRYPTION,
+            statemod.Phase.STORAGE,
+        ],
+    )
+    def test_backup_raises_error_on_phases(self, phase, injector, cli_runner, app):
+        # Arrange
+        err = RuntimeError("foo")
+        state = statemod.State().mutate(m.with_last_phase(phase), m.with_error(err))
+        pipeline_runner = mock.Mock()
+        pipeline_runner.run.return_value = state
+        injector.pipeline_runner.return_value = pipeline_runner
+
+        # Action
+        result = cli_runner.invoke(app, "backup")
+
+        # Assert
+        assert result.exit_code == 1
+        assert "foo" in result.output
+
+    @pytest.mark.parametrize(
+        "phase",
+        [
+            statemod.Phase.CLEANUP,
+            statemod.Phase.NOTIFICATION,
+            statemod.Phase.END,
+        ],
+    )
+    def test_backup_does_not_raises_error_on_phases(
+        self, phase, injector, cli_runner, app
+    ):
+        # Arrange
+        err = RuntimeError("foo")
+        state = statemod.State().mutate(m.with_last_phase(phase), m.with_error(err))
+        pipeline_runner = mock.Mock()
+        pipeline_runner.run.return_value = state
+        injector.pipeline_runner.return_value = pipeline_runner
+
+        # Action
+        result = cli_runner.invoke(app, "backup")
+
+        # Assert
+        assert result.exit_code == 0
+        assert "foo" in result.output
