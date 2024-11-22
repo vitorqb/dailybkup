@@ -59,15 +59,21 @@ EOF
 msg "Setting version in poetry..."
 poetry version "$VERSION" || exit 1
 
+msg "Going to a specific branch"
+git checkout -b "release/$VERSION" || exit 1
+
 msg "Creating release commit..."
-git add . && git commit -m "Version $VERSION" && git push  || exit 1
+git add . && git commit -m "Version $VERSION" && git push --set-upstream origin "release/$VERSION"  || exit 1
 
-msg "Building..."
-poetry build  || exit 1
+msg "Creating a pull request..."
+gh pr create --base master --fill
 
-msg "Creating github release..."
-gh release create v$VERSION --generate-notes ./dist/dailybkup-$VERSION-py3-none-any.whl ./dist/dailybkup-$VERSION.tar.gz  || exit 1
+# msg "Building..."
+# poetry build  || exit 1
 
-msg "Releasing docs..."
-./scripts/docs-release.sh -v"$VERSION"  || exit 1
+# msg "Creating github release..."
+# gh release create v$VERSION --generate-notes ./dist/dailybkup-$VERSION-py3-none-any.whl ./dist/dailybkup-$VERSION.tar.gz  || exit 1
+
+# msg "Releasing docs..."
+# ./scripts/docs-release.sh -v"$VERSION"  || exit 1
 
