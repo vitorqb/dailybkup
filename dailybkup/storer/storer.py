@@ -39,6 +39,9 @@ class Storer(ABC):
     def should_run(self, state: statemod.State) -> bool:
         return state.error is None
 
+    def get_phase(self) -> Phase:
+        return Phase.STORAGE
+
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         ...
@@ -57,10 +60,7 @@ class CompositeStorer(Storer):
         for storer in self._storers:
             self._logging.info(f"Running storer {storer}")
             final_state = storer.run(final_state)
-        return final_state.mutate(
-            m.with_last_phase(Phase.STORAGE),
-            m.with_current_file(None),
-        )
+        return final_state.mutate(m.with_current_file(None))
 
 
 class FileStorer(Storer):
@@ -83,7 +83,7 @@ class FileStorer(Storer):
         )
         LOGGER.info("Copying %s to %s", state.current_file, dst)
         shutil.copyfile(state.current_file, dst)
-        return state.mutate(m.with_last_phase(Phase.STORAGE))
+        return state
 
 
 class B2Storer(Storer):
@@ -109,7 +109,7 @@ class B2Storer(Storer):
         file_name = self._backup_file_name_generator.generate()
         LOGGER.info("Copying %s to %s in bucket %s", src, file_name, bucket)
         self._b2context.upload(src, file_name)
-        return state.mutate(m.with_last_phase(Phase.STORAGE))
+        return state
 
 
 class GDriveStorer(Storer):
@@ -137,4 +137,4 @@ class GDriveStorer(Storer):
         self._client.upload(
             parent_id=parent_id, local_file_path=src, remote_file_name=file_name
         )
-        return state.mutate(m.with_last_phase(Phase.STORAGE))
+        return state

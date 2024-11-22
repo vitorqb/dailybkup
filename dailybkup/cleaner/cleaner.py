@@ -16,6 +16,9 @@ class Cleaner(ABC):
     def should_run(self, state: statemod.State) -> bool:
         return state.error is None
 
+    def get_phase(self) -> Phase:
+        return Phase.CLEANUP
+
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         ...
@@ -44,7 +47,7 @@ class B2Cleaner(Cleaner):
                 self._b2context.bucket_name,
             )
             self._b2context.delete(file_to_delete)
-        return state.mutate(m.with_last_phase(Phase.CLEANUP))
+        return state
 
 
 class GDriveCleaner(Cleaner):
@@ -68,12 +71,12 @@ class GDriveCleaner(Cleaner):
         )
         files_to_delete = files[:-retain_last]
         self._client.delete_batch([x.id for x in files_to_delete])
-        return state.mutate(m.with_last_phase(Phase.CLEANUP))
+        return state
 
 
 class NoOpCleaner(Cleaner):
     def run(self, state: statemod.State) -> statemod.State:
-        return state.mutate(m.with_last_phase(Phase.CLEANUP))
+        return state
 
 
 class CompositeCleaner(Cleaner):
@@ -89,4 +92,4 @@ class CompositeCleaner(Cleaner):
         for cleaner in self._cleaners:
             self._logging.info(f"Running cleaner {cleaner}")
             final_state = cleaner.run(final_state)
-        return final_state.mutate(m.with_last_phase(Phase.CLEANUP))
+        return final_state

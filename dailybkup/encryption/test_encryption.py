@@ -18,7 +18,8 @@ class TestPasswordEncryptor:
         encryptor = sut.PasswordEncryptor(config, fileutils.TempFileGenerator())
         newstate = encryptor.run(state)
         assert os.path.exists(newstate.encrypted_file)
-        assert newstate.last_phase == Phase.ENCRYPTION
+        # not should modify last_phase
+        assert newstate.last_phase == state.last_phase
         assert newstate.current_file == newstate.encrypted_file
 
 
@@ -26,6 +27,5 @@ class TestNoOpEncryptor:
     def test_updates_phase(self):
         with testutils.mock_now(datetime.datetime(2022, 1, 1)):
             state_1 = statemod.State.initial_state()
-            exp_state = state_1.mutate(m.with_last_phase(Phase.ENCRYPTION))
             state_2 = sut.NoOpEncryptor().run(state_1)
-            assert state_2 == exp_state
+            assert state_2 == state_1

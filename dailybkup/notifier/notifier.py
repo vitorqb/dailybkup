@@ -16,6 +16,9 @@ class Notifier(abc.ABC):
         # Should always run, since notifies success or failures!
         return True
 
+    def get_phase(self) -> Phase:
+        return Phase.NOTIFICATION
+
     @abc.abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         ...
@@ -106,4 +109,4 @@ class CompositeNotifier(Notifier):
         final_state = state
         for notifier in self._notifiers:
             final_state = notifier.run(final_state)
-        return final_state.mutate(m.with_last_phase(Phase.NOTIFICATION))
+        return final_state

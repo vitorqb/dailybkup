@@ -9,3 +9,6 @@ class PRunnable(Protocol):
 
     def run(self, state: statemod.State) -> statemod.State:
         ...
+
+    def get_phase(self) -> statemod.Phase:
+        ...

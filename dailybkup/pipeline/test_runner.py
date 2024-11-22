@@ -1,12 +1,13 @@
+from typing import Optional
 import pytest
-import dataclasses
 
 from unittest import mock
 
 from dailybkup import state as statemod
 from dailybkup.pipeline import runner as sut
-from dailybkup.state import Phase
+from dailybkup.pipeline.runnable import PRunnable
 import dailybkup.state.mutations as m
+from dailybkup.state.phases import Phase
 
 
 @pytest.fixture
@@ -15,12 +16,20 @@ def logger_mock():
         yield mock_logger
 
 
+def mock_step(*, phase: Optional[Phase] = None) -> mock.Mock:
+    step = mock.Mock(spec=PRunnable)
+    step.should_run.return_value = True
+    step.run.side_effect = lambda x: x  # By default, when run, keep state intact
+    step.get_phase.return_value = phase or Phase.END  # By default, set phase to end
+    return step
+
+
 class MockCompressionTransitionHook(statemod.IPhaseTransitionHook):
     def __init__(self):
         self.calls = []
 
     def should_run(self, old_state: statemod.State, new_state: statemod.State) -> bool:
-        return new_state.last_phase == Phase.COMPRESSION
+        return new_state.last_phase == statemod.Phase.COMPRESSION
 
     def run(self, state: statemod.State) -> statemod.State:
         self.calls.append(state)
@@ -28,11 +37,14 @@ class MockCompressionTransitionHook(statemod.IPhaseTransitionHook):
 
 
 class MockCompressionStep:
+    def get_phase(self) -> statemod.Phase:
+        return statemod.Phase.COMPRESSION
+
     def should_run(self, state: statemod.State) -> bool:
         return state.error is None
 
     def run(self, state: statemod.State) -> statemod.State:
-        return state.mutate(m.with_last_phase(Phase.COMPRESSION))
+        return state.mutate(m.with_last_phase(statemod.Phase.COMPRESSION))
 
 
 class TestRunner:
@@ -52,7 +64,7 @@ class TestRunner:
     def test_two_steps(self):
         # ARRANGE
         initial_state = statemod.State.initial_state()
-        steps = [mock.Mock(), mock.Mock()]
+        steps = [mock_step(), mock_step()]
         hooks = []
         runner = sut.Runner(steps=steps, hooks=hooks)
 
@@ -60,13 +72,28 @@ class TestRunner:
         result = runner.run(initial_state)
 
         # ASSERT
-        assert result == steps[1].run.return_value
+        assert isinstance(result, statemod.State)
         steps[0].run.assert_called_with(initial_state)
+        steps[1].run.assert_called_with(mock.ANY)
+
+    def test_set_last_phase(self):
+        # ARRANGE
+        initial_state = statemod.State.initial_state()
+        steps = [mock_step(phase=Phase.COMPRESSION), mock_step(phase=Phase.CLEANUP)]
+        hooks = []
+        runner = sut.Runner(steps=steps, hooks=hooks)
+
+        # ACT
+        result = runner.run(initial_state)
+
+        # ASSERT
+        assert result.last_phase == statemod.Phase.CLEANUP
+        assert len(result.phase_transition_logs) == 2
 
     def test_calls_loggers(self, logger_mock):
         # ARRANGE
         initial_state = statemod.State.initial_state()
-        steps = [mock.Mock()]
+        steps = [mock.Mock(get_phase=lambda: statemod.Phase.CLEANUP)]
         hooks = []
         runner = sut.Runner(steps=steps, hooks=hooks)
 
@@ -76,7 +103,11 @@ class TestRunner:
         # ASSERT
         info_calls = logger_mock.info.call_args_list
         assert info_calls[0][0] == ("Starting pipeline",)
-        assert info_calls[1][0] == ("Running pipeline step: %s", steps[0])
+        assert info_calls[1][0] == (
+            "Running pipeline phase %s step %s",
+            statemod.Phase.CLEANUP,
+            steps[0],
+        )
         assert info_calls[2][0] == ("Pipeline finished",)
 
     def test_run_hooks(self):
@@ -91,8 +122,8 @@ class TestRunner:
 
         # ARRANGE
         assert len(hooks[0].calls) == 1
-        assert hooks[0].calls[0].last_phase == Phase.COMPRESSION
-        final_state.compressed_file == "bar"
+        assert hooks[0].calls[0].last_phase == statemod.Phase.COMPRESSION
+        assert final_state.compressed_file == "bar"
 
     def test_does_run_hook_if_hook_should_not_run(self):
         # ARRANGE
@@ -120,7 +151,7 @@ class TestRunner:
         final_state = runner.run(initial_state)
 
         # ARRANGE
-        final_state.error == error
+        assert final_state.error == error
 
     def test_only_runs_if_should_run_is_true(self):
         # ARRANGE

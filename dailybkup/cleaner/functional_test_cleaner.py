@@ -39,4 +39,5 @@ class TestFunctionalB2Cleaner:
             new_state = sut.B2Cleaner(config, b2context=b2context).run(state)
 
             assert list(b2context.get_file_names()) == [name_generator_3.generate()]
-            assert new_state.last_phase == Phase.CLEANUP
+            # does not modify phase
+            assert new_state.last_phase == state.last_phase

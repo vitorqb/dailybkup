@@ -17,6 +17,9 @@ class Compressor(ABC):
     def should_run(self, state: statemod.State) -> bool:
         return state.error is None
 
+    def get_phase(self) -> Phase:
+        return Phase.COMPRESSION
+
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         raise NotImplementedError()
@@ -49,7 +52,6 @@ class TarCompressor(Compressor):
         LOGGER.info(f"Compression done to file {destfile}")
         LOGGER.info(f"Logs saved to file {logfile}")
         return state.mutate(
-            m.with_last_phase(Phase.COMPRESSION),
             m.with_files(files),
             m.with_compression_logfile(logfile),
             m.with_compressed_file(destfile),
@@ -70,6 +72,5 @@ class MockCompressor(Compressor):
     def run(self, state: statemod.State) -> statemod.State:
         self.calls.append(state)
         return state.mutate(
-            m.with_last_phase(Phase.COMPRESSION),
             m.with_files(["foo"]),
         )

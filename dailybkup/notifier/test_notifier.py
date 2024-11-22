@@ -17,7 +17,8 @@ class TestCompositeNotifier:
         final_state = composite_notifier.run(initial_state)
         notifiers[0].run.assert_called_once()
         notifiers[1].run.assert_called_once()
-        assert final_state.last_phase == Phase.NOTIFICATION
+        # Should not modify last phase
+        assert final_state.last_phase == initial_state.last_phase
 
 
 class TestEmailNotifier:

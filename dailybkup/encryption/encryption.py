@@ -16,6 +16,9 @@ class Encryptor(ABC):
     def should_run(self, state: statemod.State) -> bool:
         return state.error is None
 
+    def get_phase(self) -> Phase:
+        return Phase.ENCRYPTION
+
     @abstractmethod
     def run(self, state: statemod.State) -> statemod.State:
         ...
@@ -36,7 +39,6 @@ class PasswordEncryptor(Encryptor):
         LOGGER.info("Starting encryption to %s", outfile)
         gpgutils.encrypt(state.current_file, self._config.password, outfile)
         return state.mutate(
-            m.with_last_phase(Phase.ENCRYPTION),
             m.with_encrypted_file(outfile),
             m.with_current_file(outfile),
         )
@@ -44,4 +46,4 @@ class PasswordEncryptor(Encryptor):
 
 class NoOpEncryptor(Encryptor):
     def run(self, state: statemod.State) -> statemod.State:
-        return state.mutate(m.with_last_phase(Phase.ENCRYPTION))
+        return state
