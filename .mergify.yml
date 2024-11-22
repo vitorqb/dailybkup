@@ -1,17 +1,19 @@
 pull_request_rules:
 
-  - name: Automatic merge
-    description: Merge when PR passes all branch protection and has label automerge
+  - name: Automatic merge (renovate)
+    description: Merge renovate PRs when they are up to date, pass all branch protections and has mergeable label
     conditions:
-      - label = mergeable
+      - 'label = mergeable'
+      - 'author = renovate[bot]'
+      - '#commits-behind = 0'
     actions:
       merge:
 
-  - name: Make sure PR are up to date before merging
-    description: This automatically updates PRs when they are out-of-date with the
-      base branch to avoid semantic conflicts (next step is using a merge
-      queue).
+  - name: Automatic merge (main)
+    description: Merge PRs when they pass all branch protections and has mergeable label
     conditions:
-      - author != renovate[bot]  # Don't rebase renovate PRs
+      - 'label = mergeable'
+      - 'author != renovate[bot]'
     actions:
-      rebase:
+      queue:
+        
