@@ -39,8 +39,7 @@ class TestFileStorer:
             state_2 = sut.FileStorer(
                 config, backup_file_name_generator=file_name_generator
             ).run(state_1)
-            exp_state = state_1.mutate(m.with_last_phase(Phase.STORAGE))
-            assert state_2 == exp_state
+            assert state_2 == state_1
             assert (
                 fileutils.read_as_str(
                     f"{dest_directory}/{file_name_generator.generate()}"
@@ -64,7 +63,8 @@ class TestCompositeStorer:
         # ASSERT
         for storer in storers:
             storer.run.assert_called_once_with(state)
-        assert final_state.last_phase == Phase.STORAGE
+        # should not modify last phase
+        assert final_state.last_phase == state.last_phase
         assert final_state.current_file is None
 
 
@@ -89,4 +89,5 @@ class TestGDriveStorer:
             local_file_path="/foo",
             remote_file_name="2020-01-01T00:00:00.foo",
         )
-        assert final_state.last_phase == Phase.STORAGE
+        # should not modify last_phase
+        assert final_state.last_phase == state.last_phase

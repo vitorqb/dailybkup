@@ -20,7 +20,8 @@ class TestTarCompressor:
             tar_compressor_runner=tarutils.TarCompressorRunner(),
         )
         state_2 = compressor.run(state_1)
-        assert state_2.last_phase == Phase.COMPRESSION
+        # Should not modify last_phase
+        assert state_2.last_phase == state_1.last_phase
         assert p_("dir1") + "/" in state_2.files
         assert p_("file1") in state_2.files
         assert p_("dir1/file3") in state_2.files

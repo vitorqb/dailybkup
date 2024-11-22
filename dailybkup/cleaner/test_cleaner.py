@@ -86,7 +86,7 @@ class TestB2Cleaner:
 
 @pytest.mark.gdrive
 class TestGDriveCleaner:
-    def test_mutate_last_phase(self):
+    def test_does_not_mutate_last_phase(self):
         client = gdrive_mock(files=[])
         config = configmod.GDriveCleanerConfig(retain_last=2, folder_id="foo")
         cleaner = sut.GDriveCleaner(config, client)
@@ -94,7 +94,7 @@ class TestGDriveCleaner:
 
         new_state = cleaner.run(state)
 
-        assert new_state.last_phase == Phase.CLEANUP
+        assert new_state.last_phase == state.last_phase
 
     def test_cleans_2_files(self):
         client = gdrive_mock(
@@ -170,10 +170,10 @@ class TestGDriveCleaner:
 
 
 class TestNoOpCleaner:
-    def test_sets_last_phase(self):
+    def test_does_not_sets_last_phase(self):
         state = statemod.State.initial_state()
         cleaner = sut.NoOpCleaner()
 
         new_state = cleaner.run(state)
 
-        assert new_state.last_phase == Phase.CLEANUP
+        assert new_state.last_phase == state.last_phase
