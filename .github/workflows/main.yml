@@ -11,7 +11,7 @@ jobs:
       - name: "Install Poetry"
         uses: abatilo/actions-poetry@v3.0.1
       - name: "Check out repository code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: "Install Dependencies"
         run: "scripts/install-deps.sh"
       - name: "Code Style Check"
@@ -32,7 +32,7 @@ jobs:
       - name: "Install Poetry"
         uses: abatilo/actions-poetry@v3.0.1
       - name: "Check out repository code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: "Install Dependencies"
         run: "scripts/install-deps.sh"
       - name: "Unit Tests"
@@ -58,7 +58,7 @@ jobs:
       - name: "Install Poetry"
         uses: abatilo/actions-poetry@v3.0.1
       - name: "Check out repository code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: "Install Dependencies"
         run: "scripts/install-deps.sh"
       - name: "Functional Tests"
@@ -77,7 +77,7 @@ jobs:
       - name: "Install Poetry"
         uses: abatilo/actions-poetry@v3.0.1
       - name: "Check out repository code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: "Install Dependencies"
         run: "scripts/install-deps.sh"
       - name: "Type Checking"
@@ -90,7 +90,7 @@ jobs:
       options: --user root
     steps:
       - name: "Check out repository code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: "Check Renovate config"
         run:  renovate-config-validator /__w/dailybkup/dailybkup/renovate.json
         
