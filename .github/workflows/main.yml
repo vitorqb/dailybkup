@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Setup Python"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
@@ -26,7 +26,7 @@ jobs:
       DAILYBKUP_DEV_OPTIONAL_DEPS: ${{ matrix.optional_deps }}
     steps:
       - name: "Setup Python"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
@@ -52,7 +52,7 @@ jobs:
           - 9000:8080
     steps:
       - name: "Setup Python"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Setup Python"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
