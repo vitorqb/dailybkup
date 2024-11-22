@@ -32,7 +32,7 @@ else
 fi
 
 # Getopts
-while getopts "hpg:fun" opt; do
+while getopts "hpg:funx" opt; do
   case "$opt" in
     h)
         echo "$USAGE"
@@ -52,6 +52,9 @@ while getopts "hpg:fun" opt; do
         ;;
     n)
         SKIP_OPTIONAL_DEPS=1
+        ;;
+    x)
+        FAIL_FAST=1
         ;;
     --)
         break
@@ -103,6 +106,11 @@ fi
 if [ "$SKIP_OPTIONAL_DEPS" == 1 ]
 then
     ARGS+=( -m "not gdrive" )
+fi
+
+if [ "$FAIL_FAST" == 1 ]
+then
+    ARGS+=( -x )
 fi
 
 ARGS+=( ${FILES[@]} )
