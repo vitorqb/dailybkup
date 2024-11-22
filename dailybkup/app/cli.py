@@ -49,4 +49,9 @@ def _setup_injector(config_file: str):
 
 def _setup_logging(verbose: bool) -> None:
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(level=level)
+    logging.basicConfig(level=level, handlers=[TyperLoggerHandler()], force=True)
+
+
+class TyperLoggerHandler(logging.Handler):
+    def emit(self, record: logging.LogRecord) -> None:
+        typer.echo(self.format(record))
