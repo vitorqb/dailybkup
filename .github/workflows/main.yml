@@ -82,3 +82,15 @@ jobs:
         run: "scripts/install-deps.sh"
       - name: "Type Checking"
         run: "scripts/typecheck.sh"
+
+  Renovate-Config-Validation:
+    runs-on: ubuntu-latest
+    container:
+      image: renovate/renovate:39.26
+      options: --user root
+    steps:
+      - name: "Check out repository code"
+        uses: "actions/checkout@v3"
+      - name: "Check Renovate config"
+        run:  renovate-config-validator /__w/dailybkup/dailybkup/renovate.json
+        
