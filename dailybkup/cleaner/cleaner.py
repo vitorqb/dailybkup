@@ -40,6 +40,7 @@ class B2Cleaner(Cleaner):
         retain_last = self._config.retain_last
         files = sorted(self._b2context.get_file_names())
         files_to_delete = files[:-retain_last]
+        self.LOGGER.info(f"Found %s files to delete", len(files_to_delete))
         for file_to_delete in files_to_delete:
             self.LOGGER.info(
                 "Deleting file %s from bucket %s",

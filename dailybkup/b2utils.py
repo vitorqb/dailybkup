@@ -1,3 +1,4 @@
+from sys import prefix
 import b2sdk.v2 as b2sdk  # type: ignore
 import tempfile
 from typing import Iterator
@@ -45,14 +46,13 @@ class B2Context:
             self._bucket.upload_local_file(f.name, f"{self.prefix}{remote_file_name}")
 
     def count_files(self) -> int:
-        return sum(
-            1 for _ in self._bucket.ls(self.prefix, latest_only=True, recursive=True)
-        )
+        return sum(1 for _ in self.get_file_names())
 
     def get_file_names(self) -> Iterator[str]:
         return (
             file_version.file_name.removeprefix(self.prefix)
-            for file_version, _ in self._bucket.ls(self.prefix)
+            for file_version, _ in self._bucket.ls(latest_only=True, recursive=True)
+            if file_version.file_name.startswith(self.prefix)
         )
 
     def delete(self, file_name: str) -> None:
