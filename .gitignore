@@ -163,3 +163,4 @@ cython_debug/
 #.idea/
 .dir-locals.el
 /.vicommands
+/.envrc
