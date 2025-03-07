@@ -9,7 +9,7 @@ jobs:
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
-        uses: abatilo/actions-poetry@v3.0.1
+        uses: abatilo/actions-poetry@v3.0.2
       - name: "Check out repository code"
         uses: "actions/checkout@v4"
       - name: "Install Dependencies"
@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
-        uses: abatilo/actions-poetry@v3.0.1
+        uses: abatilo/actions-poetry@v3.0.2
       - name: "Check out repository code"
         uses: "actions/checkout@v4"
       - name: "Install Dependencies"
@@ -56,7 +56,7 @@ jobs:
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
-        uses: abatilo/actions-poetry@v3.0.1
+        uses: abatilo/actions-poetry@v3.0.2
       - name: "Check out repository code"
         uses: "actions/checkout@v4"
       - name: "Install Dependencies"
@@ -75,7 +75,7 @@ jobs:
         with:
           python-version: '3.10' 
       - name: "Install Poetry"
-        uses: abatilo/actions-poetry@v3.0.1
+        uses: abatilo/actions-poetry@v3.0.2
       - name: "Check out repository code"
         uses: "actions/checkout@v4"
       - name: "Install Dependencies"
