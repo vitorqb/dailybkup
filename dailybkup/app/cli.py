@@ -10,7 +10,7 @@ import logging
 
 def _get_default_config_file() -> str:
     return os.environ.get(
-        "DAILYBKUP_CONFIG_FILE", os.path.expanduser("~/.dailybkup/config.yaml")
+        "DAILYBKUP_CONFIG_FILE", os.path.expanduser("~/.config/dailybkup/config.yaml")
     )
 
 

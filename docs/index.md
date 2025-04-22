@@ -10,7 +10,7 @@ run a backup.
 
 The program looks for a configuration file in a path specified by the
 environmental variable `DAILYBKUP_CONFIG_FILE`. If not set, it
-defaults to `~/.dailybkup/config.yaml`.
+defaults to `~/.config/dailybkup.yaml`.
 
 A custom configuration file can be set by using the `-c` flag, which
 will take precendence over the environmental variable
@@ -102,8 +102,8 @@ StartLimitInterval=3600
 StartLimitBurst=3
 
 [Service]
-EnvironmentFile=%h/.dailybkup/env
-ExecStart=/usr/bin/python -m dailybkup -c %h/.dailybkup/config.yaml backup
+EnvironmentFile=%h/.config/dailybkup/env
+ExecStart=/usr/bin/python -m dailybkup -c %h/.config/dailybkup/config.yaml backup
 Restart=on-failure
 # Restart after 2min
 RestartSec=120
@@ -125,7 +125,7 @@ Now, set your `config.yaml` file and an `env` file on the paths
 specified above. For example:
 
 ```
-# file:~/.dailybkup/config.yaml
+# file:~/.config/dailybkup/config.yaml
 storage:
   - type_: b2
     bucket: dailybkup-personal
@@ -140,7 +140,7 @@ notification:
 ```
 
 ```
-# file:~/.dailybkup/env
+# file:~/.config/dailybkup/env
 DAILYBKUP_B2_APPLICATION_KEY_ID=mykeyid
 DAILYBKUP_B2_APPLICATION_KEY=mykey
 ```
