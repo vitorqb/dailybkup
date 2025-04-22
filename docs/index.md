@@ -10,7 +10,7 @@ run a backup.
 
 The program looks for a configuration file in a path specified by the
 environmental variable `DAILYBKUP_CONFIG_FILE`. If not set, it
-defaults to `~/.config/dailybkup.yaml`.
+defaults to `~/.config/dailybkup/config.yaml`.
 
 A custom configuration file can be set by using the `-c` flag, which
 will take precendence over the environmental variable
