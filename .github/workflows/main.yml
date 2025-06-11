@@ -47,7 +47,7 @@ jobs:
       DAILYBKUP_DEV_OPTIONAL_DEPS: ${{ matrix.optional_deps }}
     services:
       wiremock:
-        image: wiremock/wiremock:2.35.0
+        image: wiremock/wiremock:3.13.1
         ports:
           - 9000:8080
     steps:
