@@ -31,7 +31,7 @@ types-PyYAML = "^6.0.11"
 types-setuptools = "^65.3.0"
 black = "^24.0.0"
 mkdocs = "^1.4.2"
-mike = "^1.1.2"
+mike = "^2.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
