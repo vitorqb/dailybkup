@@ -3,6 +3,8 @@ on: [push]
 jobs:
   Style-Check:
     runs-on: ubuntu-latest
+    env:
+      CHECK: '1'
     steps:
       - name: "Setup Python"
         uses: actions/setup-python@v5

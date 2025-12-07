@@ -56,7 +56,12 @@ class B2Context:
         )
 
     def delete(self, file_name: str) -> None:
-        for file_version, _ in self._bucket.ls(folder_to_list=f"{self.prefix}*", with_wildcard=True, latest_only=False, recursive=True):
+        for file_version, _ in self._bucket.ls(
+            folder_to_list=f"{self.prefix}*",
+            with_wildcard=True,
+            latest_only=False,
+            recursive=True,
+        ):
             logger.debug(f"Checking {file_version.file_name}")
             if file_version.file_name == f"{self.prefix}{file_name}":
                 logger.debug(f"Deleting {file_version.file_name}")

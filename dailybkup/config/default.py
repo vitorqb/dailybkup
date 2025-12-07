@@ -9,8 +9,7 @@ NO_DEFAULT = object()
 @runtime_checkable
 class PDefaultValue(Protocol):
     @property
-    def value(self) -> Any:
-        ...
+    def value(self) -> Any: ...
 
 
 class StaticDefaultValue:
