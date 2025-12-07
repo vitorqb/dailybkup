@@ -1219,14 +1219,14 @@ files = [
 
 [[package]]
 name = "typer"
-version = "0.13.1"
+version = "0.20.0"
 description = "Typer, build great CLIs. Easy to code. Based on Python type hints."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "typer-0.13.1-py3-none-any.whl", hash = "sha256:5b59580fd925e89463a29d363e0a43245ec02765bde9fb77d39e5d0f29dd7157"},
-    {file = "typer-0.13.1.tar.gz", hash = "sha256:9d444cb96cc268ce6f8b94e13b4335084cef4c079998a9f4851a90229a3bd25c"},
+    {file = "typer-0.20.0-py3-none-any.whl", hash = "sha256:5b463df6793ec1dca6213a3cf4c0f03bc6e322ac5e16e13ddd622a889489784a"},
+    {file = "typer-0.20.0.tar.gz", hash = "sha256:1aaf6494031793e4876fb0bacfa6a912b551cf43c1e63c800df8b1a866720c37"},
 ]
 
 [package.dependencies]
@@ -1425,4 +1425,4 @@ google-drive-storer = ["google-api-python-client", "google-auth"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "4e2f59af54778c1a4715c0405a8eb8441fcf1b5cd1667a322f7c550071bc2d47"
+content-hash = "6a4127b307029cffdf349f86893ce790da03e08d4c8010b4a13c7bb1175fc7ae"
