@@ -7,7 +7,7 @@ jobs:
       - name: "Setup Python"
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: '3.14' 
       - name: "Install Poetry"
         uses: abatilo/actions-poetry@v3.0.2
       - name: "Check out repository code"
@@ -28,7 +28,7 @@ jobs:
       - name: "Setup Python"
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: '3.14' 
       - name: "Install Poetry"
         uses: abatilo/actions-poetry@v3.0.2
       - name: "Check out repository code"
@@ -54,7 +54,7 @@ jobs:
       - name: "Setup Python"
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: '3.14' 
       - name: "Install Poetry"
         uses: abatilo/actions-poetry@v3.0.2
       - name: "Check out repository code"
@@ -73,7 +73,7 @@ jobs:
       - name: "Setup Python"
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: '3.14' 
       - name: "Install Poetry"
         uses: abatilo/actions-poetry@v3.0.2
       - name: "Check out repository code"
