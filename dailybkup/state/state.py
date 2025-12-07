@@ -39,9 +39,11 @@ class IPhaseTransitionHook(abc.ABC):
     another. It can both do side-effects or modify the state itself.
     """
 
+    @abc.abstractmethod
     def should_run(self, old_state: State, new_state: State) -> bool:
         ...
 
+    @abc.abstractmethod
     def run(self, state: State) -> State:
         ...
 
