@@ -1299,4 +1299,4 @@ google-drive-storer = ["google-api-python-client", "google-auth"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "01d81b6174058929417f2e6cc123d7cf223258d528574cac526d7b43ae607c22"
+content-hash = "e410e37c4926a27a809ef4f7e9a6e39720b0548035b4f33b4b69e20b586f45cb"

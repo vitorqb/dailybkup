@@ -22,7 +22,7 @@ class TestTypeDispatcherConfigBuilder:
         builder = sut.TypeDispatcherConfigBuilder(builders)
         config = builder.build({"type_": "foo"})
         assert config == sub_builder.build.return_value
-        assert sub_builder.build.called_once_with({})
+        sub_builder.build.assert_called_once_with({})
 
     def test_unknown_type_raises(self):
         builders = {}
