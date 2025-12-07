@@ -6,8 +6,7 @@ T = TypeVar("T", covariant=True)
 
 
 class PConfigBuilder(Protocol[T]):
-    def build(self, d: Dict[str, Any]) -> T:
-        ...
+    def build(self, d: Dict[str, Any]) -> T: ...
 
 
 @dataclasses.dataclass

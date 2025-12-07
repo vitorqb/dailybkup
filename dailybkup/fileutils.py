@@ -6,8 +6,7 @@ from typing import Optional
 
 class ITempFileGenerator(abc.ABC):
     @abc.abstractmethod
-    def gen_name(self) -> str:
-        ...
+    def gen_name(self) -> str: ...
 
 
 class TempFileGenerator(ITempFileGenerator):

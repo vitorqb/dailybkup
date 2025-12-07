@@ -20,8 +20,7 @@ class Notifier(abc.ABC):
         return Phase.NOTIFICATION
 
     @abc.abstractmethod
-    def run(self, state: statemod.State) -> statemod.State:
-        ...
+    def run(self, state: statemod.State) -> statemod.State: ...
 
 
 class _EmailPetitionBuilder:

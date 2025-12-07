@@ -25,8 +25,7 @@ class IBackupFileNameGenerator(ABC):
         self._now_fn = now_fn
 
     @abstractmethod
-    def generate(self) -> str:
-        ...
+    def generate(self) -> str: ...
 
 
 class BackupFileNameGenerator(IBackupFileNameGenerator):
@@ -43,8 +42,7 @@ class Storer(ABC):
         return Phase.STORAGE
 
     @abstractmethod
-    def run(self, state: statemod.State) -> statemod.State:
-        ...
+    def run(self, state: statemod.State) -> statemod.State: ...
 
 
 class CompositeStorer(Storer):

@@ -8,10 +8,13 @@ from dailybkup import b2utils
 
 app = typer.Typer()
 
+
 @app.callback()
 def setup(
     ctx: typer.Context,
-    application_key_id: str = typer.Option(..., envvar="DAILYBKUP_B2_APPLICATION_KEY_ID"),
+    application_key_id: str = typer.Option(
+        ..., envvar="DAILYBKUP_B2_APPLICATION_KEY_ID"
+    ),
     application_key: str = typer.Option(..., envvar="DAILYBKUP_B2_APPLICATION_KEY"),
     bucket_name: str = typer.Option(..., envvar="DAILYBKUP_B2_BUCKET_NAME"),
     prefix: str = typer.Option("", envvar="DAILYBKUP_B2_PREFIX"),
@@ -26,6 +29,7 @@ def setup(
     )
     ctx.obj = b2context
 
+
 @app.command()
 def delete_file(file_name: str, ctx: typer.Context):
     """
@@ -33,6 +37,7 @@ def delete_file(file_name: str, ctx: typer.Context):
     """
     b2context = ctx.obj
     b2context.delete(file_name)
+
 
 if __name__ == "__main__":
     app()

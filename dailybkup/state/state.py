@@ -40,12 +40,10 @@ class IPhaseTransitionHook(abc.ABC):
     """
 
     @abc.abstractmethod
-    def should_run(self, old_state: State, new_state: State) -> bool:
-        ...
+    def should_run(self, old_state: State, new_state: State) -> bool: ...
 
     @abc.abstractmethod
-    def run(self, state: State) -> State:
-        ...
+    def run(self, state: State) -> State: ...
 
 
 class CompressedFileCleanupHook(IPhaseTransitionHook):

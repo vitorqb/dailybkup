@@ -9,8 +9,7 @@ import dailybkup.osutils as osutils
 
 
 class PDesktopNotifier(Protocol):
-    def send(self, petition: DesktopNotificationPetition) -> None:
-        ...
+    def send(self, petition: DesktopNotificationPetition) -> None: ...
 
 
 class NotifySendNotifier:

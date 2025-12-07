@@ -15,8 +15,7 @@ class EmailPetition:
 
 
 class PEmailSender(Protocol):
-    def send(self, email_petition: EmailPetition) -> None:
-        ...
+    def send(self, email_petition: EmailPetition) -> None: ...
 
 
 class MockEmailSender(PEmailSender):
