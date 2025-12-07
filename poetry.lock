@@ -14,14 +14,14 @@ files = [
 
 [[package]]
 name = "b2sdk"
-version = "2.8.0"
+version = "2.10.1"
 description = "Backblaze B2 SDK"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "b2sdk-2.8.0-py3-none-any.whl", hash = "sha256:770ba282e64b9f288f7255358108d0771a6329a260ddc66a4688ae328bd9ec76"},
-    {file = "b2sdk-2.8.0.tar.gz", hash = "sha256:e5a75b20b37b45d17fdb7fae491c8bb5d8adac67d99383cda3506f6b10c96710"},
+    {file = "b2sdk-2.10.1-py3-none-any.whl", hash = "sha256:5495afef0d032de965c6fac3c918d34472192ec0ed91430d4bd9b749444f4ba0"},
+    {file = "b2sdk-2.10.1.tar.gz", hash = "sha256:92c860a4a2e64d4a30d255d5a8d6d9049ff6d2bc64ff5751c0e05b1a2921fd1f"},
 ]
 
 [package.dependencies]
@@ -1425,4 +1425,4 @@ google-drive-storer = ["google-api-python-client", "google-auth"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "6a4127b307029cffdf349f86893ce790da03e08d4c8010b4a13c7bb1175fc7ae"
+content-hash = "9fcf89120eaab65f446442a6a9a715af10195c4e5249055e550ddd2ac60c0aad"
