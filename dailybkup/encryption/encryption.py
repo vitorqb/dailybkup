@@ -20,8 +20,7 @@ class Encryptor(ABC):
         return Phase.ENCRYPTION
 
     @abstractmethod
-    def run(self, state: statemod.State) -> statemod.State:
-        ...
+    def run(self, state: statemod.State) -> statemod.State: ...
 
 
 class PasswordEncryptor(Encryptor):

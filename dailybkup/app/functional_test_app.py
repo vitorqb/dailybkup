@@ -1,6 +1,7 @@
 """
 Functional tests for the app
 """
+
 import dailybkup.tarutils as tarutils
 import dailybkup.services.email_sender as email_sender
 import dailybkup.services.desktop_notifier as desktop_notifier

@@ -20,8 +20,7 @@ class Cleaner(ABC):
         return Phase.CLEANUP
 
     @abstractmethod
-    def run(self, state: statemod.State) -> statemod.State:
-        ...
+    def run(self, state: statemod.State) -> statemod.State: ...
 
 
 class B2Cleaner(Cleaner):
