@@ -24,7 +24,7 @@ google-auth = {version = "^2.16.0", optional = true}
 google-drive-storer = ["google-auth", "google-api-python-client"]
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
+pytest = "^9.0.0"
 mypy = "^1.19.0"
 types-requests = "^2.28.11.2"
 types-PyYAML = "^6.0.11"
