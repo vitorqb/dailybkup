@@ -14,14 +14,14 @@ files = [
 
 [[package]]
 name = "b2sdk"
-version = "2.10.1"
+version = "2.10.2"
 description = "Backblaze B2 SDK"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "b2sdk-2.10.1-py3-none-any.whl", hash = "sha256:5495afef0d032de965c6fac3c918d34472192ec0ed91430d4bd9b749444f4ba0"},
-    {file = "b2sdk-2.10.1.tar.gz", hash = "sha256:92c860a4a2e64d4a30d255d5a8d6d9049ff6d2bc64ff5751c0e05b1a2921fd1f"},
+    {file = "b2sdk-2.10.2-py3-none-any.whl", hash = "sha256:c454e78d46a270e814233359e53006b2e8c2417286d2f4686586b5295ae64137"},
+    {file = "b2sdk-2.10.2.tar.gz", hash = "sha256:39e51ea164a0e12c4ecbf0dac1f290622902ffa0cfa3de83e6b50ee3c95c1465"},
 ]
 
 [package.dependencies]
@@ -1446,4 +1446,4 @@ google-drive-storer = ["google-api-python-client", "google-auth"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "783a742375ca4b3459b70ce9fd27a82f7f76d27635b9b1125a4de3744da24116"
+content-hash = "e033aedf2b59e999d9329c6eeff1d7829b37afb63de4be23d74e0a9a612399b8"
