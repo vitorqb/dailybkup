@@ -164,3 +164,4 @@ cython_debug/
 .dir-locals.el
 /.vicommands
 /.envrc
+/mise.local.toml
