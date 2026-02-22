@@ -14,21 +14,24 @@ files = [
 
 [[package]]
 name = "b2sdk"
-version = "2.10.1"
+version = "2.10.3"
 description = "Backblaze B2 SDK"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "b2sdk-2.10.1-py3-none-any.whl", hash = "sha256:5495afef0d032de965c6fac3c918d34472192ec0ed91430d4bd9b749444f4ba0"},
-    {file = "b2sdk-2.10.1.tar.gz", hash = "sha256:92c860a4a2e64d4a30d255d5a8d6d9049ff6d2bc64ff5751c0e05b1a2921fd1f"},
+    {file = "b2sdk-2.10.3-py3-none-any.whl", hash = "sha256:62351893bd4098d71cc703f1f4a23fe23ed8f609f509e8662297db10bffa4322"},
+    {file = "b2sdk-2.10.3.tar.gz", hash = "sha256:aec069860587990a88e3504ed09c7f48f20fb156f8dd3b01fb36a869fd6ed772"},
 ]
 
 [package.dependencies]
-annotated_types = ">=0.5.0"
+annotated-types = ">=0.5.0"
 logfury = ">=1.0.1,<2.0.0"
 requests = ">=2.9.1,<3.0.0"
 typing-extensions = {version = ">=4.7.1", markers = "python_version < \"3.12\""}
+
+[package.extras]
+full = ["eval-type-backport (>=0.1.3,<1)", "pydantic (>=2.0.1)", "tqdm (>=4.5.0,<5.0.0)"]
 
 [[package]]
 name = "black"
@@ -1446,4 +1449,4 @@ google-drive-storer = ["google-api-python-client", "google-auth"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "783a742375ca4b3459b70ce9fd27a82f7f76d27635b9b1125a4de3744da24116"
+content-hash = "1d32ca599abbd4f0d39e76a8200fe64acc32307b43c35a36bbec6e8aa5ac18b6"
