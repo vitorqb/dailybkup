@@ -17,6 +17,7 @@ class NotifySendNotifierConfig(IDesktopNotifierConfig):
 class MockDesktopNotifierConfig(IDesktopNotifierConfig):
     type_: str = "mock"
     directory: str
+    should_raise: bool = False
 
 
 notify_send_notifier_config_builder = configmod.GenericBuilder(
@@ -28,6 +29,7 @@ mock_notifier_config_builder = configmod.GenericBuilder(
     MockDesktopNotifierConfig,
     configmod.bs.Required("directory"),
     configmod.bs.Optional("type_", "mock"),
+    configmod.bs.Optional("should_raise", False),
 )
 desktop_notifier_config_builder: configmod.TypeDispatcherConfigBuilder[
     IDesktopNotifierConfig

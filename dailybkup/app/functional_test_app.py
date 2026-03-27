@@ -113,9 +113,17 @@ class TestFunctionalApp:
             mock_sender_dir = config.notification[0].sender_config.directory
             mock_sender = email_sender.MockEmailSender(directory=mock_sender_dir)
             result1 = cli_runner.invoke(app, ["-c", config_file, "backup"])
-            assert result1.exit_code == 0  # When failing during notifications, exit 0
+            assert result1.exit_code == 1
             assert mock_sender.count == 1
             assert mock_sender.last_email_petition.subject == "Backup Failed!"
+
+    def test_exits_with_status_code_zero_if_fails_on_notification(
+        self, app, cli_runner, config_builder
+    ):
+        config_builder.with_mock_desktop_notifier(should_raise=True)
+        with config_builder.build() as (_, config_file):
+            result1 = cli_runner.invoke(app, ["-c", config_file, "backup"])
+            assert result1.exit_code == 0  # When failing during notifications, exit 0
 
     def test_notifies_using_notify_send(self, app, cli_runner, config_builder):
         config_builder.with_mock_desktop_notifier()

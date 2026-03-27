@@ -1,5 +1,6 @@
 import dataclasses
 from typing import List, Optional
+from dailybkup.state.error import FrozenError
 import dailybkup.timeutils as timeutils
 from .phases import Phase, PhaseTransitionLog
 from .state import StateMutation, State
@@ -38,5 +39,13 @@ def with_current_file(current_file: Optional[str]) -> StateMutation:
     return lambda x: dataclasses.replace(x, current_file=current_file)
 
 
-def with_error(error: Optional[Exception]) -> StateMutation:
-    return lambda x: dataclasses.replace(x, error=error)
+def with_error(error: Exception) -> StateMutation:
+
+    def inner_with_error(x: State) -> State:
+        # If there is an error don't override it
+        if x.error is not None:
+            return x
+        # Else set error
+        return dataclasses.replace(x, error=FrozenError(error, x.last_phase))
+
+    return inner_with_error

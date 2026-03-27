@@ -24,7 +24,9 @@ class TestMutations:
         assert final_state.compressed_file == "baz"
         assert final_state.encrypted_file == "boz"
         assert final_state.current_file == "buz"
-        assert final_state.error == an_error
+        assert final_state.error
+        assert final_state.error.last_phase == Phase.END
+        assert final_state.error.source == an_error
 
     def test_mutating_last_phase_creates_record(self):
         with testutils.mock_now(datetime.datetime(222, 1, 1)) as now:
@@ -33,3 +35,12 @@ class TestMutations:
             assert final_state.phase_transition_logs == [
                 PhaseTransitionLog(now(), Phase.BEGIN, Phase.COMPRESSION)
             ]
+
+    def test_with_error_twice_keep_first_error(self):
+        initial_state = statemod.State.initial_state()
+        first_error = RuntimeError("one")
+        final_state = initial_state.mutate(
+            m.with_error(first_error), m.with_error(RuntimeError("two"))
+        )
+        assert final_state.error
+        assert final_state.error.source == first_error

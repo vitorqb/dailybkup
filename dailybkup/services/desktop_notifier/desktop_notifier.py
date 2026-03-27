@@ -24,10 +24,13 @@ class NotifySendNotifier:
 
 
 class MockDesktopNotifier:
-    def __init__(self, directory: str):
+    def __init__(self, directory: str, should_raise: bool = False):
         self._directory = directory
+        self._should_raise = should_raise
 
     def send(self, petition: DesktopNotificationPetition) -> None:
+        if self._should_raise:
+            raise RuntimeError("Mock desktop notifier configured to raise")
         filename = str(uuid.uuid1())
         with open(f"{self._directory}/{filename}", "w") as f:
             json.dump(dataclasses.asdict(petition), f)
