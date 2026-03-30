@@ -144,6 +144,7 @@ class TestRunner:
         error = RuntimeError("FOO")
         steps = [mock.Mock()]
         steps[0].run.side_effect = error
+        steps[0].get_phase.return_value = Phase.COMPRESSION
         hooks = []
         runner = sut.Runner(steps=steps, hooks=hooks)
 
@@ -151,7 +152,9 @@ class TestRunner:
         final_state = runner.run(initial_state)
 
         # ARRANGE
-        assert final_state.error == error
+        assert final_state.error
+        assert final_state.error.source == error
+        assert final_state.error.last_phase == Phase.COMPRESSION
 
     def test_only_runs_if_should_run_is_true(self):
         # ARRANGE

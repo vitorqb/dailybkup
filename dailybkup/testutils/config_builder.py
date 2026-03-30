@@ -108,9 +108,11 @@ class ConfigBuilder:
         )
         self.replace(notification=[*self._config.notification, notification_config])
 
-    def with_mock_desktop_notifier(self, directory=None) -> None:
+    def with_mock_desktop_notifier(self, directory=None, should_raise=False) -> None:
         directory = directory or self._tempfile_controller.new_dir()
-        sender_config = desktop_notifier.MockDesktopNotifierConfig(directory=directory)
+        sender_config = desktop_notifier.MockDesktopNotifierConfig(
+            directory=directory, should_raise=should_raise
+        )
         notification_config = notifiermod.DesktopNotifierConfig(
             sender_config=sender_config
         )

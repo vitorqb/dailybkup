@@ -57,7 +57,7 @@ def _setup_logging(verbose: bool) -> None:
 def _handle_error(state: State):
     if state.error is None:
         return
-    match state.last_phase:
+    match state.error.last_phase:
         # If we fal on these steps, log the error but don't raise so we don't retry
         case Phase.CLEANUP | Phase.NOTIFICATION | Phase.END:
             logging.warning(
@@ -67,7 +67,7 @@ def _handle_error(state: State):
         # If we fail on any other step raise
         case _:
             logging.error(state.error)
-            raise state.error
+            raise state.error.source
 
 
 class TyperLoggerHandler(logging.Handler):

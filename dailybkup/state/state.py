@@ -2,6 +2,8 @@ import abc
 import dataclasses
 import logging
 import os
+
+from dailybkup.state.error import FrozenError
 from .phases import Phase, PhaseTransitionLog
 from typing import List, Optional, Callable
 
@@ -20,7 +22,7 @@ class State:
     compressed_file: Optional[str] = None
     encrypted_file: Optional[str] = None
     current_file: Optional[str] = None
-    error: Optional[Exception] = None
+    error: Optional[FrozenError] = None
 
     @classmethod
     def initial_state(cls, **kwargs) -> "State":
