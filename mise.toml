@@ -1,6 +1,6 @@
 [tools]
 python = "3.14.2"
-poetry = "2.2.1"
+poetry = "2.3.4"
 
 [task_config]
 includes = [
