@@ -26,24 +26,24 @@ files = [
 
 [[package]]
 name = "b2sdk"
-version = "2.10.4"
+version = "2.12.0"
 description = "Backblaze B2 SDK"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "b2sdk-2.10.4-py3-none-any.whl", hash = "sha256:0816136ee740befbfeaa20da629fb90782a7bac40b5e3f59799436840358c87f"},
-    {file = "b2sdk-2.10.4.tar.gz", hash = "sha256:2bf69843b96e99f2e70a8aa052cd0aa5c0c80500855a991950051a5116bb8498"},
+    {file = "b2sdk-2.12.0-py3-none-any.whl", hash = "sha256:58af4e925b2ed0422b4f2f26ee3f53c7045520ae6ddcbe65b5bc9e4b99725bce"},
+    {file = "b2sdk-2.12.0.tar.gz", hash = "sha256:da7b65e1af4f59c7de7d079c1e25de6b033aa45090fded4caefe52ded9b13ee6"},
 ]
 
 [package.dependencies]
 annotated-types = ">=0.5.0"
 logfury = ">=1.0.1,<2.0.0"
-requests = ">=2.9.1,<3.0.0"
+requests = ">=2.33.0,<3.0.0"
 typing-extensions = {version = ">=4.7.1", markers = "python_version < \"3.12\""}
 
 [package.extras]
-full = ["eval-type-backport (>=0.1.3,<1)", "pydantic (>=2.0.1)", "tqdm (>=4.5.0,<5.0.0)"]
+full = ["pydantic (>=2.0.1)", "pydantic (>=2.0.1,<2.13)", "tqdm (>=4.5.0,<5.0.0)"]
 
 [[package]]
 name = "black"
@@ -1463,4 +1463,4 @@ google-drive-storer = ["google-api-python-client", "google-auth"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "6551bdaad1ce93eb6fb1c62b092c54bfee95deaad2dec953f7c895a43daf09b0"
+content-hash = "8717bbc7626f67677b133ff504061dc18e821e930b5beb83dea50c47c57fd56c"
