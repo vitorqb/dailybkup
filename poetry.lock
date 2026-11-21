@@ -26,24 +26,25 @@ files = [
 
 [[package]]
 name = "b2sdk"
-version = "2.10.4"
+version = "2.13.5"
 description = "Backblaze B2 SDK"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "b2sdk-2.10.4-py3-none-any.whl", hash = "sha256:0816136ee740befbfeaa20da629fb90782a7bac40b5e3f59799436840358c87f"},
-    {file = "b2sdk-2.10.4.tar.gz", hash = "sha256:2bf69843b96e99f2e70a8aa052cd0aa5c0c80500855a991950051a5116bb8498"},
+    {file = "b2sdk-2.13.5-py3-none-any.whl", hash = "sha256:589124c52eea92ff69930d1539d5a2fe041c62a1146cf0dd7a1d1d8cb0d70868"},
+    {file = "b2sdk-2.13.5.tar.gz", hash = "sha256:584a5746be087476fd6106cc7635c2da032d484b73634f7e6afc5758f25c2b5b"},
 ]
 
 [package.dependencies]
 annotated-types = ">=0.5.0"
+certifi = ">=2026.10.19"
 logfury = ">=1.0.1,<2.0.0"
-requests = ">=2.9.1,<3.0.0"
+requests = ">=2.33.0,<3.0.0"
 typing-extensions = {version = ">=4.7.1", markers = "python_version < \"3.12\""}
 
 [package.extras]
-full = ["eval-type-backport (>=0.1.3,<1)", "pydantic (>=2.0.1)", "tqdm (>=4.5.0,<5.0.0)"]
+full = ["pydantic (>=2.0.1)", "pydantic (>=2.0.1,<2.13)", "tqdm (>=4.5.0,<5.0.0)"]
 
 [[package]]
 name = "black"
@@ -113,14 +114,14 @@ files = [
 
 [[package]]
 name = "certifi"
-version = "2026.2.25"
+version = "2026.11.20"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "certifi-2026.2.25-py3-none-any.whl", hash = "sha256:027692e4402ad994f1c42e52a4997a9763c646b73e4096e4d5d6db8af1d6f0fa"},
-    {file = "certifi-2026.2.25.tar.gz", hash = "sha256:e887ab5cee78ea814d3472169153c2d12cd43b14bd03329a39a9c6e2e80bfba7"},
+    {file = "certifi-2026.11.20-py3-none-any.whl", hash = "sha256:7422df25243767b9877031a2248cb14d09ddac9beee846f4cef3d5c9191d488f"},
+    {file = "certifi-2026.11.20.tar.gz", hash = "sha256:af1cb240a8133f105aa52684a3a3258339d7f2fd0bd4e2812698ff5cf5588c4e"},
 ]
 
 [[package]]
@@ -1463,4 +1464,4 @@ google-drive-storer = ["google-api-python-client", "google-auth"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "6551bdaad1ce93eb6fb1c62b092c54bfee95deaad2dec953f7c895a43daf09b0"
+content-hash = "6d1dee176fa75c764121f4ce92294ff343e2276372803cb5a14859483252ffe0"
